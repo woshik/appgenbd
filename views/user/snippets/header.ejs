@@ -1,0 +1,27 @@
+<head>
+    <title><%=title%> || <%=info.appName%></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/dashboard/css/fontawesome-all.css">
+    <link rel="stylesheet" type="text/css" href="/dashboard/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/dashboard/css/style4.css">
+
+    <% if(path === sidebar.appList) { %>
+
+    <link rel="stylesheet" type="text/css" href="/dashboard/DataTables/datatables.min.css">
+
+    <% } %>
+
+    <link rel="stylesheet" type="text/css" href="/css/custom.css">
+</head>

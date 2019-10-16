@@ -1,0 +1,40 @@
+<nav id="sidebar">
+    <ul class="list-unstyled components">
+
+        <li class="<% if(path === sidebar.dashboard) { %>active<% } %>" >
+            <a href="<%=sidebar.dashboard%>">
+                <i class="fas fa-th-large"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li class="<% if(path === sidebar.installApp) { %>active<% } %>">
+            <a href="<%=sidebar.installApp%>">
+                <i class="fas fa-arrow-circle-down"></i>
+                Install App
+            </a>
+        </li>
+
+        <li class="<% if(path === sidebar.appList) { %>active<% } %>">
+            <a href="<%=sidebar.appList%>">
+                <i class="fas fa-list-ul"></i>
+                App List
+            </a>
+        </li>
+
+        <li class="<% if(path === sidebar.uploadContent) { %>active<% } %>">
+            <a href="<%=sidebar.uploadContent%>">
+                <i class="far fa-file-alt"></i>
+                Content Upload
+            </a>
+        </li>
+
+        <li class="<% if(path === sidebar.generateApplication) { %>active<% } %>">
+            <a href="<%=sidebar.generateApplication%>">
+                <i class="far fa-file-pdf"></i>
+                Application Generator
+            </a>
+        </li>
+
+    </ul>
+</nav>

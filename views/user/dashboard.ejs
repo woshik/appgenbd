@@ -1,0 +1,66 @@
+<%- include('base_header.ejs') %>
+<% if (active) { %>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3 col-xs-6 bg-primary">
+            <div class="s-l">
+                <h5>Projects</h5>
+                <p class="paragraph-agileits-w3layouts text-white">Lorem Ipsum</p>
+            </div>
+            <div class="s-r">
+                <h6>340
+                    <i class="far fa-edit"></i>
+                </h6>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6 bg-success">
+            <div class="s-l">
+                <h5>Clients</h5>
+                <p class="paragraph-agileits-w3layouts">Lorem Ipsum</p>
+            </div>
+            <div class="s-r">
+                <h6>250
+                    <i class="far fa-smile"></i>
+                </h6>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6 bg-danger">
+            <div class="s-l">
+                <h5>Tasks</h5>
+                <p class="paragraph-agileits-w3layouts">Lorem Ipsum</p>
+            </div>
+            <div class="s-r">
+                <h6>232
+                    <i class="fas fa-tasks"></i>
+                </h6>
+            </div>
+        </div>
+        <div class="col-lg-3 col-xs-6 bg-warning">
+            <div class="s-l">
+                <h5>Employees</h5>
+                <p class="paragraph-agileits-w3layouts">Lorem Ipsum</p>
+            </div>
+            <div class="s-r">
+                <h6>190
+                    <i class="fas fa-users"></i>
+                </h6>
+            </div>
+        </div>
+    </div>
+</div>
+<% } else { %>
+<h2 class="main-title-w3layouts mb-2 text-center">Account Inactive</h2>
+<div class="blank-page-content" style="padding: 35px 210px;">
+    <div class="outer-w3-agile mt-3" style="padding: 10px 60px;width: 585px;margin: 0 auto;">
+        <p class="paragraph-agileits-w3layouts">Now your account is inactive.<br>
+            For activing your account please Bkash 350Tk on this number, 01947738405 with refarence code 'proapp'.<br>
+            After Bkash on this number please contact with admin on this number, 01947738405 for activing your account.<br>
+            This is our monthly fee, your can install 15 app.<br>
+            If you need more app to install, please contact with us.<br>
+            After 1 month you have to recharge again for running your app.
+        </p>
+    </div>
+</div>
+<% } %>
+<%- include('base_footer.ejs') %>
+<%- include('close_footer.ejs') %>

@@ -1,0 +1,37 @@
+<%- include('snippets/header.ejs') %>
+<form action="<%=verificationForm%>" method="POST" class="login100-form validate-form" id="verificationForm">
+    <span class="login100-form-title p-b-34">
+        <%=title%>
+    </span>
+    <% if (flashMessage) { %>
+    <div class="alert alert-success alert-dismissible" role="alert" style="width: 100%;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <%=flashMessage%>
+    </div>
+    <% } %>
+    <div id="message" style="width: 100%"></div>
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>" id="csrf">
+    <div class="wrap-input100 validate-input m-b-20" data-validate="Type Code">
+        <input id="name" class="input100" type="text" name="code" placeholder="verification Code">
+        <span class="focus-input100"></span>
+    </div>
+    <div class="container-login100-form-btn">
+        <button class="login100-form-btn">
+            Submit
+        </button>
+    </div>
+    <div class="w-full text-center p-t-40 p-b-110">
+        <a href="<%=sendEmail%>" id="mailSending" class="txt4">
+            Send Email Again
+        </a>
+    </div>
+
+    <div class="w-full text-center">
+        <a href="<%=loginPage%>" class="txt4">
+            Back To Login
+        </a>
+    </div>
+</form>
+<%- include('snippets/script.ejs') %>
+<script type="text/javascript" src="/js/auth/emailCheck.js"></script>
+<%- include('snippets/footer.ejs') %>

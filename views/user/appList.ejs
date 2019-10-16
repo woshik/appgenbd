@@ -1,0 +1,27 @@
+<%- include('base_header.ejs') %>
+
+<section class="tables-section">
+    <div class="outer-w3-agile mt-3">
+        <h4 class="tittle-w3-agileits mb-4"><%=title%></h4>
+        <div class="table-responsive">
+	        <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
+	            <thead>
+	                <tr>
+	                    <th scope="col">App Name</th>
+	                    <th scope="col">APP ID</th>
+	                    <th scope="col">Subscribe</th>
+	                    <th scope="col">Dial</th>
+	                </tr>
+	            </thead>
+	        </table>
+	    </div>
+    </div>
+</section>
+
+<%- include('base_footer.ejs') %>
+
+<script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
+
+<script type="text/javascript" src="/js/appList.js"></script>
+
+<%- include('close_footer.ejs') %>

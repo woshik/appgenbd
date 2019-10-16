@@ -1,0 +1,6 @@
+{
+	"mail": {
+		"password": "mail_password"
+	},
+	"session_secret": "session_secret"
+}
