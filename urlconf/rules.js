@@ -1,3 +1,6 @@
+const { join } = require('path')
+const { isUserAuthenticated, isCanUserSee, canAccess } = require(join(__dirname, "..", "core", "middlewares"))
+
 api = {}
 
 web = {
@@ -8,6 +11,7 @@ web = {
             userLoginView: 'get',
             userLogin: 'post'
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
     registration: {
@@ -17,6 +21,7 @@ web = {
             registrationView: 'get',
             registration: 'post'
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -27,6 +32,7 @@ web = {
             emailVerificationView: 'get',
             emailVerification: 'post',
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -36,6 +42,7 @@ web = {
         methods: {
             sendMailAgain: 'post',
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -46,6 +53,7 @@ web = {
             forgotPasswordView: 'get',
             forgotPassword: 'post',
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -56,6 +64,7 @@ web = {
             forgotPasswordCodeVerifyView: 'get',
             forgotPasswordCodeVerify: 'post',
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -66,6 +75,7 @@ web = {
             changePasswordView: 'get',
             changePassword: 'post',
         },
+        middleware: [isCanUserSee],
         path: 'auth/'
     },
 
@@ -75,6 +85,7 @@ web = {
         methods: {
             dashboardView: 'get',
         },
+        middleware: [isUserAuthenticated],
         path: 'user/'
     },
 
@@ -84,6 +95,7 @@ web = {
         methods: {
             userLogout: 'get',
         },
+        middleware: [isUserAuthenticated],
         path: 'user/'
     }
 

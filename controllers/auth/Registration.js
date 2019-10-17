@@ -69,7 +69,6 @@ const registration = (req, res, next) => {
                             token: Math.floor(Math.random() * 100001),
                             token_refresh: tokenTime,
                             mail_for_verification: 1,
-                            mail_for_forgetpass: 0
                         })
                         .then(dataInsectionResult => {
                             sendMail(dataInsectionResult.ops[0].email, "Varification Code", dataInsectionResult.ops[0].token)

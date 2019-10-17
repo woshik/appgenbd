@@ -113,9 +113,6 @@ exports.flash = () => {
     }
 }
 
-
-
-
 exports.commonInfo = {
     appName: config.get('app_name'),
     company: config.get('company'),

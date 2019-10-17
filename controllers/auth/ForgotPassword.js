@@ -51,7 +51,7 @@ const forgotPassword = (req, res, next) => {
             user.updateOne({ email: isEmailRegister.email }, {
                     'forgot': 1,
                     'token': token,
-                    'forgotTokenTime': tokenTime,
+                    'forgot_token_time': tokenTime,
                     'userRDId': userRDId
                 })
                 .then(result => {
@@ -77,10 +77,12 @@ const forgotPasswordCodeVerifyView = (req, res, next) => {
         .then(userData => {
 
             if (!userData || userData.email_active !== 1) {
+                req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.redirect(web.userLogin.url)
             }
 
             if (userData.forgot !== 1) {
+                req.flash('userLoginScreenErrorMessage', 'User account not active')
                 return res.redirect(web.forgotPassword.url)
             }
 
@@ -117,14 +119,18 @@ const forgotPasswordCodeVerify = (req, res, next) => {
     const user = new model("users")
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
-            if (!userData || userData.forgot !== 1 || userData.email_active !== 1) {
-                return res.status(200).json({
-                    success: true,
-                    message: web.userLogin.url
-                })
+
+            if (!userData || userData.email_active !== 1) {
+                req.flash('userLoginScreenErrorMessage', 'User account not found')
+                return res.redirect(web.userLogin.url)
             }
 
-            if (userData.forgetTokenTime.getTime() > new Date().getTime()) {
+            if (userData.forgot !== 1) {
+                req.flash('userLoginScreenErrorMessage', 'User account not active')
+                return res.redirect(web.forgotPassword.url)
+            }
+
+            if (userData.forgot_token_time.getTime() > new Date().getTime()) {
                 if (userData.token !== parseInt(req.body.code)) {
                     return res.status(200).json({
                         success: false,
@@ -146,16 +152,16 @@ const forgotPasswordCodeVerify = (req, res, next) => {
 
                 let tokenTime = new Date()
                 tokenTime.setMinutes(tokenTime.getMinutes() + 10)
-                let forgetPassword = {
-                    'forgetToken': Math.floor(Math.random() * 100001),
-                    'forgetTokenTime': tokenTime,
-                }
+                let token = Math.floor(Math.random() * 100001)
 
-                sendMail(userData.email, "Varification Code", forgetPassword.forgetToken)
+                sendMail(userData.email, "Varification Code", token)
                     .then(response => {})
                     .catch(err => next(err))
 
-                user.updateOne({ userRDId: req.params.id }, forgetPassword)
+                user.updateOne({ userRDId: req.params.id }, {
+                        "token": token,
+                        "forgot_token_time": tokenTime
+                    })
                     .then(userUpdateValue => {
                         return res.status(200).json({
                             success: false,
@@ -172,8 +178,8 @@ const changePasswordView = (req, res, nex) => {
     const user = new model("users");
     user.findOne({ userRDId: req.params.id, token: req.params.code })
         .then(userData => {
-            if (!userData || userData.forget !== 1 || userData.email_active !== 1 || userData.forgot === 1) {
-                req.flash('userLoginScreenErrorMessage', 'You are not properly doing forgot password')
+            if (!userData || userData.forget !== 1 || userData.email_active !== 1 || userData.forgot !== 1) {
+                req.flash('userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.')
                 return res.redirect(web.userLogin)
             }
 

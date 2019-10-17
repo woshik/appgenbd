@@ -7,11 +7,11 @@ if (cluster.isMaster) {
         cluster.fork()
     }
 
+    require(join(__dirname, "cron", "serverCronJob"))
+
     // cluster.on('exit', (worker, code, signal) => {
     //     cluster.fork()
     // })
-} else if (cluster.worker.id !== 1) {
-    require(join(__dirname, "bootstrap"))
 } else {
-    require(join(__dirname, "cron", "serverCronJob"))
+    require(join(__dirname, "bootstrap"))
 }
