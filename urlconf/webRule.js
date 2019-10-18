@@ -1,9 +1,7 @@
 const { join } = require('path')
-const { isUserAuthenticated, isCanUserSee, canAccess } = require(join(__dirname, "..", "core", "middlewares"))
+const { isUserAuthenticated, isUserCanSee, canAccess } = require(join(__dirname, "..", "core", "middlewares"))
 
-api = {}
-
-web = {
+module.exports = {
     userLogin: {
         url: '/login/user',
         controller: 'UserLogin',
@@ -11,7 +9,7 @@ web = {
             userLoginView: 'get',
             userLogin: 'post'
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
     registration: {
@@ -21,7 +19,7 @@ web = {
             registrationView: 'get',
             registration: 'post'
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -32,7 +30,7 @@ web = {
             emailVerificationView: 'get',
             emailVerification: 'post',
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -42,7 +40,7 @@ web = {
         methods: {
             sendMailAgain: 'post',
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -53,7 +51,7 @@ web = {
             forgotPasswordView: 'get',
             forgotPassword: 'post',
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -64,7 +62,7 @@ web = {
             forgotPasswordCodeVerifyView: 'get',
             forgotPasswordCodeVerify: 'post',
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -75,7 +73,7 @@ web = {
             changePasswordView: 'get',
             changePassword: 'post',
         },
-        middleware: [isCanUserSee],
+        middleware: [isUserCanSee],
         path: 'auth/'
     },
 
@@ -90,14 +88,15 @@ web = {
     },
 
     userLogout: {
-        url: '/',
+        url: '/logout/user',
         controller: 'Dashboard',
         methods: {
             userLogout: 'get',
         },
         middleware: [isUserAuthenticated],
         path: 'user/'
-    }
+    },
+
 
     // userLogout: '/logout/user', // user logout
 
@@ -123,5 +122,3 @@ web = {
     // adminLogin: '/login/admin', // admin login
     // adminLogout: '/logout/admin', // admin logout
 }
-
-module.exports = { api, web };

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { join } = require("path");
-const { web } = require(join(__dirname, "..", "urlconf", "rules"));
+const web = require(join(__dirname, "..", "urlconf", "webRule"));
 
 Object.entries(web).forEach(([routeName, routeInfo]) => {
     Object.entries(routeInfo.methods).forEach(([method, httpVerb]) => {

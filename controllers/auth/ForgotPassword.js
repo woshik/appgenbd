@@ -3,7 +3,7 @@ const Joi = require("@hapi/joi")
 const bcrypt = require("bcryptjs")
 const crypto = require('crypto')
 const { commonInfo, fromErrorMessage, sendMail, hashPassword } = require(join(__dirname, "../../", "core", "util"))
-const { web } = require(join(__dirname, "../../", "urlconf", "rules"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"))
 
 const forgotPasswordView = (req, res) => {
@@ -131,7 +131,7 @@ const forgotPasswordCodeVerify = (req, res, next) => {
             }
 
             if (userData.forgot_token_time.getTime() > new Date().getTime()) {
-                if (userData.token !== parseInt(req.body.code)) {
+                if (userData.token !== parseInt(validateResult.value.code)) {
                     return res.status(200).json({
                         success: false,
                         message: "Please enter valid verification code"
@@ -143,7 +143,7 @@ const forgotPasswordCodeVerify = (req, res, next) => {
                     .then(userUpdateValue => {
                         return res.status(200).json({
                             success: true,
-                            message: web.passwordChange.url.replace(":id", userRDId).replace(":code", userData.token)
+                            message: web.passwordChange.url.replace(":id", userRDId).replace(":code", validateResult.value.code)
                         })
                     })
                     .catch(err => next(err))
@@ -187,7 +187,7 @@ const changePasswordView = (req, res, nex) => {
                 info: commonInfo,
                 title: "Change Password",
                 csrfToken: req.csrfToken(),
-                changePasswordForm: web.passwordChange.url.replace(":id", req.params.id).replace(":code", req.params.code)
+                changePasswordForm: web.passwordChange.url.replace(":id", userData.userRDId).replace(":code", userData.token)
             });
         })
         .catch(err => next(err))

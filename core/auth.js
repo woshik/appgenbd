@@ -2,8 +2,9 @@ const localStrategy = require('passport-local').Strategy
 const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
+const { ObjectId } = require('mongodb')
 const { join } = require('path')
-const { web } = require(join(__dirname, '..', 'urlconf', 'rules'))
+const web = require(join(__dirname, '..', 'urlconf', 'webRule'))
 
 const model = require(join(__dirname, '..', 'db', 'model'))
 
@@ -45,7 +46,7 @@ module.exports = (app) => {
 
     passport.deserializeUser((id, done) => {
         let user = new model('users')
-        user.findOne({ _id: id })
+        user.findOne({ _id: ObjectId(id) })
             .then(userData => {
                 return done(null, userData)
             })

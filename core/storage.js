@@ -12,7 +12,7 @@ exports.sessionStore = (app, opt) => {
         store: new MongoStore({
             url: config.get("database_connection_string"),
             collection: options.collectionName || "sessions",
-            ttl: (24 * 60 * 60),
+            ttl: (24 * 60 * 60 ),
             secret: (options.encryption === undefined || options.encryption === true) ? config.get("session_secret") : '',
             mongoOptions: {
                 useNewUrlParser: true, 
@@ -21,7 +21,7 @@ exports.sessionStore = (app, opt) => {
         }),
         cookie: {
             domain: config.get("domain_name"),
-            maxAge: options.maxAge || (24 * 60 * 60),
+            maxAge: (24 * 60 * 60 ),
             httpOnly: options.httpOnly || true,
             secure: process.env.NODE_ENV === "production" ? true : false
         }
@@ -32,7 +32,7 @@ exports.cookieStore = (app, opt) => {
     let options = opt || {}
     app.use(cookieParser(config.get("cookie_secret"), {
         domain: config.get("domain_name"),
-        maxAge: options.maxAge || (24 * 60 * 60),
+        maxAge:  (24 * 60 * 60 ),
         httpOnly: options.httpOnly || true,
         secure: process.env.NODE_ENV === "production" ? true : false
     }))

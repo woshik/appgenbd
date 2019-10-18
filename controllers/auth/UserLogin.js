@@ -2,7 +2,7 @@ const { join } = require("path")
 const passport = require("passport")
 const Joi = require("@hapi/joi")
 const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
-const { web } = require(join(__dirname, "../../", "urlconf", "rules"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 
 const userLoginView = (req, res) => {
     res.render("auth/userLogin", {
@@ -44,14 +44,13 @@ const userLogin = (req, res, next) => {
             })
         }
 
-        req.login(user)
-            .then(() => {
-                return res.status(200).json({
-                    success: true,
-                    message: web.userDashboard.url
-                })
+        req.login(user, (err) => {
+            if (!!err) next(err)
+            return res.status(200).json({
+                success: true,
+                message: web.userDashboard.url
             })
-            .catch(err => next(err))
+        })
     })(req, res, next)
 }
 

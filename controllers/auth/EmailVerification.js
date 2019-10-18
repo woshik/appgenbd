@@ -2,7 +2,7 @@ const { join } = require("path")
 const Joi = require("@hapi/joi")
 const crypto = require('crypto')
 const { commonInfo, fromErrorMessage, sendMail } = require(join(__dirname, "../../", "core", "util"))
-const { web } = require(join(__dirname, "../../", "urlconf", "rules"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"));
 
 const emailVerificationView = (req, res, next) => {

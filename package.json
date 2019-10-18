@@ -1,7 +1,7 @@
 {
-    "name": "pro-app-server",
+    "name": "appgenbd",
     "version": "1.0.0",
-    "description": "bdapp server for pro app installation",
+    "description": "this a application server where any one can host their robi bd apps",
     "main": "app.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
@@ -13,7 +13,8 @@
         "node": "12.11.0"
     },
     "author": "Woshikuzzaman Anik",
-    "license": "ISC",
+    "license": "MIT",
+    "repository": "https://github.com/woshik/appgenbd",
     "dependencies": {
         "@hapi/joi": "^16.1.2",
         "axios": "^0.19.0",
