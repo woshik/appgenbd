@@ -1,16 +1,11 @@
-const path = require("path");
-const Joi = require('@hapi/joi');
-const randomstring = require("randomstring");
-const ObjectId = require("mongodb").ObjectID;
-
-const UTIL_FOLDER = path.join(__dirname, "../../../", "util");
-
-const { web } = require(path.join(UTIL_FOLDER, "urls"));
-const commonInfo = require(path.join(UTIL_FOLDER, "commonInfo.js"));
-const { FromError } = require(path.join(UTIL_FOLDER, "errorMessage"));
-const sidebar = require(path.join(UTIL_FOLDER, "sideBar"));
-
-const model = require(path.join(__dirname, "../../", "models", "model"));
+const { join } = require("path")
+const Joi = require('@hapi/joi')
+const crypto = require('crypto')
+const { ObjectId } = require('mongodb')
+const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
+const model = require(join(__dirname, "../../", "db", "model"))
 
 const contentUploadView = (req, res, next) => {
 
@@ -23,12 +18,12 @@ const contentUploadView = (req, res, next) => {
                 title: 'Content Upload',
                 userName: req.user.name,
                 email: req.user.email,
-                active: req.user.account_active,
+                active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
                 sidebar: sidebar,
                 path: req.path,
                 csrfToken: req.csrfToken(),
                 appList: result,
-                uploadContentForm: web.contentUpload,
+                uploadContentForm: web.contentUpload.url,
             });
         })
         .catch(err => {
@@ -37,85 +32,70 @@ const contentUploadView = (req, res, next) => {
 };
 
 const contentUpload = (req, res, next) => {
+
     const schema = Joi.object({
-        appId: Joi.string().trim().pattern(/^[a-zA-Z0-9]+$/).required().label("App Name"),
-        messageDate: Joi.string().trim().pattern(/^[0-9-]+$/).required().label("Message Receiving Date"),
-        content: Joi.string().trim().required().label("Message")
+        appId: Joi.string().trim().pattern(/^[a-zA-Z0-9]+$/).required().label("App name"),
+        messageDate: Joi.date().greater(localTime(onlyDate())).required().label("Message receiving date"),
+        messageTime: Joi.string().trim().pattern(/^[0-9:]+$/).required().label("Message receiving time"),
+        content: Joi.string().trim().required().label("Message content")
     })
 
     const validateResult = schema.validate({
         appId: req.body.appId,
         messageDate: req.body.messageDate,
+        messageTime: req.body.messageTime,
         content: req.body.messageContent
     })
-
+    
     if (validateResult.error) {
         return res.status(200).json({
             success: false,
-            message: FromError(validateResult.error.details[0])
-        });
+            message: fromErrorMessage(validateResult.error.details[0])
+        })
     }
 
-    messageContent = new model('message-content')
-
+    messageContent = new model('content')
     messageContent.findOne({
-        user_id: req.user._id, 
-        app_id: validateResult.value.appId,
-        date: validateResult.value.messageDate,
-        message: validateResult.value.content
-    })
-        .then(result => {
-            let nd = new Date(validateResult.value.messageDate)
-            nd.setHours(nd.getHours()+6)
-            nd.setDate(nd.setDate()+1)
-
-            return req.status(200).json({success: true, date: nd})
+            user_id: req.user._id,
+            app_id: validateResult.value.appId,
+            date: validateResult.value.messageDate,
         })
-        .catch(err => {
-            return next(err)
-        }) 
-};
+        .then(message => {
+            if (!message) message = []
 
-const sendMessageDate = (req, res, next) => {
-    const schema = Joi.object({
-        appId: Joi.string().trim().pattern(/^[a-zA-Z0-9]+$/).required().label("App Name"),
-    });
-
-    const validateResult = schema.validate({
-        appId: req.query.appId,
-    });
-
-    if (validateResult.error) {
-        return res.status(200).json({
-            success: false,
-            message: FromError(validateResult.error.details[0])
-        });
-    }
-
-    try {
-        var appId = ObjectId(validateResult.value.appId);
-    } catch (err) {
-        return next(err);
-    }
-
-    messageContent = new model('message-content')
-
-    messageContent.findOne({ app_id: appId, user_id: req.user._id }, { message: 1, _id: 0 })
-        .then(result => {
-            if (result === null) {
-                let d = new Date()
-                d.setHours(d.getHours() + 6)
-
-                return res.json({ success: true, date: d })
+            if (message.length === 10) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'Already you are submit 10 message for that date'
+                })
             }
+
+            messageContent.save({
+                    user_id: req.user._id,
+                    app_id: ObjectId(validateResult.value.appId),
+                    date: req.body.messageDate,
+                    time: req.body.messageTime,
+                    content: validateResult.value.content
+                })
+                .then(saveData => {
+                    if (!saveData.result.ok) {
+                        return res.status(200).json({
+                            success: false,
+                            message: 'Server error. Plase try again later.'
+                        })
+                    }
+
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Data Successfully save.'
+                    })
+                })
+                .catch(err => next(err))
         })
-        .catch(err => {
-            return next(err)
-        })
+        .catch(err => next(err))
 }
 
 module.exports = {
     contentUploadView,
-    contentUpload,
-    sendMessageDate
+    contentUpload
 }

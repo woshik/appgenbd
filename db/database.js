@@ -21,7 +21,6 @@ const getDB = () => {
     if (_db) {
         return _db
     }
-    console.log('database not found')
     logger.error('database not found')
 }
 

@@ -1,3 +1,7 @@
 #sectionHidden {
-	display: none;
+    display: none;
+}
+
+table th, td:last-child {
+	text-align: center;
 }

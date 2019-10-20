@@ -52,6 +52,10 @@ exports.fromErrorMessage = error => {
             return "Confirm password doesn't match"
         case "any.required":
             return `${error.context.label} is required`
+        case "date.greater":
+            return `Date must be greater than today`
+        case "date.base": 
+            return "Please, enter valid date."
         default:
             return error.message
     }
@@ -111,6 +115,29 @@ exports.flash = () => {
         }
         next();
     }
+}
+
+exports.localTime = (option) => {
+    let time
+    if (!! option) {
+        time = new Date(option)
+    } else {
+        time = new Date()
+    }
+    time.setHours(time.getHours() + 6)
+    
+    return time
+}
+
+exports.onlyDate = (option) => {
+    let date
+    if (!! option) {
+        date = new Date(option)
+    } else {
+        date = new Date()
+    }
+   
+    return date.toDateString()
 }
 
 exports.commonInfo = {

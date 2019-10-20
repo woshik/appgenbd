@@ -2,12 +2,12 @@
     "name": "appgenbd",
     "version": "1.0.0",
     "description": "this a application server where any one can host their robi bd apps",
-    "main": "app.js",
+    "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "node app.js",
-        "watch": "nodemon app.js",
-        "pm2": "pm2 start app.js"
+        "start": "node index.js",
+        "watch": "nodemon index.js",
+        "pm2": "pm2 start index.js"
     },
     "engines": {
         "node": "12.11.0"
@@ -33,6 +33,7 @@
         "nodemailer": "^6.3.0",
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
+        "pdfkit": "^0.10.0",
         "randomstring": "^1.1.5",
         "winston": "^3.2.1",
         "winston-daily-rotate-file": "^4.2.1"

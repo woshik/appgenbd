@@ -2,9 +2,29 @@ const { join } = require('path')
 const web = require(join(__dirname, 'webRule'))
 
 module.exports = {
-	dashboard : web.userDashboard.url,
-	// installApp : web.installApp,
-	// appList: web.appList,
-	// uploadContent: web.contentUpload,
-	// generateApplication: web.applicationGenerator
+	dashboard : {
+		title: 'Dashboard',
+		url: web.userDashboard.url,
+		icon: '<i class="fas fa-th-large"></i>'
+	},
+	appInstall : {
+		title: 'Install App',
+		url: web.appInstall.url,
+		icon: '<i class="fas fa-arrow-alt-circle-down"></i>'
+	},
+	appList : {
+		title: 'App List',
+		url: web.appList.url,
+		icon: '<i class="fas fa-list-ul"></i>'
+	},
+	uploadContent: {
+		title: 'Content Upload',
+		url: web.contentUpload.url,
+		icon: '<i class="fas fa-cloud-upload-alt"></i>'
+	},
+	generateApplication: {
+		title: 'Application Generator',
+		url: web.applicationGenerator.url,
+		icon: '<i class="fas fa-file-pdf"></i>'
+	}
 }

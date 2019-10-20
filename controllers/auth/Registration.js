@@ -52,8 +52,7 @@ const registration = (req, res, next) => {
 
             hashPassword(validateResult.value.password)
                 .then(passwordHashed => {
-                    let tokenTime = new Date();
-                    tokenTime.setMinutes(tokenTime.getMinutes() + 10);
+                    let time = new Date()
 
                     user.save({
                             userRDId: crypto.randomBytes(30).toString('hex'),
@@ -61,14 +60,14 @@ const registration = (req, res, next) => {
                             number: validateResult.value.number,
                             email: validateResult.value.email,
                             password: passwordHashed,
-                            email_active: 0,
-                            account_active: 0,
-                            account_activation_end: new Date(),
-                            max_app_install: 0,
-                            app_install: 0,
+                            email_verify: 0,
                             token: Math.floor(Math.random() * 100001),
-                            token_refresh: tokenTime,
+                            token_refresh: time.setMinutes(time.getMinutes() + 10),
+                            max_app_install: 0,
+                            app_installed: 0,
+                            account_activation_end: new Date().toDateString(),
                             mail_for_verification: 1,
+                            account_create: new Date().toString(),
                         })
                         .then(dataInsectionResult => {
                             sendMail(dataInsectionResult.ops[0].email, "Varification Code", dataInsectionResult.ops[0].token)
@@ -94,20 +93,20 @@ const sendMailAgain = (req, res, next) => {
     const user = new model("users");
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
-            if (! userData) {
+            if (!userData) {
                 req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.status(200).json({
                     url: web.userLogin.url
                 })
             }
 
-            if (userData.mail_for_verification === 5) {
+            if (userData.mail_for_verification >= 5) {
                 return res.status(200).json({
                     message: 'You already send email too many time. Please wait for a while.'
                 });
             }
 
-            if (userData.token_refresh.getTime() > new Date().getTime()) {
+            if (userData.token_refresh > new Date().getTime()) {
 
                 sendMail(userData.email, "Varification Code", userData.token)
                     .then(response => {})
@@ -115,6 +114,12 @@ const sendMailAgain = (req, res, next) => {
 
                 user.customUpdateOne({ userRDId: req.params.id }, { '$inc': { "mail_for_verification": 1 } })
                     .then(userUpdateValue => {
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
+
                         return res.status(200).json({
                             message: 'Please, check your email address again.'
                         })
@@ -122,11 +127,11 @@ const sendMailAgain = (req, res, next) => {
                     .catch(err => next(err))
             } else {
                 let tokenTime = new Date();
-                tokenTime.setMinutes(tokenTime.getMinutes() + 10);
+
                 let updateValue = {
                     "$set": {
                         "token": Math.floor(Math.random() * 100001),
-                        "token_refresh": tokenTime
+                        "token_refresh": tokenTime.setMinutes(tokenTime.getMinutes() + 10)
                     },
                     "$inc": {
                         "mail_for_verification": 1
@@ -139,6 +144,13 @@ const sendMailAgain = (req, res, next) => {
 
                 user.customUpdateOne({ userRDId: req.params.id }, updateValue)
                     .then(userUpdateValue => {
+
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
+                        
                         return res.status(200).json({
                             message: "Please, check again your email address."
                         });

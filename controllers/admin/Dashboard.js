@@ -7,31 +7,21 @@ const model = require(join(__dirname, "../../", "db", "model"));
 
 const dashboardView = (req, res, next) => {
 
-    let dashboard = {
-        accountDeactive: req.user.account_activation_end,
-        maxApp: req.user.max_app_install,
-        appInstalled: req.user.app_installed
-    }
-
-    res.render("user/dashboard", {
+    res.render("admin/dashboard", {
         info: commonInfo,
-        title: 'Dashboard',
-        userName: req.user.name,
+        title: 'User List',
         email: req.user.email,
-        active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
-        sidebar: sidebar,
         csrfToken: req.csrfToken(),
-        path: req.path
     })
 }
 
-const userLogout = (req, res) => {
+const adminLogout = (req, res) => {
     req.logout()
     req.flash('userLoginScreenSuccessMessage', 'Successfully Logout')
-    res.redirect(web.userLogin.url)
+    res.redirect(web.adminLogin.url)
 }
 
 module.exports = {
     dashboardView,
-    userLogout
+    adminLogout
 }

@@ -1,58 +1,54 @@
-const path = require("path");
-
-const UTIL_FOLDER = path.join(__dirname, "../../../", "util");
-
-const { web } = require(path.join(UTIL_FOLDER, "urls"));
-const commonInfo = require(path.join(UTIL_FOLDER, "commonInfo.js"));
-const sidebar = require(path.join(UTIL_FOLDER, "sideBar"));
-
-const model = require(path.join(__dirname, "../../", "models", "model"));
+const { join } = require("path")
+const { commonInfo, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
+const model = require(join(__dirname, "../../", "db", "model"))
 
 const appListView = (req, res, next) => {
-	res.render("user/appList", {
-	    info: commonInfo,
-	    title: 'App List',
-	    userName: req.user.name,
-	    email: req.user.email,
-	    active: req.user.account_active,
-	    sidebar: sidebar,
-	    path: req.path,
-	    csrfToken: req.csrfToken(),
-	    installAppForm: web.appName,
-	});
-};
+    res.render("user/appList", {
+        info: commonInfo,
+        title: 'App List',
+        userName: req.user.name,
+        email: req.user.email,
+        active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
+        sidebar: sidebar,
+        path: req.path,
+        csrfToken: req.csrfToken(),
+        appList: web.appList.url,
+    })
+}
 
-const userAppList = (req, res, next) => {
-	const app = new model("app");
-	
-	app.dataTable({ userId: req.user._id, app_name:RegExp(`.*${req.query.search.value}.*`, 'i')}, {_id: 0, userId: 0, randomSerial: 0, password: 0}, parseInt(req.query.start), parseInt(req.query.length))
-	.then (result => {
-		let response = []
-		result.data.map((item, index) => {
-			let itter = []
-			itter.push(item.app_name)
-			itter.push(item.appId)
-			itter.push(item.subscribe)
-			itter.push(item.dial)
-			
-			response.push(itter)
-		})
+const appList = (req, res, next) => {
+    const app = new model("app")
 
-		return res.json({
-			data: response,
-			recordsTotal: result.recordsTotal,
-			recordsFiltered: result.recordsFiltered,
-			draw: parseInt(req.query.draw),
-		})
-	})
-	.catch(err => {
-		console.log(err);
-	})
+    app.dataTable({
+            user_id: req.user._id,
+            app_name: RegExp(`.*${req.body.search.value}.*`, 'i')
+        }, {
+            _id: 0,
+            userId: 0,
+            randomSerial: 0,
+            password: 0
+        }, parseInt(req.body.start), parseInt(req.body.length))
+        .then(result => {
+            let response = []
+            result.data.map((item, index) => {
+                response.push([item.app_name, item.appId, item.subscribe, item.dial, `<a href="#" class="btn btn-success">App Details</a>`])
+            })
+
+            return res.json({
+                data: response,
+                recordsTotal: result.recordsTotal,
+                recordsFiltered: result.recordsFiltered,
+                draw: parseInt(req.query.draw),
+            })
+        })
+        .catch(err => console.log(err))
 }
 
 
 
 module.exports = {
-	appListView,
-	userAppList
+    appListView,
+    appList,
 }

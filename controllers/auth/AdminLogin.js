@@ -4,20 +4,18 @@ const Joi = require("@hapi/joi")
 const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 
-const userLoginView = (req, res) => {
-    res.render("auth/userLogin", {
+const adminLoginView = (req, res) => {
+    res.render("auth/adminLogin", {
         info: commonInfo,
-        title: "User Login",
+        title: "Admin Login",
         csrfToken: req.csrfToken(),
-        loginForm: web.userLogin.url,
-        forgotPassword: web.forgotPassword.url,
-        registrationPage: web.registration.url,
-        successMessage: req.flash('userLoginScreenSuccessMessage'),
-        errorMessage: req.flash('userLoginScreenErrorMessage')
+        loginForm: web.adminLogin.url,
+        successMessage: req.flash('adminLoginScreenSuccessMessage'),
+        errorMessage: req.flash('adminLoginScreenErrorMessage')
     })
 }
 
-const userLogin = (req, res, next) => {
+const adminLogin = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().trim().email().required().label("Email address"),
         password: Joi.string().trim().min(5).max(50).label("Password")
@@ -35,7 +33,7 @@ const userLogin = (req, res, next) => {
         })
     }
 
-    passport.authenticate('users', function(err, user, info) {
+    passport.authenticate('admin', function(err, user, info) {
         if (err) return next(err)
         if (!user) {
             return res.status(200).json({
@@ -48,13 +46,13 @@ const userLogin = (req, res, next) => {
             if (!!err) next(err)
             return res.status(200).json({
                 success: true,
-                message: web.userDashboard.url
+                message: web.adminDashboard.url
             })
         })
     })(req, res, next)
 }
 
 module.exports = {
-    userLoginView,
-    userLogin
+    adminLoginView,
+    adminLogin
 }

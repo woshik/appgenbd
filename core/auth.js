@@ -9,19 +9,19 @@ const web = require(join(__dirname, '..', 'urlconf', 'webRule'))
 const model = require(join(__dirname, '..', 'db', 'model'))
 
 module.exports = (app) => {
-    passport.use(
+    passport.use('users',
         new localStrategy({ usernameField: 'email' }, (email, password, done) => {
-            let user = new model('users');
+            let user = new model('users')
             user.findOne({ email: email })
                 .then(userData => {
                     if (!userData) return done(null, false, { message: "Email address not register" })
                     bcrypt.compare(password, userData.password)
                         .then(isMatch => {
                             if (isMatch) {
-                                if (userData.email_active === 1) {
+                                if (userData.email_verify === 1) {
                                     return done(null, userData)
                                 } else {
-                                    let userRDId = crypto.randomBytes(15).toString('hex')
+                                    let userRDId = crypto.randomBytes(30).toString('hex')
                                     user.updateOne({ email: email }, { "userRDId": userRDId })
                                         .then(userUpdateValue => {})
                                         .catch(err => next(err))
@@ -30,29 +30,63 @@ module.exports = (app) => {
                             }
                             return done(null, false, { message: "Password doesn't match" })
                         })
-                        .catch(err => {
-                            return done(err)
+                        .catch(err => done(err))
+                })
+                .catch(err => done(err))
+        })
+    )
+
+    passport.use('admin',
+        new localStrategy({ usernameField: 'email' }, (email, password, done) => {
+            let admin = new model('admin')
+            console.log(admin)
+            admin.findOne({ email: email })
+                .then(userData => {
+                    if (!userData) return done(null, false, { message: "Email address not register" })
+                    bcrypt.compare(password, userData.password)
+                        .then(isMatch => {
+                            if (isMatch) {
+                                return done(null, userData)
+                            }
+                            return done(null, false, { message: "Password doesn't match" })
                         })
+                        .catch(err => done(err))
                 })
-                .catch(err => {
-                    return done(err)
-                })
+                .catch(err => done(err))
         })
     )
 
     passport.serializeUser((user, done) => {
-        return done(null, user._id)
+        let key = { id: user._id }
+        !!user.super_user ? (key.model = 'admin') : (key.model = 'users')
+        return done(null, key)
     })
 
-    passport.deserializeUser((id, done) => {
-        let user = new model('users')
-        user.findOne({ _id: ObjectId(id) })
+    passport.deserializeUser((key, done) => {
+        let user = new model(key.model)
+        user.findOne({ _id: ObjectId(key.id) })
             .then(userData => {
-                return done(null, userData)
+                let obj = {}
+                if (key.model === 'users') {
+                    obj = {
+                        _id: userData._id,
+                        name: userData.name,
+                        number: userData.number,
+                        email: userData.email,
+                        account_activation_end: userData.account_activation_end,
+                        max_app_install: userData.max_app_install,
+                        app_install: userData.app_install
+                    }
+                } else {
+                    obj = {
+                        _id: userData._id,
+                        email: userData.email
+                    }
+                }
+
+                done(null, obj)
             })
-            .catch(err => {
-                done(err)
-            })
+            .catch(err => done(err))
     })
 
     app.use(passport.initialize());

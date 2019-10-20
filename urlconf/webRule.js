@@ -10,7 +10,7 @@ module.exports = {
             userLogin: 'post'
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
     registration: {
         url: '/registration',
@@ -20,7 +20,7 @@ module.exports = {
             registration: 'post'
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     emailVerification: {
@@ -31,7 +31,7 @@ module.exports = {
             emailVerification: 'post',
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     sendEmailAgain: {
@@ -41,7 +41,7 @@ module.exports = {
             sendMailAgain: 'post',
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     forgotPassword: {
@@ -52,7 +52,7 @@ module.exports = {
             forgotPassword: 'post',
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     forgotPasswordCodeVerify: {
@@ -63,7 +63,7 @@ module.exports = {
             forgotPasswordCodeVerify: 'post',
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     passwordChange: {
@@ -74,7 +74,7 @@ module.exports = {
             changePassword: 'post',
         },
         middleware: [isUserCanSee],
-        path: 'auth/'
+        path: 'auth'
     },
 
     userDashboard: {
@@ -84,7 +84,7 @@ module.exports = {
             dashboardView: 'get',
         },
         middleware: [isUserAuthenticated],
-        path: 'user/'
+        path: 'user'
     },
 
     userLogout: {
@@ -94,31 +94,94 @@ module.exports = {
             userLogout: 'get',
         },
         middleware: [isUserAuthenticated],
-        path: 'user/'
+        path: 'user'
     },
 
+    appInstall: {
+        url: '/installapp',
+        controller: 'InstallApp',
+        methods: {
+            appInstallView: 'get',
+            appInstall: 'post',
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
-    // userLogout: '/logout/user', // user logout
+    appName: {
+        url: '/appname',
+        controller: 'InstallApp',
+        methods: {
+            appName: 'post',
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
-    // : '/registration', // user registration
-    // : '', // user email verification
-    // forgotPassword: '', // forgot password
-    // forgotPasswordPassCode: '/forgotpassword/verification/:id', // forgot password
-    // changePassword: '',
-    // // user login system end //
+    appList: {
+        url: '/applist',
+        controller: 'AppList',
+        methods: {
+            appListView: 'get',
+            appList: 'post'
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
-    // // user dashboard start //
+    contentUpload: {
+        url: '/contentupload',
+        controller: 'ContentUpload',
+        methods: {
+            contentUploadView: 'get',
+            contentUpload: 'post'
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
-    // userDashboard: '/', 
-    // installApp: '/installapp',
-    // appName: '/applicationname',
-    // appList: '/applist',
-    // userAppList: '/userapplist',
-    // contentUpload: '/contentupload',
-    // sendMessageDate: '/sendmessagedate',
-    // applicationGenerator: '/applicationgenerator',
-    // user dashboard end //
+    applicationGenerator: {
+        url: '/applicationgenerator',
+        controller: 'ApplicationGenerator',
+        methods: {
+            applicationGeneratorView: 'get',
+            applicationGenerator: 'post'
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
-    // adminLogin: '/login/admin', // admin login
-    // adminLogout: '/logout/admin', // admin logout
+    //=====================================================================================================================================//
+    //============================================================== Admin URL ===========================================================//
+    //===================================================================================================================================//
+
+    adminLogin: {
+        url: '/login/admin',
+        controller: 'AdminLogin',
+        methods: {
+            adminLoginView: 'get',
+            adminLogin: 'post'
+        },
+        path: 'auth'
+    },
+
+    adminDashboard: {
+        url: '/admin',
+        controller: 'Dashboard',
+        methods: {
+            dashboardView: 'get',
+        },
+        middleware: [isUserAuthenticated],
+        path: 'admin'
+    },
+
+    adminLogout: {
+        url: '/logout/admin',
+        controller: 'Dashboard',
+        methods: {
+            adminLogout: 'get',
+        },
+        middleware: [isUserAuthenticated],
+        path: 'admin'
+    },
 }

@@ -5,7 +5,7 @@ const model = require(join(__dirname, "..", "db", "model"));
 
 
 // mail sending limit reset
-new CronJob('0 */15 * * * *', function() {
+new CronJob('0 */30 * * * *', function() {
 	let user = new model("users");
 	user.updateMany({ mail_for_verification: 5 }, { 'mail_for_verification': 0 })
 		.then(response => {})

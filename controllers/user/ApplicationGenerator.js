@@ -1,16 +1,10 @@
-const path = require("path");
-const Joi = require('@hapi/joi');
-const randomstring = require("randomstring");
-const ObjectId = require("mongodb").ObjectID;
-
-const UTIL_FOLDER = path.join(__dirname, "../../../", "util");
-
-const { web } = require(path.join(UTIL_FOLDER, "urls"));
-const commonInfo = require(path.join(UTIL_FOLDER, "commonInfo.js"));
-const { FromError } = require(path.join(UTIL_FOLDER, "errorMessage"));
-const sidebar = require(path.join(UTIL_FOLDER, "sideBar"));
-
-const model = require(path.join(__dirname, "../../", "models", "model"));
+const { join } = require("path")
+const Joi = require('@hapi/joi')
+const PDFDocument = require('pdfkit')
+const fs = require('fs')
+const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const web = require(join(__dirname, "../../", "urlconf", "webRule"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
 
 const applicationGeneratorView = (req, res, next) => {
 	res.render("user/applicationGenerator", {
@@ -18,34 +12,49 @@ const applicationGeneratorView = (req, res, next) => {
 	    title: 'Application Generator',
 	    userName: req.user.name,
 	    email: req.user.email,
-	    active: req.user.account_active,
+	    active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
 	    sidebar: sidebar,
 	    path: req.path,
 	    csrfToken: req.csrfToken(),
-	    installAppForm: web.appName,
+	    applicationGeneratorForm: web.applicationGenerator.url,
 	});
 };
 
 const applicationGenerator = (req, res, next) => {
 	const schema = Joi.object({
-        appId: Joi.string().trim().pattern(/^[a-zA-Z0-9]+$/).required().label("App Name"),
-        messageDate: Joi.string().trim().pattern(/^[0-9-]+$/).required().label("Message Receiving Date"),
-        content: Joi.string().trim().required().label("Message")
+        username: Joi.string().trim().required().label("Name"),
+        email: Joi.string().trim().email().required().label("Email address"),
+        appName: Joi.string().trim().required().label("App name"),
+        appId: Joi.string().trim().required().label("App id"),
+        smsKeyword: Joi.string().trim().required().label("SMS keyword"),
+        ussdcode: Joi.string().trim().required().label("USSD code"),
+        perDaySms: Joi.number().min(1).max(10).required().label("SMS Offer Per Day"),
+        longDescription: Joi.string().trim().required().label("Long description"),
+        shortDescription: Joi.string().trim().required().label("Short description"),
     })
 
     const validateResult = schema.validate({
+        username: req.body.username,
+        email: req.body.email,
+        appName: req.body.appName,
         appId: req.body.appId,
-        messageDate: req.body.messageDate,
-        content: req.body.messageContent
+        smsKeyword: req.body.smsKeyword,
+        ussdcode: req.body.ussdcode,
+        perDaySms: req.body.perDaySms,
+        longDescription: req.body.longDescription,
+        shortDescription: req.body.shortDescription
     })
 
     if (validateResult.error) {
         return res.status(200).json({
             success: false,
-            message: FromError(validateResult.error.details[0])
-        });
+            message: fromErrorMessage(validateResult.error.details[0])
+        })
     }
-};
+
+    const doc = new PDFDocument
+    doc.pipe(fs.createWriteStream(join(__dirname, '../../', 'pdf', 'output.pdf')))
+}
 
 module.exports = {
 	applicationGeneratorView,

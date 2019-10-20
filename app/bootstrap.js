@@ -4,10 +4,10 @@ const helmet = require("helmet")
 const compression = require("compression")
 const csrf = require("csurf")
 const { join } = require("path")
-const { mongoClient } = require(join(__dirname, "db", "database"))
-const { sessionStore, cookieStore } = require(join(__dirname, "core", "storage"))
-const { logger, flash } = require(join(__dirname, "core", "util"))
-const auth = require(join(__dirname, "core", "auth"))
+const { mongoClient } = require(join(__dirname, "..", "db", "database"))
+const { sessionStore, cookieStore } = require(join(__dirname, "..", "core", "storage"))
+const { logger, flash } = require(join(__dirname, "..", "core", "util"))
+const auth = require(join(__dirname, "..", "core", "auth"))
 
 // define port
 const {
@@ -23,13 +23,13 @@ app.use(compression())
 
 // set view engine configuretaion
 app.set("view engine", "ejs")
-app.set("views", join(__dirname, "views"))
+app.set("views", join(__dirname, "..", "views"))
 
 // app configuretaion
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static(join(__dirname, "public")))
-app.use(express.static(join(__dirname, "custom")))
+app.use(express.static(join(__dirname, "..", "public")))
+app.use(express.static(join(__dirname, "..", "custom")))
 
 // api routing
 //app.use("/api", require(join(__dirname, "routes", "api")))
@@ -47,7 +47,7 @@ auth(app)
 app.use(flash())
 
 // web routing
-app.use("/", require(join(__dirname, "routes", "web")))
+app.use("/", require(join(__dirname, "..", "routes", "web")))
 
 // 404 page not found
 app.use((req, res) => {

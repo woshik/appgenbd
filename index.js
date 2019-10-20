@@ -1,4 +1,4 @@
-const cluster = require('cluster')
+const cluster = require("cluster")
 const { join } = require("path")
 
 if (cluster.isMaster) {
@@ -13,5 +13,5 @@ if (cluster.isMaster) {
     //     cluster.fork()
     // })
 } else {
-    require(join(__dirname, "bootstrap"))
+    require(join(__dirname, "app", "bootstrap"))
 }

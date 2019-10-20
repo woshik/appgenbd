@@ -1,30 +1,41 @@
 <%- include('snippets/header.ejs') %>
-
-<form action="adminLoginForm" type="post" class="login100-form validate-form" id="adminLoginForm">
-	<span class="login100-form-title p-b-14">
-		Welcome
-	</span>
-	<span class="login100-form-title p-b-34">
-		<%=title%>
-	</span>
-	<input type="hidden" name="_csrf" value="<%=csrfToken%>">
-	<div class="wrap-input100 rs1-wrap-input100 validate-input m-b-20" data-validate="Type email">
-		<input id="first-name" class="input100" type="text" name="email" placeholder="Email">
-		<span class="focus-input100"></span>
-	</div>
-	<div class="wrap-input100 rs2-wrap-input100 validate-input m-b-20" data-validate="Type password">
-		<input class="input100" type="password" name="password" placeholder="Password">
-		<span class="focus-input100"></span>
-	</div>
+<form action="<%=loginForm%>" method="POST" class="login100-form validate-form" id="loginForm">
 	
-	<div class="container-login100-form-btn">
-		<button class="login100-form-btn">
-			Login
-		</button>
-	</div>
+    <span class="login100-form-title p-b-14">
+        Welcome
+    </span>
+    <span class="login100-form-title p-b-34">
+        <%=title%>
+    </span>
+    <% if (errorMessage) { %>
+    <div class="alert alert-danger alert-dismissible" role="alert" style="width: 100%;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <%=errorMessage%>
+    </div>
+    <% } %>
+    <% if (successMessage) { %>
+    <div class="alert alert-success alert-dismissible" role="alert" style="width: 100%;">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <%=successMessage%>
+    </div>
+    <% } %>
+    <div id="message" style="width: 100%"></div>
+    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+    <div class="wrap-input100 rs1-wrap-input100 validate-input m-b-20" data-validate="Type email">
+        <input id="first-name" class="input100" type="text" name="email" placeholder="Email">
+        <span class="focus-input100"></span>
+    </div>
+    <div class="wrap-input100 rs2-wrap-input100 validate-input m-b-20" data-validate="Type password">
+        <input class="input100" type="password" name="password" placeholder="Password">
+        <span class="focus-input100"></span>
+    </div>
+    <div class="container-login100-form-btn">
+        <button class="login100-form-btn">
+            Sign in
+        </button>
+    </div>
 
 </form>
-
 <%- include('snippets/script.ejs') %>
-
+<script type="text/javascript" src="/js/auth/login.js"></script>
 <%- include('snippets/footer.ejs') %>

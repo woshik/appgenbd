@@ -1,7 +1,8 @@
-const config = require("config");
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
-const MongoStore = require("connect-mongo")(session);
+const config = require("config")
+const session = require("express-session")
+const MongoStore = require("connect-mongo")(session)
+const cookieParser = require("cookie-parser")
+
 
 exports.sessionStore = (app, opt) => {
     let options = opt || {}
@@ -21,7 +22,7 @@ exports.sessionStore = (app, opt) => {
         }),
         cookie: {
             domain: config.get("domain_name"),
-            maxAge: (24 * 60 * 60 ),
+            maxAge: (24 * 60 * 60 * 1000),
             httpOnly: options.httpOnly || true,
             secure: process.env.NODE_ENV === "production" ? true : false
         }
@@ -32,7 +33,7 @@ exports.cookieStore = (app, opt) => {
     let options = opt || {}
     app.use(cookieParser(config.get("cookie_secret"), {
         domain: config.get("domain_name"),
-        maxAge:  (24 * 60 * 60 ),
+        maxAge:  (24 * 60 * 60),
         httpOnly: options.httpOnly || true,
         secure: process.env.NODE_ENV === "production" ? true : false
     }))

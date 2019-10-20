@@ -15,7 +15,7 @@ const emailVerificationView = (req, res, next) => {
                 return res.redirect(web.userLogin.url)
             }
 
-            if (userData.email_active === 1) {
+            if (userData.email_verify === 1) {
                 req.flash('userLoginScreenErrorMessage', 'Your account already activated')
                 return res.redirect(web.userLogin.url)
             }
@@ -61,7 +61,7 @@ const emailVerification = (req, res, next) => {
                 })
             }
 
-            if (userData.email_active === 1) {
+            if (userData.email_verify === 1) {
                 req.flash('userLoginScreenErrorMessage', 'Your account already activated')
                 return res.status(200).json({
                     success: true,
@@ -69,7 +69,7 @@ const emailVerification = (req, res, next) => {
                 });
             }
 
-            if (userData.token_refresh.getTime() > new Date().getTime()) {
+            if (userData.token_refresh > new Date().getTime()) {
                 if (userData.token !== parseInt(validateResult.value.code)) {
                     return res.status(200).json({
                         success: false,
@@ -77,8 +77,14 @@ const emailVerification = (req, res, next) => {
                     });
                 }
 
-                user.updateOne({ userRDId: req.params.id }, { "email_active": 1, "userRDId": crypto.randomBytes(30).toString('hex') })
+                user.updateOne({ userRDId: req.params.id }, { "email_verify": 1, "userRDId": crypto.randomBytes(30).toString('hex') })
                     .then(userUpdateValue => {
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                success: false,
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
 
                         req.flash('userLoginScreenSuccessMessage', 'Account successfully active.')
 
@@ -90,7 +96,7 @@ const emailVerification = (req, res, next) => {
                     .catch(err => next(err))
             } else {
                 let tokenTime = new Date();
-                tokenTime.setMinutes(tokenTime.getMinutes() + 10);
+
                 let token = Math.floor(Math.random() * 100001)
 
                 sendMail(userData.email, "Varification Code", token)
@@ -100,13 +106,21 @@ const emailVerification = (req, res, next) => {
                 user.customUpdateOne({ userRDId: req.params.id }, {
                         "$set": {
                             "token": token,
-                            "token_refresh": tokenTime
+                            "token_refresh": tokenTime.setMinutes(tokenTime.getMinutes() + 10)
                         },
                         "$inc": {
                             "mail_for_verification": 1
                         }
                     })
                     .then(userUpdateValue => {
+
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                success: false,
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
+
                         return res.status(200).json({
                             success: false,
                             message: "Please, check your email account again. Code time finish."
@@ -116,9 +130,9 @@ const emailVerification = (req, res, next) => {
             }
         })
         .catch(err => next(err))
-};
+}
 
 module.exports = {
     emailVerificationView,
     emailVerification
-};
+}

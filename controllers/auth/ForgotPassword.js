@@ -55,6 +55,14 @@ const forgotPassword = (req, res, next) => {
                     'userRDId': userRDId
                 })
                 .then(result => {
+
+                    if (!result.result.nModified) {
+                        return res.status(200).json({
+                            success: false,
+                            message: 'Server Error. Please try again later.'
+                        })
+                    }
+
                     sendMail(isEmailRegister.email, "Varification Code", token)
                         .then((response) => {})
                         .catch(err => next(err))
@@ -76,7 +84,7 @@ const forgotPasswordCodeVerifyView = (req, res, next) => {
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
 
-            if (!userData || userData.email_active !== 1) {
+            if (!userData || userData.email_verify !== 1) {
                 req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.redirect(web.userLogin.url)
             }
@@ -120,7 +128,7 @@ const forgotPasswordCodeVerify = (req, res, next) => {
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
 
-            if (!userData || userData.email_active !== 1) {
+            if (!userData || userData.email_verify !== 1) {
                 req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.redirect(web.userLogin.url)
             }
@@ -141,6 +149,13 @@ const forgotPasswordCodeVerify = (req, res, next) => {
                 let userRDId = crypto.randomBytes(30).toString('hex')
                 user.updateOne({ userRDId: req.params.id }, { "userRDId": userRDId })
                     .then(userUpdateValue => {
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                success: false,
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
+
                         return res.status(200).json({
                             success: true,
                             message: web.passwordChange.url.replace(":id", userRDId).replace(":code", validateResult.value.code)
@@ -163,6 +178,14 @@ const forgotPasswordCodeVerify = (req, res, next) => {
                         "forgot_token_time": tokenTime
                     })
                     .then(userUpdateValue => {
+
+                        if (!userUpdateValue.result.nModified) {
+                            return res.status(200).json({
+                                success: false,
+                                message: 'Server Error. Please try again later.'
+                            })
+                        }
+
                         return res.status(200).json({
                             success: false,
                             message: "Please, check your email account again. Verification code time finish."
@@ -178,7 +201,7 @@ const changePasswordView = (req, res, nex) => {
     const user = new model("users");
     user.findOne({ userRDId: req.params.id, token: req.params.code })
         .then(userData => {
-            if (!userData || userData.forget !== 1 || userData.email_active !== 1 || userData.forgot !== 1) {
+            if (!userData || userData.forget !== 1 || userData.email_verify !== 1 || userData.forgot !== 1) {
                 req.flash('userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.')
                 return res.redirect(web.userLogin)
             }
@@ -233,6 +256,13 @@ const changePassword = (req, res, next) => {
 
                     user.updateOne({ _id: userAvailable._id }, password)
                         .then(userUpdateValue => {
+                            if (!userUpdateValue.result.nModified) {
+                                return res.status(200).json({
+                                    success: false,
+                                    message: 'Server Error. Please try again later.'
+                                })
+                            }
+
                             req.flash('userLoginScreenSuccessMessage', 'Password Successfully Changed')
                             return res.status(200).json({
                                 success: true,

@@ -1,6 +1,7 @@
 $(document).ready(function() {
     
-    $("#verificationForm").unbind("submit").bind("submit", function() {
+    $("#verificationForm").unbind("submit").bind("submit", function(e) {
+        e.preventDefault()
         $("#message").fadeOut(0)
         var form = $(this)
         var url = form.attr("action")
