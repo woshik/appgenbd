@@ -1,0 +1,16 @@
+{
+	"name": "BDapps Pro Server - Production",
+	"mail": {
+		"host": "server232.web-hosting.com",
+		"username": "tech@identicalit.com",
+		"send_port": 465,
+		"sender_mail": "tech@identicalit.com"
+	},
+	"database_connection_string": "",
+	"database_name": "",
+	"server_api": {
+		"subscription": "https://developer.bdapps.com/subscription/send",
+		"subscription_check": "https://developer.bdapps.com/subscription/getStatus",
+		"ussd": "https://developer.bdapps.com/ussd/send"
+	}
+}

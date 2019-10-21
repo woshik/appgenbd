@@ -1,0 +1,19 @@
+{
+	"name": "App Gen BD",
+	"mail": {
+		"host": "server232.web-hosting.com",
+		"username": "tech@identicalit.com",
+		"password": "199601OO7",
+		"send_port": 465,
+		"sender_mail": "tech@identicalit.com"
+	},
+	"session_secret": "hufasiudhfiuaba98ef98jsudvahrouifoiasjdoifjas",
+	"cookie_secret": "bhiahvyahuh;]f[a;sdfaisjrufh473gf8gsyfugsud",
+	"database_connection_string": "mongodb://localhost:27017/appgenbd",
+	"database_name": "proApp",
+	"server_api": {
+		"subscription": "http://localhost:7000/subscription/send",
+		"subscription_check": "http://localhost:7000/subscription/getStatus",
+		"ussd": "http://localhost:7000/ussd/send"
+	}
+}
