@@ -3,7 +3,7 @@ const Joi = require('@hapi/joi')
 const crypto = require('crypto')
 const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 const model = require(join(__dirname, "../../", "db", "model"))
 
 const appInstallView = (req, res, next) => {

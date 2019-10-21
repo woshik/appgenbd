@@ -4,7 +4,7 @@ const crypto = require('crypto')
 const { ObjectId } = require('mongodb')
 const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 const model = require(join(__dirname, "../../", "db", "model"))
 
 const contentUploadView = (req, res, next) => {

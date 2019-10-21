@@ -4,7 +4,7 @@ const PDFDocument = require('pdfkit')
 const fs = require('fs')
 const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sidebar"))
+const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 
 const applicationGeneratorView = (req, res, next) => {
 	res.render("user/applicationGenerator", {
