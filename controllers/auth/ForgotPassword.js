@@ -198,12 +198,13 @@ const forgotPasswordCodeVerify = (req, res, next) => {
 }
 
 const changePasswordView = (req, res, nex) => {
-    const user = new model("users");
-    user.findOne({ userRDId: req.params.id, token: req.params.code })
+    const user = new model("users")
+    user.findOne({ userRDId: req.params.id, token: parseInt(req.params.code) })
         .then(userData => {
-            if (!userData || userData.forget !== 1 || userData.email_verify !== 1 || userData.forgot !== 1) {
+            if (!userData || userData.email_verify !== 1 || userData.forgot !== 1) {
+                console.log('ok')
                 req.flash('userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.')
-                return res.redirect(web.userLogin)
+                return res.redirect(web.userLogin.url)
             }
 
             res.render("auth/changePassword", {
@@ -236,24 +237,23 @@ const changePassword = (req, res, next) => {
     }
 
     const user = new model("users");
-
-    user.findOne({ userRDId: req.params.id, token: req.params.code, forgot: 1 })
+    
+    user.findOne({ userRDId: req.params.id, token: parseInt(req.params.code), forgot: 1 })
         .then(userAvailable => {
+            
             if (!userAvailable) {
                 return res.status(200).json({
-                    success: true,
+                    success: false,
                     message: "User not found"
                 })
             }
 
             hashPassword(validateResult.value.password)
                 .then(passwordHashed => {
-
                     let password = {
                         'password': passwordHashed,
                         'forget': 0
                     }
-
                     user.updateOne({ _id: userAvailable._id }, password)
                         .then(userUpdateValue => {
                             if (!userUpdateValue.result.nModified) {
@@ -266,7 +266,7 @@ const changePassword = (req, res, next) => {
                             req.flash('userLoginScreenSuccessMessage', 'Password Successfully Changed')
                             return res.status(200).json({
                                 success: true,
-                                message: web.userLogin
+                                message: web.userLogin.url
                             })
                         })
                         .catch(err => next(err))
