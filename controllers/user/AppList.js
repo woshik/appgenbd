@@ -1,5 +1,5 @@
 const { join } = require("path")
-const { commonInfo, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const { commonInfo } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 const model = require(join(__dirname, "../../", "db", "model"))
@@ -10,7 +10,6 @@ const appListView = (req, res, next) => {
         title: 'App List',
         userName: req.user.name,
         email: req.user.email,
-        active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
         sidebar: sidebar,
         path: req.path,
         csrfToken: req.csrfToken(),

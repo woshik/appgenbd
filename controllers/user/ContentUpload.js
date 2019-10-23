@@ -2,7 +2,7 @@ const { join } = require("path")
 const Joi = require('@hapi/joi')
 const crypto = require('crypto')
 const { ObjectId } = require('mongodb')
-const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 const model = require(join(__dirname, "../../", "db", "model"))
@@ -18,7 +18,6 @@ const contentUploadView = (req, res, next) => {
                 title: 'Content Upload',
                 userName: req.user.name,
                 email: req.user.email,
-                active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
                 sidebar: sidebar,
                 path: req.path,
                 csrfToken: req.csrfToken(),

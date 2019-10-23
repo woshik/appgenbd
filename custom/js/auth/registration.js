@@ -1,5 +1,7 @@
 $(document).ready(function() {
-    $("#registrationForm").unbind("submit").bind("submit", function() {
+    let timeOut
+    $("#registrationForm").unbind("submit").bind("submit", function(e) {
+        e.preventDefault()
         var form = $(this)
         var url = form.attr("action")
         var type = form.attr("method")
@@ -21,9 +23,13 @@ $(document).ready(function() {
                 if (res.success === true) {
                     window.location = res.message
                 } else {
+                    clearTimeout(timeOut)
                     $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                         res.message + "</div>").fadeIn(1000)
+                    timeOut = setTimeout(function(){
+                        $("#message").fadeOut(1000)
+                    },5000)
                 }
             }
         })

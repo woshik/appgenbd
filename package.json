@@ -1,10 +1,10 @@
 {
+    "company": "Hyper Queue",
     "name": "appgenbd",
     "version": "1.0.0",
     "description": "this a application server where any one can host their robi bd apps",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node index.js",
         "watch": "nodemon index.js",
         "pm2": "pm2 start index.js"
@@ -25,6 +25,7 @@
         "cookie-parser": "^1.4.4",
         "cron": "^1.7.2",
         "csurf": "^1.10.0",
+        "date-and-time": "^0.10.0",
         "ejs": "^2.7.1",
         "express": "^4.17.1",
         "express-session": "^1.17.0",
@@ -34,12 +35,10 @@
         "passport": "^0.4.0",
         "passport-local": "^1.0.0",
         "pdfkit": "^0.10.0",
-        "randomstring": "^1.1.5",
         "winston": "^3.2.1",
         "winston-daily-rotate-file": "^4.2.1"
     },
     "devDependencies": {
-        "nodemon": "^1.19.2",
-        "pm2": "^4.0.1"
+        "nodemon": "^1.19.2"
     }
 }

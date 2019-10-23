@@ -1,21 +1,22 @@
 const { join } = require("path")
 const Joi = require("@hapi/joi")
 const crypto = require('crypto')
+const dateTime = require('date-and-time')
 const { commonInfo, fromErrorMessage, hashPassword, sendMail } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"));
 
-const registrationView = (req, res) => {
+exports.registrationView = (req, res) => {
     res.render("auth/registration", {
         info: commonInfo,
         title: "Account Registration",
         csrfToken: req.csrfToken(),
         registrationForm: web.registration.url,
         loginPage: web.userLogin.url
-    });
-};
+    })
+}
 
-const registration = (req, res, next) => {
+exports.registration = (req, res, next) => {
     const schema = Joi.object({
         name: Joi.string().trim().pattern(/^[a-zA-Z\s]+$/).required().label("Name"),
         number: Joi.string().trim().pattern(/^(01|\+8801)[0-9]{9,14}/).required().label("Mobile number"),
@@ -43,7 +44,7 @@ const registration = (req, res, next) => {
 
     user.findOne({ email: validateResult.value.email })
         .then(isEmailRegistered => {
-            if (! isEmailRegistered) {
+            if (!!isEmailRegistered) {
                 return res.status(200).json({
                     success: false,
                     message: "Email address already registered"
@@ -52,8 +53,8 @@ const registration = (req, res, next) => {
 
             hashPassword(validateResult.value.password)
                 .then(passwordHashed => {
-                    let time = new Date()
-
+                    let now = new Date()
+                    let BDnow = dateTime.format(dateTime.addHours(now, 6), "YYYY-MM-DD HH:mm:ss")
                     user.save({
                             userRDId: crypto.randomBytes(30).toString('hex'),
                             name: validateResult.value.name,
@@ -61,14 +62,14 @@ const registration = (req, res, next) => {
                             email: validateResult.value.email,
                             password: passwordHashed,
                             email_verify: false,
-                            token: Math.floor(Math.random() * 100001),
-                            token_refresh: time.setMinutes(time.getMinutes() + 10),
+                            token: Math.floor(Math.random() * 100000),
+                            token_refresh: now.setMinutes(now.getMinutes() + 10),
                             max_app_install: 0,
                             app_installed: 0,
-                            account_activation_end: new Date().toDateString(),
+                            account_activation_end: BDnow,
                             mail_for_verification: 1,
                             account_active: true,
-                            account_create: new Date().toString(),
+                            account_create: BDnow,
                         })
                         .then(dataInsectionResult => {
                             sendMail(dataInsectionResult.ops[0].email, "Varification Code", dataInsectionResult.ops[0].token)
@@ -80,17 +81,16 @@ const registration = (req, res, next) => {
                             return res.status(200).json({
                                 success: true,
                                 message: web.emailVerification.url.replace(":id", dataInsectionResult.ops[0].userRDId)
-                            });
+                            })
                         })
                         .catch(err => next(err))
                 })
                 .catch(err => next(err))
         })
         .catch(err => next(err))
-};
+}
 
-const sendMailAgain = (req, res, next) => {
-
+exports.sendMailAgain = (req, res, next) => {
     const user = new model("users");
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
@@ -151,7 +151,7 @@ const sendMailAgain = (req, res, next) => {
                                 message: 'Server Error. Please try again later.'
                             })
                         }
-                        
+
                         return res.status(200).json({
                             message: "Please, check again your email address."
                         });
@@ -161,9 +161,3 @@ const sendMailAgain = (req, res, next) => {
         })
         .catch(err => next(err))
 }
-
-module.exports = {
-    registrationView,
-    registration,
-    sendMailAgain
-};

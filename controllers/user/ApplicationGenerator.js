@@ -2,7 +2,7 @@ const { join } = require("path")
 const Joi = require('@hapi/joi')
 const PDFDocument = require('pdfkit')
 const fs = require('fs')
-const { commonInfo, fromErrorMessage, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 
@@ -12,7 +12,6 @@ const applicationGeneratorView = (req, res, next) => {
 	    title: 'Application Generator',
 	    userName: req.user.name,
 	    email: req.user.email,
-	    active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
 	    sidebar: sidebar,
 	    path: req.path,
 	    csrfToken: req.csrfToken(),

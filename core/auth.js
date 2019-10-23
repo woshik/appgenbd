@@ -2,10 +2,10 @@ const localStrategy = require('passport-local').Strategy
 const passport = require('passport')
 const bcrypt = require('bcryptjs')
 const crypto = require('crypto')
+const dateTime = require('date-and-time')
 const { ObjectId } = require('mongodb')
 const { join } = require('path')
 const web = require(join(__dirname, '..', 'urlconf', 'webRule'))
-
 const model = require(join(__dirname, '..', 'db', 'model'))
 
 module.exports = (app) => {
@@ -18,8 +18,12 @@ module.exports = (app) => {
                     bcrypt.compare(password, userData.password)
                         .then(isMatch => {
                             if (isMatch) {
-                                if (userData.email_verify === 1) {
-                                    return done(null, userData)
+                                if (userData.email_verify) {
+                                    if (userData.account_active) {
+                                        return done(null, userData)
+                                    } else {
+                                        return done(null, false, { message: 'Your account is deactivated. Please contact with admin.' })
+                                    }
                                 } else {
                                     let userRDId = crypto.randomBytes(30).toString('hex')
                                     user.updateOne({ email: email }, { "userRDId": userRDId })
@@ -58,7 +62,7 @@ module.exports = (app) => {
 
     passport.serializeUser((user, done) => {
         let key = { id: user._id }
-        !!user.super_user ? (key.model = 'admin') : (key.model = 'users')
+        (!!user.super_user) ? (key.model = 'admin') : (key.model = 'users')
         return done(null, key)
     })
 
@@ -75,7 +79,8 @@ module.exports = (app) => {
                         email: userData.email,
                         account_activation_end: userData.account_activation_end,
                         max_app_install: userData.max_app_install,
-                        app_install: userData.app_install
+                        app_install: userData.app_install,
+                        active: dateTime.subtract(dateTime.addHours(new Date(), 6), new Date(userData.account_activation_end)).toDays() >= 0
                     }
                 } else {
                     obj = {
@@ -84,7 +89,6 @@ module.exports = (app) => {
                         super_user: userData.super_user
                     }
                 }
-
                 done(null, obj)
             })
             .catch(err => done(err))

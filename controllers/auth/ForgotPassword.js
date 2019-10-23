@@ -6,7 +6,7 @@ const { commonInfo, fromErrorMessage, sendMail, hashPassword } = require(join(__
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"))
 
-const forgotPasswordView = (req, res) => {
+exports.forgotPasswordView = (req, res) => {
     res.render("auth/forgotPassword", {
         info: commonInfo,
         title: "Forgot Password",
@@ -16,7 +16,7 @@ const forgotPasswordView = (req, res) => {
     })
 }
 
-const forgotPassword = (req, res, next) => {
+exports.forgotPassword = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().trim().email().required().label("Email address"),
     })
@@ -78,13 +78,13 @@ const forgotPassword = (req, res, next) => {
         .catch(err => next(err))
 }
 
-const forgotPasswordCodeVerifyView = (req, res, next) => {
+exports.forgotPasswordCodeVerifyView = (req, res, next) => {
 
     const user = new model("users")
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
 
-            if (!userData || userData.email_verify !== 1) {
+            if (!userData || !userData.email_verify) {
                 req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.redirect(web.userLogin.url)
             }
@@ -107,7 +107,7 @@ const forgotPasswordCodeVerifyView = (req, res, next) => {
         .catch(err => next(err))
 }
 
-const forgotPasswordCodeVerify = (req, res, next) => {
+exports.forgotPasswordCodeVerify = (req, res, next) => {
 
     const schema = Joi.object({
         code: Joi.string().trim().required().label("Verification code")
@@ -128,7 +128,7 @@ const forgotPasswordCodeVerify = (req, res, next) => {
     user.findOne({ userRDId: req.params.id })
         .then(userData => {
 
-            if (!userData || userData.email_verify !== 1) {
+            if (!userData || !userData.email_verify) {
                 req.flash('userLoginScreenErrorMessage', 'User account not found')
                 return res.redirect(web.userLogin.url)
             }
@@ -197,11 +197,11 @@ const forgotPasswordCodeVerify = (req, res, next) => {
         .catch(err => next(err))
 }
 
-const changePasswordView = (req, res, nex) => {
+exports.changePasswordView = (req, res, nex) => {
     const user = new model("users")
     user.findOne({ userRDId: req.params.id, token: parseInt(req.params.code) })
         .then(userData => {
-            if (!userData || userData.email_verify !== 1 || userData.forgot !== 1) {
+            if (!userData || !userData.email_verify || userData.forgot !== 1) {
                 console.log('ok')
                 req.flash('userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.')
                 return res.redirect(web.userLogin.url)
@@ -217,7 +217,7 @@ const changePasswordView = (req, res, nex) => {
         .catch(err => next(err))
 }
 
-const changePassword = (req, res, next) => {
+exports.changePassword = (req, res, next) => {
 
     const schema = Joi.object({
         password: Joi.string().trim().min(5).max(50).label("Password"),
@@ -237,10 +237,10 @@ const changePassword = (req, res, next) => {
     }
 
     const user = new model("users");
-    
+
     user.findOne({ userRDId: req.params.id, token: parseInt(req.params.code), forgot: 1 })
         .then(userAvailable => {
-            
+
             if (!userAvailable) {
                 return res.status(200).json({
                     success: false,
@@ -274,13 +274,4 @@ const changePassword = (req, res, next) => {
                 .catch(err => next(err))
         })
         .catch(err => next(err))
-}
-
-module.exports = {
-    forgotPasswordView,
-    forgotPassword,
-    forgotPasswordCodeVerifyView,
-    forgotPasswordCodeVerify,
-    changePasswordView,
-    changePassword
 }

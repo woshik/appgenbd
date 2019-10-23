@@ -1,5 +1,5 @@
 const { join } = require("path")
-const { commonInfo, localTime, onlyDate } = require(join(__dirname, "../../", "core", "util"))
+const { commonInfo } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 const model = require(join(__dirname, "../../", "db", "model"));
@@ -18,7 +18,7 @@ const dashboardView = (req, res, next) => {
         title: 'Dashboard',
         userName: req.user.name,
         email: req.user.email,
-        active: (localTime(onlyDate()).getTime() <= localTime(req.user.account_activation_end).getTime()),
+        active: req.user.active,
         sidebar: sidebar,
         csrfToken: req.csrfToken(),
         path: req.path

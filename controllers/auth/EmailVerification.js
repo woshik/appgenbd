@@ -5,7 +5,7 @@ const { commonInfo, fromErrorMessage, sendMail } = require(join(__dirname, "../.
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"));
 
-const emailVerificationView = (req, res, next) => {
+exports.emailVerificationView = (req, res, next) => {
 
     const user = new model("users");
     user.findOne({ userRDId: req.params.id })
@@ -15,7 +15,7 @@ const emailVerificationView = (req, res, next) => {
                 return res.redirect(web.userLogin.url)
             }
 
-            if (userData.email_verify === 1) {
+            if (userData.email_verify) {
                 req.flash('userLoginScreenErrorMessage', 'Your account already activated')
                 return res.redirect(web.userLogin.url)
             }
@@ -33,7 +33,7 @@ const emailVerificationView = (req, res, next) => {
         .catch(err => next(err))
 }
 
-const emailVerification = (req, res, next) => {
+exports.emailVerification = (req, res, next) => {
     const schema = Joi.object({
         code: Joi.string().trim().required().label("Verification code")
     });
@@ -61,7 +61,7 @@ const emailVerification = (req, res, next) => {
                 })
             }
 
-            if (userData.email_verify === 1) {
+            if (userData.email_verify) {
                 req.flash('userLoginScreenErrorMessage', 'Your account already activated')
                 return res.status(200).json({
                     success: true,
@@ -77,7 +77,7 @@ const emailVerification = (req, res, next) => {
                     });
                 }
 
-                user.updateOne({ userRDId: req.params.id }, { "email_verify": 1, "userRDId": crypto.randomBytes(30).toString('hex') })
+                user.updateOne({ userRDId: req.params.id }, { "email_verify": true, "userRDId": crypto.randomBytes(30).toString('hex') })
                     .then(userUpdateValue => {
                         if (!userUpdateValue.result.nModified) {
                             return res.status(200).json({
@@ -130,9 +130,4 @@ const emailVerification = (req, res, next) => {
             }
         })
         .catch(err => next(err))
-}
-
-module.exports = {
-    emailVerificationView,
-    emailVerification
 }

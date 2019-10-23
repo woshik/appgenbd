@@ -4,7 +4,7 @@ const Joi = require("@hapi/joi")
 const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
 const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 
-const userLoginView = (req, res) => {
+exports.userLoginView = (req, res) => {
     res.render("auth/userLogin", {
         info: commonInfo,
         title: "User Login",
@@ -17,7 +17,7 @@ const userLoginView = (req, res) => {
     })
 }
 
-const userLogin = (req, res, next) => {
+exports.userLogin = (req, res, next) => {
     const schema = Joi.object({
         email: Joi.string().trim().email().required().label("Email address"),
         password: Joi.string().trim().min(5).max(50).label("Password")
@@ -52,9 +52,4 @@ const userLogin = (req, res, next) => {
             })
         })
     })(req, res, next)
-}
-
-module.exports = {
-    userLoginView,
-    userLogin
 }
