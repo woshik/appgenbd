@@ -12,6 +12,7 @@ const dashboardView = (req, res, next) => {
         title: 'User List',
         email: req.user.email,
         csrfToken: req.csrfToken(),
+        userList: web.userList.url
     })
 }
 

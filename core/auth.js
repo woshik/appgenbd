@@ -80,7 +80,8 @@ module.exports = (app) => {
                 } else {
                     obj = {
                         _id: userData._id,
-                        email: userData.email
+                        email: userData.email,
+                        super_user: userData.super_user
                     }
                 }
 

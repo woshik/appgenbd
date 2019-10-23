@@ -22,7 +22,7 @@ const registration = (req, res, next) => {
         email: Joi.string().trim().email().required().label("Email address"),
         password: Joi.string().trim().min(5).max(50).label("Password"),
         confirm_password: Joi.ref("password")
-    });
+    })
 
     const validateResult = schema.validate({
         name: req.body.name,
@@ -30,24 +30,24 @@ const registration = (req, res, next) => {
         email: req.body.email,
         password: req.body.password,
         confirm_password: req.body.confirm_password
-    });
+    })
 
     if (validateResult.error) {
         return res.status(200).json({
             success: false,
             message: fromErrorMessage(validateResult.error.details[0])
-        });
+        })
     }
 
-    const user = new model("users");
+    const user = new model("users")
 
     user.findOne({ email: validateResult.value.email })
-        .then(isEmailRegister => {
-            if (isEmailRegister) {
+        .then(isEmailRegistered => {
+            if (! isEmailRegistered) {
                 return res.status(200).json({
                     success: false,
                     message: "Email address already registered"
-                });
+                })
             }
 
             hashPassword(validateResult.value.password)
@@ -60,13 +60,14 @@ const registration = (req, res, next) => {
                             number: validateResult.value.number,
                             email: validateResult.value.email,
                             password: passwordHashed,
-                            email_verify: 0,
+                            email_verify: false,
                             token: Math.floor(Math.random() * 100001),
                             token_refresh: time.setMinutes(time.getMinutes() + 10),
                             max_app_install: 0,
                             app_installed: 0,
                             account_activation_end: new Date().toDateString(),
                             mail_for_verification: 1,
+                            account_active: true,
                             account_create: new Date().toString(),
                         })
                         .then(dataInsectionResult => {

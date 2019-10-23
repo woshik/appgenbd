@@ -1,5 +1,5 @@
 const { join } = require('path')
-const { isUserAuthenticated, isUserCanSee, canAccess } = require(join(__dirname, "..", "core", "middlewares"))
+const { isUserAuthenticated, isUserCanSee, canAccess, isSuperUser } = require(join(__dirname, "..", "core", "middlewares"))
 
 module.exports = {
     userLogin: {
@@ -151,9 +151,16 @@ module.exports = {
         path: 'user'
     },
 
+
+
+
+
     //=====================================================================================================================================//
     //============================================================== Admin URL ===========================================================//
     //===================================================================================================================================//
+
+
+
 
     adminLogin: {
         url: '/login/admin',
@@ -171,7 +178,7 @@ module.exports = {
         methods: {
             dashboardView: 'get',
         },
-        middleware: [isUserAuthenticated],
+        middleware: [isSuperUser],
         path: 'admin'
     },
 
@@ -181,7 +188,17 @@ module.exports = {
         methods: {
             adminLogout: 'get',
         },
-        middleware: [isUserAuthenticated],
+        middleware: [isSuperUser],
         path: 'admin'
     },
+
+    userList: {
+        url: '/userlist',
+        controller: 'UserList',
+        methods: {
+            userList: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    }
 }

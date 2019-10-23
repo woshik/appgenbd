@@ -6,14 +6,16 @@
             <%=title%>
         </h4>
         <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
+            <table class="table table-bordered table-hover table-striped" id="userList" style="width:100%;">
                 <thead>
                     <tr>
-                        <th scope="col">App Name</th>
-                        <th scope="col">APP ID</th>
-                        <th scope="col">Subscribe</th>
-                        <th scope="col">Dial</th>
-                        <th scope="col">Details</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Number</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">App Installed</th>
+                        <th scope="col">Max App Install</th>
+                        <th scope="col">User Active</th>
+                        <th scope="col">Action</th>
                     </tr>
                 </thead>
             </table>
@@ -23,30 +25,27 @@
 <%- include('base/base_footer.ejs') %>
 <script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
 <script type="text/javascript">
-// $(document).ready(function() {
-//     var appList = $('#appList').DataTable({
-//         "processing": true,
-//         "serverSide": true,
-//         "order": [],
-//         "ajax": {
-//             url: "<%=userList%>",
-//             headers: {
-//                 'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-//             },
-//             type: "POST"
-//         },
-//         "columnDefs": [{
-//             "targets": [0, 1, 2, 3, 4],
-//             "orderable": false
-//         }],
-//         "lengthMenu": [
-//             [25, 50, 75, 100, -1],
-//             [25, 50, 75, 100, "All"]
-//         ],
-//     })
-// })
+$(document).ready(function() {
+    var userList = $('#userList').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "order": [],
+        "ajax": {
+            url: "<%=userList%>",
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            type: "POST"
+        },
+        "columnDefs": [{
+            "targets": [0, 1, 2, 3, 4],
+            "orderable": false
+        }],
+        "lengthMenu": [
+            [10, 25, 50, 75, 100, -1],
+            [10, 25, 50, 75, 100, "All"]
+        ],
+    })
+})
 </script>
-
-
-<%- include('base/base_footer.ejs') %>
 <%- include('base/close_footer.ejs') %>
