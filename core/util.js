@@ -54,7 +54,7 @@ exports.fromErrorMessage = error => {
             return `${error.context.label} is required`
         case "date.greater":
             return `Date must be greater than today`
-        case "date.base": 
+        case "date.base":
             return "Please, enter valid date."
         default:
             return error.message
@@ -98,7 +98,7 @@ exports.logger = createLogger({
 
 exports.flash = () => {
     return function(req, res, next) {
-        if (req.flash && safe) { return next(); }
+        if (req.flash) return next()
         req.flash = function(type, msg) {
             if (this.session === undefined) throw Error('req.flash() requires sessions');
             let msgs = this.session.flash = this.session.flash || {};
@@ -119,24 +119,24 @@ exports.flash = () => {
 
 exports.localTime = (option) => {
     let time
-    if (!! option) {
+    if (!!option) {
         time = new Date(option)
     } else {
         time = new Date()
     }
     time.setHours(time.getHours() + 6)
-    
+
     return time
 }
 
 exports.onlyDate = (option) => {
     let date
-    if (!! option) {
+    if (!!option) {
         date = new Date(option)
     } else {
         date = new Date()
     }
-   
+
     return date.toDateString()
 }
 

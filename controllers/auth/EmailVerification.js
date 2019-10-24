@@ -6,7 +6,6 @@ const web = require(join(__dirname, "../../", "urlconf", "webRule"))
 const model = require(join(__dirname, "../../", "db", "model"));
 
 exports.emailVerificationView = (req, res, next) => {
-
     const user = new model("users");
     user.findOne({ userRDId: req.params.id })
         .then(userData => {

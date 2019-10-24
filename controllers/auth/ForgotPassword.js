@@ -129,13 +129,17 @@ exports.forgotPasswordCodeVerify = (req, res, next) => {
         .then(userData => {
 
             if (!userData || !userData.email_verify) {
-                req.flash('userLoginScreenErrorMessage', 'User account not found')
-                return res.redirect(web.userLogin.url)
+                return res.status(200).json({
+                    success: false,
+                    message: "User account not found"
+                })
             }
 
             if (userData.forgot !== 1) {
-                req.flash('userLoginScreenErrorMessage', 'User account not active')
-                return res.redirect(web.forgotPassword.url)
+                return res.status(200).json({
+                    success: false,
+                    message: "User account not active"
+                })
             }
 
             if (userData.forgot_token_time.getTime() > new Date().getTime()) {
@@ -202,7 +206,6 @@ exports.changePasswordView = (req, res, nex) => {
     user.findOne({ userRDId: req.params.id, token: parseInt(req.params.code) })
         .then(userData => {
             if (!userData || !userData.email_verify || userData.forgot !== 1) {
-                console.log('ok')
                 req.flash('userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.')
                 return res.redirect(web.userLogin.url)
             }
