@@ -9,6 +9,9 @@ $(document).ready(function() {
         $.ajax({
             url: url,
             type: type,
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
             data: form.serialize(),
             dataType: "json",
             success: function(res) {
@@ -36,8 +39,8 @@ $(document).ready(function() {
         $.ajax({
             url: e.target.href,
             type: "POST",
-            data: {
-                _csrf: $("#csrf")[0].value
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             dataType: "json",
             success: function(res) {

@@ -8,6 +8,9 @@ $(document).ready(function() {
         $.ajax({
             url: url,
             type: type,
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
             data: form.serialize(),
             dataType: "json",
             success: function(res) {
