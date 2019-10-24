@@ -3,8 +3,6 @@ const { createLogger, format, transports } = require('winston')
 const { align, combine, timestamp, printf } = format
 const nodemailer = require("nodemailer")
 const config = require("config")
-const bcrypt = require('bcryptjs')
-const { join } = require('path')
 
 exports.sendMail = (recipient, subject, text, callback = null) => {
     let transport = nodemailer.createTransport({

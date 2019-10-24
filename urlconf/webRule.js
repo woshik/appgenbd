@@ -1,4 +1,3 @@
-const { join } = require('path')
 const { isUserAuthenticated, isUserCanSee, canAccess, isSuperUser } = require(join(__dirname, "..", "core", "middlewares"))
 
 module.exports = {

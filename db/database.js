@@ -1,7 +1,5 @@
-const { join } = require('path')
 const config = require('config')
 const MongoClient = require('mongodb').MongoClient;
-const { logger } = require(join(__dirname, '..', 'core', 'util'))
 
 let _db;
 

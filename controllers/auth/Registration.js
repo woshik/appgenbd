@@ -1,11 +1,3 @@
-const { join } = require("path")
-const Joi = require("@hapi/joi")
-const crypto = require('crypto')
-const dateTime = require('date-and-time')
-const { commonInfo, fromErrorMessage, hashPassword, sendMail } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const model = require(join(__dirname, "../../", "db", "model"));
-
 exports.registrationView = (req, res) => {
     res.render("auth/registration", {
         info: commonInfo,

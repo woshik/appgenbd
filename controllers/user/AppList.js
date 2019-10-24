@@ -1,9 +1,3 @@
-const { join } = require("path")
-const { commonInfo } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
-const model = require(join(__dirname, "../../", "db", "model"))
-
 const appListView = (req, res, next) => {
     res.render("user/appList", {
         info: commonInfo,

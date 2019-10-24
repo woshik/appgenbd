@@ -1,15 +1,18 @@
+// import other usefull modules
 const http = require("http")
 const express = require("express")
 const helmet = require("helmet")
 const compression = require("compression")
 const csrf = require("csurf")
-const { join } = require("path")
-const { mongoClient } = require(join(__dirname, "..", "db", "database"))
-const { sessionStore, cookieStore } = require(join(__dirname, "..", "core", "storage"))
-const { logger, flash } = require(join(__dirname, "..", "core", "util"))
-const auth = require(join(__dirname, "..", "core", "auth"))
 
-// define port
+// import module from project
+
+const { mongoClient } = require(join(BASE_DIR, "db", "database"))
+const { sessionStore, cookieStore } = require(join(BASE_DIR, "core", "storage"))
+const { logger, flash } = require(join(BASE_DIR, "core", "util"))
+const auth = require(join(BASE_DIR, "core", "auth"))
+
+// define port number
 const {
     PORT = 3000
 } = process.env
@@ -30,6 +33,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(join(__dirname, "..", "public")))
 app.use(express.static(join(__dirname, "..", "custom")))
+
+
 
 // api routing
 //app.use("/api", require(join(__dirname, "routes", "api")))

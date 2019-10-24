@@ -1,5 +1,9 @@
 const cluster = require("cluster")
-const { join } = require("path")
+
+// global declaration 
+global.join = require("path").join
+global.BASE_DIR = __dirname
+require(join(BASE_DIR, 'app', 'autoloader'))
 
 if (cluster.isMaster) {
     let numCPUs = require('os').cpus().length

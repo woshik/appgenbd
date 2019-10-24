@@ -1,11 +1,3 @@
-const { join } = require("path")
-const Joi = require("@hapi/joi")
-const bcrypt = require("bcryptjs")
-const crypto = require('crypto')
-const { commonInfo, fromErrorMessage, sendMail, hashPassword } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const model = require(join(__dirname, "../../", "db", "model"))
-
 exports.forgotPasswordView = (req, res) => {
     res.render("auth/forgotPassword", {
         info: commonInfo,

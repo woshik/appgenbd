@@ -1,12 +1,4 @@
-const { join } = require("path")
-const Joi = require("@hapi/joi")
-const crypto = require('crypto')
-const { commonInfo, fromErrorMessage, sendMail } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const model = require(join(__dirname, "../../", "db", "model"));
-
 exports.emailVerificationView = (req, res, next) => {
-
     const user = new model("users");
     user.findOne({ userRDId: req.params.id })
         .then(userData => {

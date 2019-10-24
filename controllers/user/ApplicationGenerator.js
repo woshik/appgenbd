@@ -1,10 +1,5 @@
-const { join } = require("path")
-const Joi = require('@hapi/joi')
 const PDFDocument = require('pdfkit')
 const fs = require('fs')
-const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
 
 const applicationGeneratorView = (req, res, next) => {
 	res.render("user/applicationGenerator", {

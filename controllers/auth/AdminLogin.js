@@ -1,9 +1,3 @@
-const { join } = require("path")
-const passport = require("passport")
-const Joi = require("@hapi/joi")
-const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-
 exports.adminLoginView = (req, res) => {
     res.render("auth/adminLogin", {
         info: commonInfo,

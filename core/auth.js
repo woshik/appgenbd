@@ -1,12 +1,4 @@
 const localStrategy = require('passport-local').Strategy
-const passport = require('passport')
-const bcrypt = require('bcryptjs')
-const crypto = require('crypto')
-const dateTime = require('date-and-time')
-const { ObjectId } = require('mongodb')
-const { join } = require('path')
-const web = require(join(__dirname, '..', 'urlconf', 'webRule'))
-const model = require(join(__dirname, '..', 'db', 'model'))
 
 module.exports = (app) => {
     passport.use('users',
