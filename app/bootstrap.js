@@ -9,7 +9,7 @@ const csrf = require("csurf")
 
 const { mongoClient } = require(join(BASE_DIR, "db", "database"))
 const { sessionStore, cookieStore } = require(join(BASE_DIR, "core", "storage"))
-const { logger, flash } = require(join(BASE_DIR, "core", "util"))
+const { flash } = require(join(BASE_DIR, "core", "util"))
 const auth = require(join(BASE_DIR, "core", "auth"))
 
 // define port number
@@ -33,8 +33,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(join(__dirname, "..", "public")))
 app.use(express.static(join(__dirname, "..", "custom")))
-
-
 
 // api routing
 //app.use("/api", require(join(__dirname, "routes", "api")))

@@ -1,9 +1,5 @@
-const { join } = require('path')
-const model = require(join(__dirname, "../../", "db", "model"))
-
-const userList = (req, res, next) => {
+exports.userList = (req, res, next) => {
     const user = new model("users")
-
     user.dataTable({}, {}, parseInt(req.body.start), parseInt(req.body.length))
         .then(result => {
             let response = []
@@ -19,8 +15,4 @@ const userList = (req, res, next) => {
             })
         })
         .catch(err => console.log(err))
-}
-
-module.exports = {
-    userList,
 }

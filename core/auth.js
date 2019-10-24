@@ -1,5 +1,6 @@
 const localStrategy = require('passport-local').Strategy
 
+
 module.exports = (app) => {
     passport.use('users',
         new localStrategy({ usernameField: 'email' }, (email, password, done) => {
@@ -72,7 +73,7 @@ module.exports = (app) => {
                         account_activation_end: userData.account_activation_end,
                         max_app_install: userData.max_app_install,
                         app_install: userData.app_install,
-                        active: dateTime.subtract(dateTime.addHours(new Date(), 6), new Date(userData.account_activation_end)).toDays() >= 0
+                        active: dateTime.subtract(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6)).toDays() >= 0
                     }
                 } else {
                     obj = {
@@ -86,6 +87,6 @@ module.exports = (app) => {
             .catch(err => done(err))
     })
 
-    app.use(passport.initialize());
-    app.use(passport.session());
+    app.use(passport.initialize())
+    app.use(passport.session())
 }

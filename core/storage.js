@@ -3,7 +3,6 @@ const session = require("express-session")
 const MongoStore = require("connect-mongo")(session)
 const cookieParser = require("cookie-parser")
 
-
 exports.sessionStore = (app, opt) => {
     let options = opt || {}
     app.use(session({

@@ -3,9 +3,8 @@ global.bcrypt = require('bcryptjs')
 global.crypto = require('crypto')
 global.dateTime = require('date-and-time')
 global.passport = require("passport")
-global.ObjectId = require('mongodb')
+global.ObjectId = require('mongodb').ObjectId
 
-global.model = require(join(BASE_DIR, 'db', 'model'))
 global.web = require(join(BASE_DIR, 'urlconf', 'webRule'))
 global.api = require(join(BASE_DIR, 'urlconf', 'apiRule'))
 global.sideBar = require(join(BASE_DIR, 'urlconf', 'sideBar'))

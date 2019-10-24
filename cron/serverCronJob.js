@@ -1,8 +1,9 @@
 const { CronJob } = require('cron')
+const model = require(join(BASE_DIR, 'db', 'model'))
 
 // mail sending limit reset
-new CronJob('0 */30 * * * *', function() {
-	let user = new model("users");
+new CronJob('0 */20 * * * *', function() {
+	let user = new model("users")
 	user.updateMany({ mail_for_verification: 5 }, { 'mail_for_verification': 0 })
 		.then(response => {})
 		.catch(err => logger.error(err))
