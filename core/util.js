@@ -54,6 +54,8 @@ exports.fromErrorMessage = error => {
             return `Date must be greater than today`
         case "date.base":
             return "Please, enter valid date."
+        case "number.base":
+            return "Please, enter valid ammount"
         default:
             return error.message
     }

@@ -1,10 +1,13 @@
 exports.dashboardView = (req, res, next) => {
     res.render("admin/dashboard", {
         info: commonInfo,
-        title: 'User List',
+        title: 'Admin',
         email: req.user.email,
         csrfToken: req.csrfToken(),
-        userList: web.userList.url
+        userList: web.userList.url,
+        userPayment: web.payment.url,
+        userAccountStatusChange: web.accountStatusChange.url,
+        userAccountDelete: web.accountDelete.url
     })
 }
 

@@ -1,4 +1,4 @@
-global.joi = require('@hapi/joi')
+global.Joi = require('@hapi/joi')
 global.bcrypt = require('bcryptjs')
 global.crypto = require('crypto')
 global.dateTime = require('date-and-time')

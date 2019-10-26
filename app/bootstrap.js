@@ -31,8 +31,8 @@ app.set("views", join(__dirname, "..", "views"))
 // app configuretaion
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static(join(__dirname, "..", "public")))
-app.use(express.static(join(__dirname, "..", "custom")))
+app.use(express.static(join(BASE_DIR, "public")))
+app.use(express.static(join(BASE_DIR, "custom")))
 
 // api routing
 //app.use("/api", require(join(__dirname, "routes", "api")))
@@ -50,7 +50,7 @@ auth(app)
 app.use(flash())
 
 // web routing
-app.use("/", require(join(__dirname, "..", "routes", "web")))
+app.use("/", require(join(BASE_DIR, "routes", "web")))
 
 // 404 page not found
 app.use((req, res) => {

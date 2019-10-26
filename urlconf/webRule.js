@@ -199,5 +199,45 @@ module.exports = {
         },
         middleware: [isSuperUser],
         path: 'admin'
-    }
+    },
+
+    payment: {
+        url: '/payment',
+        controller: 'UserAction',
+        methods: {
+            payment: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
+    accountStatusChange: {
+        url: '/accountstatuschange',
+        controller: 'UserAction',
+        methods: {
+            accountStatusChange: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
+    accountDelete: {
+        url: '/accountdelete',
+        controller: 'UserAction',
+        methods: {
+            accountDelete: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
+    accountDetails: {
+        url: '/accountdetails',
+        controller: 'AccountDetails',
+        methods: {
+            accountDetails: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
 }

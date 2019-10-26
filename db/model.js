@@ -1,8 +1,8 @@
 module.exports = class Model {
     constructor(collectionName) {
-        const { join } = require("path");
-        this.db = require(join(__dirname, 'database')).getDB();
-        this.collectionName = collectionName;
+        const { join } = require("path")
+        this.db = require(join(__dirname, 'database')).getDB()
+        this.collectionName = collectionName
     }
 
     save(data) {
@@ -10,17 +10,11 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.insertOne(data)
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+                .catch(err => reject(err))
+        })
     }
 
     updateOne(where, updateValue) {
@@ -28,17 +22,11 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.updateOne(where, { '$set': updateValue })
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+                .catch(err => reject(err))
+        })
     }
 
     customUpdateOne(where, updateValue) {
@@ -46,17 +34,13 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.updateOne(where, updateValue)
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
                 .catch(err => {
-                    reject(err);
-                });
-        });
+                    reject(err)
+                })
+        })
     }
 
     updateMany(where, updateValue) {
@@ -65,16 +49,16 @@ module.exports = class Model {
                 .then(result => {
                     result.updateMany(where, { '$set': updateValue })
                         .then(result => {
-                            resolve(result);
+                            resolve(result)
                         })
                         .catch(err => {
-                            reject(err);
-                        });
+                            reject(err)
+                        })
                 })
                 .catch(err => {
-                    reject(err);
-                });
-        });
+                    reject(err)
+                })
+        })
     }
 
     customUpdateMany(where, updateValue) {
@@ -82,16 +66,12 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.updateMany(where, updateValue)
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
                 .catch(err => {
-                    reject(err);
-                });
+                    reject(err)
+                })
         });
     }
 
@@ -100,17 +80,11 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.findOne(where, show)
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+                .catch(err => reject(err))
+        })
     }
 
     find(where, show = {}) {
@@ -118,17 +92,35 @@ module.exports = class Model {
             this.db.createCollection(this.collectionName)
                 .then(result => {
                     result.find(where).project(show).toArray()
-                        .then(result => {
-                            resolve(result);
-                        })
-                        .catch(err => {
-                            reject(err);
-                        });
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
                 })
-                .catch(err => {
-                    reject(err);
-                });
-        });
+                .catch(err => reject(err))
+        })
+    }
+
+    deleteOne(where) {
+        return new Promise((resolve, reject) => {
+            this.db.createCollection(this.collectionName)
+                .then(result => {
+                    result.deleteOne(where)
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    deleteMany(where) {
+        return new Promise((resolve, reject) => {
+            this.db.createCollection(this.collectionName)
+                .then(result => {
+                    result.deleteMany(where)
+                        .then(result => resolve(result))
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
+        })
     }
 
     dataTable(where, show, start, limit) {
@@ -143,13 +135,9 @@ module.exports = class Model {
                                 recordsFiltered: await result.find(where).count()
                             })
                         })
-                        .catch(err => {
-                            reject(err)
-                        })
+                        .catch(err => reject(err))
                 })
-                .catch(err => {
-                    reject(err);
-                });
+                .catch(err => reject(err))
         })
     }
 }

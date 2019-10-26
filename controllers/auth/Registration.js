@@ -58,6 +58,7 @@ exports.registration = (req, res, next) => {
                             token_refresh: now.setMinutes(now.getMinutes() + 10),
                             max_app_install: 0,
                             app_installed: 0,
+                            total_payment: 0,
                             account_activation_end: BDnow,
                             mail_for_verification: 1,
                             account_active: true,

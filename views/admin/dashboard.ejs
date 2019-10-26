@@ -1,10 +1,10 @@
 <%- include('base/base_header.ejs') %>
-
 <section class="tables-section">
     <div class="outer-w3-agile mt-3">
         <h4 class="tittle-w3-agileits mb-4">
             <%=title%>
         </h4>
+        <div id="message" style="width: 100%"></div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped" id="userList" style="width:100%;">
                 <thead>
@@ -12,9 +12,12 @@
                         <th scope="col">Name</th>
                         <th scope="col">Number</th>
                         <th scope="col">Email</th>
-                        <th scope="col">App Installed</th>
-                        <th scope="col">Max App Install</th>
+                        <th scope="col">Account Create</th>
+                        <th scope="col">Email Active</th>
                         <th scope="col">User Active</th>
+                        <th scope="col">Account Expire</th>
+                        <th scope="col">Total Pay</th>
+                        <th scope="col">Account Delete</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
@@ -22,11 +25,15 @@
         </div>
     </div>
 </section>
+<%- include('base/modal.ejs') %>
 <%- include('base/base_footer.ejs') %>
 <script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
 <script type="text/javascript">
+var timeOut, userList
+$("#message").fadeOut(0)
+
 $(document).ready(function() {
-    var userList = $('#userList').DataTable({
+    userList = $('#userList').DataTable({
         "processing": true,
         "serverSide": true,
         "order": [],
@@ -47,5 +54,124 @@ $(document).ready(function() {
         ],
     })
 })
+
+function payment(id) {
+    if (id) {
+        $("#paymentError").fadeOut(0)
+        $("#paymentButton").unbind("click").bind("click", function() {
+            $.ajax({
+                url: "<%=userPayment%>",
+                type: "POST",
+                headers: {
+                    'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                data: {
+                    'id': id,
+                    'payment': $('#userPayment').val()
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.success === true) {
+
+                    } else {
+                        clearTimeout(timeOut)
+                        $("#paymentError").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            res.message +
+                            '</div>').fadeIn(1000)
+                        timeOut = setTimeout(function() {
+                            $("#paymentError").fadeOut(1000)
+                        }, 5000)
+                    }
+                }
+            })
+        })
+    }
+}
+
+function accountStatusChange(id, accountStatus) {
+    var accountStatusChangeText = accountStatus === 'true' ? "Deactive" : "Active"
+    document.getElementById("accountStatusChangeModalLabel").innerHTML = "Account "+accountStatusChangeText
+    document.getElementById("accountStatusChangeButton").innerHTML = accountStatusChangeText
+    document.getElementById("accountStatusChangeModalBody").innerHTML = "Do you want to really " + accountStatusChangeText.toLowerCase() + " this account ?"
+    if (id && accountStatus) {
+        $("#accountStatusChangeButton").unbind("click").bind("click", function() {
+            $.ajax({
+                url: "<%=userAccountStatusChange%>",
+                type: "POST",
+                headers: {
+                    'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                data: {
+                    'id': id,
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.success === true) {
+                        $("#message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            res.message +
+                            '</div>').fadeIn(1000)
+                        userList.ajax.reload(null, false);
+                    } else {
+                        $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            res.message +
+                            '</div>').fadeIn(1000)
+                    }
+
+                    $('#accountStatusChange').modal('hide');
+                    clearMessage()
+                }
+            })
+        })
+    }
+}
+
+
+function accountDelete(id) {
+    if (id) {
+        $("#accountDeleteButton").unbind("click").bind("click", function() {
+            console.log('ok')
+            $.ajax({
+                url: "<%=userAccountDelete%>",
+                type: "POST",
+                headers: {
+                    'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                data: {
+                    'id': id,
+                },
+                dataType: "json",
+                success: function(res) {
+                    if (res.success === true) {
+                        $("#message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            res.message +
+                            '</div>').fadeIn(1000)
+                        userList.ajax.reload(null, false)
+
+                    } else {
+                        $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                            res.message +
+                            '</div>').fadeIn(1000)
+                    }
+
+                    $('#accountDelete').modal('hide')
+                    clearMessage()
+                }
+            })
+        })
+    }
+}
+
+
+function clearMessage() {
+    clearTimeout(timeOut)
+    timeOut = setTimeout(function() {
+        $("#message").fadeOut(1000)
+    }, 5000)
+}
 </script>
 <%- include('base/close_footer.ejs') %>

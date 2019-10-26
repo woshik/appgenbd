@@ -35,7 +35,7 @@ exports.adminLogin = (req, res, next) => {
                 message: info.message
             })
         }
-
+        
         req.login(user, (err) => {
             if (!!err) next(err)
             return res.status(200).json({

@@ -2,6 +2,10 @@
     display: none;
 }
 
-table th, td:last-child {
+table th, td {
 	text-align: center;
 }
+
+.fas, .far {
+	font-size: 17px
+}  

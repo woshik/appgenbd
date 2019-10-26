@@ -25,7 +25,7 @@ $(document).ready(function() {
                         res.message +
                         '</div>').fadeIn(1000)
                     timeOut = setTimeout(function() {
-                        $("#message").fadeOut(1000)
+                        $("#message").fadeOut(500)
                     }, 5000)
                 }
             }
