@@ -14,7 +14,7 @@ const auth = require(join(BASE_DIR, "core", "auth"))
 
 // define port number
 const {
-    PORT = 3000
+    PORT = 5000
 } = process.env
 
 // calling express function

@@ -6,7 +6,7 @@ exports.isUserAuthenticated = (req, res, next) => {
             next()
         }
     } else {
-        res.redirect(web.adminDashboard.url)
+        res.redirect(web.userDashboard.url)
     }
 }
 
