@@ -10,7 +10,7 @@
 	"session_secret": "hufasiudhfiuaba98ef98jsudvahrouifoiasjdoifjas",
 	"cookie_secret": "bhiahvyahuh;]f[a;sdfaisjrufh473gf8gsyfugsud",
 	"database_connection_string": "mongodb://localhost:27017/appgenbd",
-	"database_name": "proApp",
+	"database_name": "appgenbd",
 	"server_api": {
 		"subscription": "http://localhost:7000/subscription/send",
 		"subscription_check": "http://localhost:7000/subscription/getStatus",
