@@ -75,11 +75,12 @@ module.exports = class Model {
         });
     }
 
-    findOne(where, show = {}) {
+    findOne(where, show) {
         return new Promise((resolve, reject) => {
             this.db.createCollection(this.collectionName)
                 .then(result => {
-                    result.findOne(where, show)
+                    show = show || {}
+                    result.findOne(where, { projection: show })
                         .then(result => resolve(result))
                         .catch(err => reject(err))
                 })
@@ -87,11 +88,12 @@ module.exports = class Model {
         })
     }
 
-    find(where, show = {}) {
+    find(where, show) {
         return new Promise((resolve, reject) => {
             this.db.createCollection(this.collectionName)
                 .then(result => {
-                    result.find(where).project(show).toArray()
+                    show = show || {}
+                    result.find(where, { projection: show }).toArray()
                         .then(result => resolve(result))
                         .catch(err => reject(err))
                 })
@@ -123,17 +125,49 @@ module.exports = class Model {
         })
     }
 
-    dataTable(where, show, start, limit) {
+    dataTable(where, show, start, limit, sort) {
         return new Promise((resolve, reject) => {
             this.db.createCollection(this.collectionName)
                 .then(result => {
-                    result.find(where).project(show).skip(start).limit(limit).toArray()
+                    result.find(where).project(show).skip(start).limit(limit).sort(sort).toArray()
                         .then(async (Data) => {
                             resolve({
                                 data: Data,
                                 recordsTotal: await result.find({ userId: where.userId }).count(),
                                 recordsFiltered: await result.find(where).count()
                             })
+                        })
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    aggregate(where, from, localField, foreignField, as) {
+        return new Promise((resolve, reject) => {
+            this.db.createCollection(this.collectionName)
+                .then(result => {
+                    result.aggregate([{
+                                $match: where
+                            },
+                            {
+                                $project: {
+                                    [localField]: {
+                                        $toString: localField
+                                    }
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: from,
+                                    localField: localField,
+                                    foreignField: foreignField,
+                                    as: as
+                                }
+                            }
+                        ]).toArray()
+                        .then(data => {
+                            console.log(data)
                         })
                         .catch(err => reject(err))
                 })

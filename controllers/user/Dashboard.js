@@ -1,37 +1,34 @@
-const { join } = require("path")
-const { commonInfo } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
-const model = require(join(__dirname, "../../", "db", "model"));
+const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 
-
-const dashboardView = (req, res, next) => {
-
-    let dashboard = {
-        accountDeactive: req.user.account_activation_end,
-        maxApp: req.user.max_app_install,
-        appInstalled: req.user.app_installed
-    }
-
-    res.render("user/dashboard", {
-        info: commonInfo,
-        title: 'Dashboard',
-        userName: req.user.name,
-        email: req.user.email,
-        active: req.user.active,
-        sidebar: sidebar,
-        csrfToken: req.csrfToken(),
-        path: req.path
-    })
+exports.dashboardView = (req, res, next) => {
+    let user = new model('users')
+    
+    user.findOne({ _id: req.user._id })
+        .then(userData => {
+            let dashboardData = {
+                info: commonInfo,
+                title: 'Dashboard',
+                userName: req.user.name,
+                email: req.user.email,
+                active: req.user.active,
+                sidebar: sidebar,
+                csrfToken: req.csrfToken(),
+                balance: userData.reserved_ammount,
+                path: req.path,
+                active: dateTime.format(new Date(userData.account_active_date), 'DD-MM-YYYY'),
+                expire: dateTime.format(new Date(userData.account_activation_end), 'DD-MM-YYYY'),
+                maxApp: userData.max_app_install,
+                appInstalled: userData.app_installed,
+                totalSubscriber: userData.total_subscribe
+            }
+            
+            res.render("user/dashboard", dashboardData)
+        })
+        .catch(err => next(err))
 }
 
-const userLogout = (req, res) => {
-    req.logout()
+exports.userLogout = (req, res) => {
     req.flash('userLoginScreenSuccessMessage', 'Successfully Logout')
+    req.logout()
     res.redirect(web.userLogin.url)
-}
-
-module.exports = {
-    dashboardView,
-    userLogout
 }

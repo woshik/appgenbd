@@ -1,7 +1,8 @@
 $(document).ready(function() {
-    $("#message").fadeOut(0)
-    var check = 1
+    var check = 1,
+        timeOut
     $("#installAppForm").unbind("submit").bind("submit", function(e) {
+        $("#message").fadeOut(0)
         e.preventDefault()
         var form = $(this)
         var url = form.attr("action")
@@ -15,7 +16,6 @@ $(document).ready(function() {
             data: form.serialize(),
             dataType: "json",
             success: function(res) {
-                $("#message").html('')
                 if (res.success === true) {
                     if (check === 1) {
                         $('#smsUrl').val(res.message.sms)
@@ -41,6 +41,10 @@ $(document).ready(function() {
                         res.message +
                         '</div>').fadeIn(1000)
                 }
+                clearTimeout(timeOut)
+                timeOut = setTimeout(function() {
+                    $("#message").fadeOut(1000)
+                }, 5000)
             }
         })
     })

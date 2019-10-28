@@ -1,8 +1,8 @@
 $(document).ready(function() {
-    $("#message").fadeOut(0);
-
+    var timeOut;
     $("#uploadContentForm").unbind("submit").bind("submit", function(e) {
         e.preventDefault()
+        $("#message").fadeOut(0);
         var form = $(this)
         var url = form.attr("action")
         var type = form.attr("method")
@@ -27,6 +27,11 @@ $(document).ready(function() {
                         res.message +
                         '</div>').fadeIn(1000)
                 }
+
+                clearTimeout(timeOut)
+                timeOut = setTimeout(function() {
+                    $("#message").fadeOut(1000)
+                }, 5000)
             }
         })
     })

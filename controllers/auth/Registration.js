@@ -1,3 +1,6 @@
+const crypto = require('crypto')
+const { hashPassword, sendMail } = require(join(BASE_DIR, 'core', 'util'))
+
 exports.registrationView = (req, res) => {
     res.render("auth/registration", {
         info: commonInfo,
@@ -54,13 +57,16 @@ exports.registration = (req, res, next) => {
                             email: validateResult.value.email,
                             password: passwordHashed,
                             email_verify: false,
+                            reserved_ammount: 0,
                             token: Math.floor(Math.random() * 100000),
                             token_refresh: now.setMinutes(now.getMinutes() + 10),
                             max_app_install: 0,
-                            app_installed: 0,
+                            app_install: 0,
                             total_payment: 0,
+                            total_subscribe: 0,
                             account_activation_end: BDnow,
                             mail_for_verification: 1,
+                            account_active_date: BDnow,
                             account_active: true,
                             account_create: BDnow,
                         })

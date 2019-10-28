@@ -124,6 +124,17 @@ module.exports = {
             appListView: 'get',
             appList: 'post'
         },
+        middleware: [isUserAuthenticated],
+        path: 'user'
+    },
+
+    appdetails: {
+        url: '/appdetails/:appId',
+        controller: 'AppDetails',
+        methods: {
+            appDetailsView: 'get',
+            appDetails: 'post'
+        },
         middleware: [isUserAuthenticated, canAccess],
         path: 'user'
     },

@@ -1,4 +1,5 @@
 const config = require('config')
+const { logger } = require(join(BASE_DIR, 'core', 'util'))
 const MongoClient = require('mongodb').MongoClient;
 
 let _db;

@@ -3,58 +3,64 @@
 <div class="container-fluid">
     <div class="row">
         <div class="outer-w3-agile col-xl">
-            <div class="stat-grid p-3 d-flex align-items-center justify-content-between bg-primary">
+            <h4 class="tittle-w3-agileits mb-2">Server Overview</h4>
+            <div class="stat-grid p-3 d-flex align-items-center justify-content-between custom-block block-1">
+                <div class="s-l">
+                    <h5>Account Balance</h5>
+                </div>
+                <div class="s-r">
+                    <h6>
+                        <%=balance%> Tk
+                    </h6>
+                </div>
+            </div>
+            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-2">
                 <div class="s-l">
                     <h5>Account Active</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        
-                        <i class="far fa-edit"></i>
+                        <%=active%>
                     </h6>
                 </div>
             </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between bg-success">
+            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-3">
                 <div class="s-l">
-                    <h5>Account Deactive</h5>
+                    <h5>Account Expire</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        
-                        <i class="far fa-smile"></i>
+                        <%=expire%>
                     </h6>
                 </div>
             </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between bg-danger">
+            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-4">
                 <div class="s-l">
-                    <h5>App Amount</h5>
+                    <h5>Max App Install</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        
-                        <i class="fas fa-tasks"></i>
+                        <%=maxApp%>
                     </h6>
                 </div>
             </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between bg-success">
+            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-5">
                 <div class="s-l">
                     <h5>App Installed</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        
-                        <i class="fas fa-users"></i>
+                        <%=appInstalled%>
                     </h6>
                 </div>
             </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between bg-primary">
+            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-6">
                 <div class="s-l">
-                    <h5></h5>
+                    <h5>Total Subscriber</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        
-                        <i class="fas fa-users"></i>
+                        <%=totalSubscriber%>
                     </h6>
                 </div>
             </div>

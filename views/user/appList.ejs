@@ -12,7 +12,7 @@
                         <th scope="col">APP ID</th>
                         <th scope="col">Subscribe</th>
                         <th scope="col">Dial</th>
-                        <th scope="col">Details</th>
+                        <th scope="col">App Details</th>
                     </tr>
                 </thead>
             </table>
@@ -35,12 +35,12 @@ $(document).ready(function() {
             type: "POST"
         },
         "columnDefs": [{
-            "targets": [0, 1, 2, 3, 4],
+            "targets": [4],
             "orderable": false
         }],
         "lengthMenu": [
-            [25, 50, 75, 100, -1],
-            [25, 50, 75, 100, "All"]
+            [15, 25, 50, 75, 100, 200],
+            [15, 25, 50, 75, 100, 200]
         ],
     })
 })

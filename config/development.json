@@ -15,5 +15,10 @@
 		"subscription": "http://localhost:7000/subscription/send",
 		"subscription_check": "http://localhost:7000/subscription/getStatus",
 		"ussd": "http://localhost:7000/ussd/send"
+	},
+	"ssl": {
+		"cert": "/ssl/cert.pem",
+		"chain": "/ssl/chain.pem",
+		"privkey": "/ssl/privkey.pem"
 	}
 }

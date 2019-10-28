@@ -1,5 +1,8 @@
-const appListView = (req, res, next) => {
-    res.render("user/appList", {
+const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
+
+exports.appListView = (req, res, next) => {
+
+    let appListData = {
         info: commonInfo,
         title: 'App List',
         userName: req.user.name,
@@ -8,11 +11,21 @@ const appListView = (req, res, next) => {
         path: req.path,
         csrfToken: req.csrfToken(),
         appList: web.appList.url,
-    })
+    }
+
+    res.render("user/appList", appListData)
 }
 
-const appList = (req, res, next) => {
+exports.appList = (req, res, next) => {
     const app = new model("app")
+    let order = ['app_name', 'app_id', 'subscribe', 'dial']
+    let sort = {}
+
+    if (req.body.order) {
+        sort[order[parseInt(req.body.order[0].column)]] = req.body.order[0].dir === 'asc' ? 1 : -1
+    } else {
+        sort[order[0]] = 1
+    }
 
     app.dataTable({
             user_id: req.user._id,
@@ -20,13 +33,18 @@ const appList = (req, res, next) => {
         }, {
             _id: 0,
             userId: 0,
-            randomSerial: 0,
             password: 0
-        }, parseInt(req.body.start), parseInt(req.body.length))
+        }, parseInt(req.body.start), parseInt(req.body.length), sort)
         .then(result => {
             let response = []
             result.data.map((item, index) => {
-                response.push([item.app_name, item.appId, item.subscribe, item.dial, `<a href="#" class="btn btn-success">App Details</a>`])
+                response.push([
+                    item.app_name,
+                    item.app_id,
+                    item.subscribe,
+                    item.dial,
+                    `<a href="${web.appdetails.url.replace(':appId', item.randomSerial)}" class="btn btn-success">App Details</a>`
+                ])
             })
 
             return res.json({
@@ -36,12 +54,5 @@ const appList = (req, res, next) => {
                 draw: parseInt(req.query.draw),
             })
         })
-        .catch(err => console.log(err))
-}
-
-
-
-module.exports = {
-    appListView,
-    appList,
+        .catch(err => next(err))
 }

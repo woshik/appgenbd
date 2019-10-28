@@ -1,13 +1,9 @@
-const { join } = require("path")
-const Joi = require('@hapi/joi')
-const crypto = require('crypto')
-const { commonInfo, fromErrorMessage } = require(join(__dirname, "../../", "core", "util"))
-const web = require(join(__dirname, "../../", "urlconf", "webRule"))
-const sidebar = require(join(__dirname, "../../", "urlconf", "sideBar"))
-const model = require(join(__dirname, "../../", "db", "model"))
+const { randomBytes } = require('crypto')
+const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 
-const appInstallView = (req, res, next) => {
-    res.render("user/installApp", {
+exports.appInstallView = (req, res, next) => {
+
+    let installAppData = {
         info: commonInfo,
         title: 'Install App',
         userName: req.user.name,
@@ -16,10 +12,12 @@ const appInstallView = (req, res, next) => {
         path: req.path,
         csrfToken: req.csrfToken(),
         installAppForm: web.appName.url,
-    });
-};
+    }
 
-const appName = (req, res, next) => {
+    res.render("user/installApp", installAppData)
+}
+
+exports.appName = (req, res, next) => {
     const schema = Joi.object({
         appName: Joi.string().trim().pattern(/^[a-zA-Z0-9\s]+$/).required().label("App Name"),
     })
@@ -32,6 +30,13 @@ const appName = (req, res, next) => {
         return res.status(200).json({
             success: false,
             message: fromErrorMessage(validateResult.error.details[0])
+        })
+    }
+
+    if (req.user.max_app_install === 0) {
+        return res.status(200).json({
+            success: false,
+            message: 'Please, first pay your bill. Your are now using trial version.'
         })
     }
 
@@ -50,10 +55,10 @@ const appName = (req, res, next) => {
                 return res.status(200).json({
                     success: false,
                     message: `This app name already exist.`
-                });
+                })
             }
 
-            let randomSerial = crypto.randomBytes(20).toString('hex')
+            let randomSerial = randomBytes(20).toString('hex')
 
             app.save({
                     user_id: req.user._id,
@@ -61,7 +66,7 @@ const appName = (req, res, next) => {
                     subscribe: 0,
                     dial: 0,
                     randomSerial: randomSerial,
-                    createDate: new Date(),
+                    create_date: dateTime.format(dateTime.addHours(new Date(), 6), "YYYY-MM-DD HH:mm:ss"),
                 })
                 .then(dataInsectionResult => {
                     const user = new model("users")
@@ -79,15 +84,13 @@ const appName = (req, res, next) => {
                                 })
                             }
 
-                            let response = {
-                                'ussd': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/ussd`,
-                                'sms': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/sms`,
-                                'url': web.appInstall.url,
-                            }
-
                             return res.status(200).json({
                                 success: true,
-                                message: response
+                                message: {
+                                    'ussd': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/ussd`,
+                                    'sms': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/sms`,
+                                    'url': web.appInstall.url,
+                                }
                             })
                         })
                         .catch(err => next(err))
@@ -97,12 +100,12 @@ const appName = (req, res, next) => {
         .catch(err => next(err))
 };
 
-const appInstall = (req, res, next) => {
+exports.appInstall = (req, res, next) => {
     const schema = Joi.object({
         appName: Joi.string().trim().required().label("App Name"),
         appId: Joi.string().trim().label("App Id"),
         password: Joi.string().trim().label("Password"),
-    });
+    })
 
     const validateResult = schema.validate({
         appName: req.body.appName,
@@ -114,19 +117,26 @@ const appInstall = (req, res, next) => {
         return res.status(200).json({
             success: false,
             message: fromErrorMessage(validateResult.error.details[0])
-        });
+        })
+    }
+
+    if (req.user.max_app_install === 0) {
+        return res.status(200).json({
+            success: false,
+            message: 'Please, first pay your bill. Your are now using trial version.'
+        })
     }
 
     if (req.user.max_app_install === req.user.app_install) {
         return res.status(200).json({
             success: false,
             message: `Your already install ${req.user.app_install} app`
-        });
+        })
     }
 
     const app = new model("app");
 
-    app.updateOne({ userId: req.user._id, app_name: validateResult.value.appName }, {
+    app.updateOne({ user_id: req.user._id, app_name: validateResult.value.appName }, {
             'app_id': validateResult.value.appId,
             'password': validateResult.value.password
         })
@@ -134,7 +144,7 @@ const appInstall = (req, res, next) => {
             if (!updateData.result.nModified) {
                 return res.status(200).json({
                     success: false,
-                    message: 'Please, first install app name'
+                    message: 'Your app not found.'
                 })
 
             }
@@ -147,10 +157,4 @@ const appInstall = (req, res, next) => {
             })
         })
         .catch(err => next(err))
-}
-
-module.exports = {
-    appInstallView,
-    appInstall,
-    appName,
 }

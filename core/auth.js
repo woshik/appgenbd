@@ -1,5 +1,7 @@
+const passport = require('passport')
 const localStrategy = require('passport-local').Strategy
-
+const bcrypt = require('bcryptjs')
+const { ObjectId } = require('mongodb')
 
 module.exports = (app) => {
     passport.use('users',
@@ -12,7 +14,7 @@ module.exports = (app) => {
                         .then(isMatch => {
                             if (isMatch) {
                                 if (userData.email_verify) {
-                                    if (userData.account_active) {
+                                    if (userData.account_active && !userData.account_delete) {
                                         return done(null, userData)
                                     } else {
                                         return done(null, false, { message: 'Your account is deactivated. Please contact with admin.' })
@@ -36,7 +38,6 @@ module.exports = (app) => {
     passport.use('admin',
         new localStrategy({ usernameField: 'email' }, (email, password, done) => {
             let admin = new model('admin')
-            console.log(admin)
             admin.findOne({ email: email })
                 .then(userData => {
                     if (!userData) return done(null, false, { message: "Email address not register" })
@@ -61,28 +62,25 @@ module.exports = (app) => {
 
     passport.deserializeUser((key, done) => {
         let user = new model(key.model)
-        user.findOne({ _id: ObjectId(key.id) })
+        user.findOne({ _id: ObjectId(key.id) }, {
+                _id: 1,
+                name: 1,
+                number: 1,
+                email: 1,
+                account_activation_end: 1,
+                max_app_install: 1,
+                app_install: 1,
+                super_user: 1
+            })
             .then(userData => {
-                let obj = {}
-                if (key.model === 'users') {
-                    obj = {
-                        _id: userData._id,
-                        name: userData.name,
-                        number: userData.number,
-                        email: userData.email,
-                        account_activation_end: userData.account_activation_end,
-                        max_app_install: userData.max_app_install,
-                        app_install: userData.app_install,
-                        active: dateTime.subtract(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6)).toDays() >= 0
-                    }
-                } else {
-                    obj = {
-                        _id: userData._id,
-                        email: userData.email,
-                        super_user: userData.super_user
-                    }
+                if (!userData) {
+                    return done(null, false)
                 }
-                done(null, obj)
+
+                if (key.model === 'users') {
+                    userData.active = dateTime.subtract(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6)).toDays() >= 0
+                }
+                done(null, userData)
             })
             .catch(err => done(err))
     })

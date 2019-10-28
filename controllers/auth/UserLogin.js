@@ -1,3 +1,5 @@
+const passport = require("passport")
+
 exports.userLoginView = (req, res) => {
     res.render("auth/userLogin", {
         info: commonInfo,

@@ -12,5 +12,10 @@
 		"subscription": "https://developer.bdapps.com/subscription/send",
 		"subscription_check": "https://developer.bdapps.com/subscription/getStatus",
 		"ussd": "https://developer.bdapps.com/ussd/send"
+	},
+	"ssl": {
+		"cert": "/etc/letsencrypt/live/appgenbd.com/cert.pem",
+		"chain": "/etc/letsencrypt/live/appgenbd.com/chain.pem",
+		"privkey": "/etc/letsencrypt/live/appgenbd.com/privkey.pem"
 	}
 }

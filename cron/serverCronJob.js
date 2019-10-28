@@ -1,5 +1,6 @@
 const { CronJob } = require('cron')
 const model = require(join(BASE_DIR, 'db', 'model'))
+const { logger } = require(join(BASE_DIR, 'core', 'util'))
 
 // mail sending limit reset
 new CronJob('0 */20 * * * *', function() {

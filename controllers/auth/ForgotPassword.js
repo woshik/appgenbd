@@ -1,3 +1,6 @@
+const crypto = require('crypto')
+const { hashPassword, sendMail } = require(join(BASE_DIR, 'core', 'util'))
+
 exports.forgotPasswordView = (req, res) => {
     res.render("auth/forgotPassword", {
         info: commonInfo,

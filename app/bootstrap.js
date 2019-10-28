@@ -1,38 +1,48 @@
 // import other usefull modules
-const http = require("http")
-const express = require("express")
-const helmet = require("helmet")
-const compression = require("compression")
-const csrf = require("csurf")
+const https = require('https')
+const express = require('express')
+const helmet = require('helmet')
+const compression = require('compression')
+const csrf = require('csurf')
+const config = require("config")
+const fs = require('fs')
 
 // import module from project
-
-const { mongoClient } = require(join(BASE_DIR, "db", "database"))
-const { sessionStore, cookieStore } = require(join(BASE_DIR, "core", "storage"))
-const { flash } = require(join(BASE_DIR, "core", "util"))
-const auth = require(join(BASE_DIR, "core", "auth"))
-
-// define port number
-const {
-    PORT = 5000
-} = process.env
+const { mongoClient } = require(join(BASE_DIR, 'db', 'database'))
+const { sessionStore, cookieStore } = require(join(BASE_DIR, 'core', 'storage'))
+const { flash, logger } = require(join(BASE_DIR, 'core', 'util'))
+const auth = require(join(BASE_DIR, 'core', 'auth'))
+require('./autoLoader')
 
 // calling express function
 const app = express()
+
+// node js process error handle
+process.on('uncaughtException', (err) => {
+    logger.error(err)
+})
+
+process.on('unhandledRejection', (err) => {
+    logger.error(err)
+})
+
+
+// HTTPS configurataion
+
 
 // security configuretaion
 app.use(helmet())
 app.use(compression())
 
 // set view engine configuretaion
-app.set("view engine", "ejs")
-app.set("views", join(__dirname, "..", "views"))
+app.set('view engine', 'ejs')
+app.set('views', join(BASE_DIR, 'views'))
 
 // app configuretaion
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(express.static(join(BASE_DIR, "public")))
-app.use(express.static(join(BASE_DIR, "custom")))
+app.use(express.static(join(BASE_DIR, 'public')))
+app.use(express.static(join(BASE_DIR, 'custom')))
 
 // api routing
 //app.use("/api", require(join(__dirname, "routes", "api")))
@@ -64,14 +74,14 @@ app.use((err, req, res, next) => {
     res.status(500).send("Something fail");
 })
 
-process.on('uncaughtException', function(err) {
-    logger.error(err)
-})
-
 // start mongodb and then runing the app on defined port number
 mongoClient
     .then(() => {
-        http.createServer(app).listen(PORT, () => console.log(`app is runing on port ${PORT}`))
+        https.createServer({
+            key: fs.readFileSync(join(BASE_DIR, config.get('ssl.privkey')), 'utf8'),
+            cert: fs.readFileSync(join(BASE_DIR, config.get('ssl.cert')), 'utf8'),
+            ca: fs.readFileSync(join(BASE_DIR, config.get('ssl.chain')), 'utf8')
+        }, app).listen(5000, () => console.log(`app is runing on port 5000`))
     })
     .catch(err => {
         logger.error(err)

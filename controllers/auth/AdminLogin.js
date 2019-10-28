@@ -1,3 +1,5 @@
+const passport = require("passport")
+
 exports.adminLoginView = (req, res) => {
     res.render("auth/adminLogin", {
         info: commonInfo,
