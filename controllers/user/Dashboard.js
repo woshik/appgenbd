@@ -18,7 +18,7 @@ exports.dashboardView = (req, res, next) => {
                 active: dateTime.format(new Date(userData.account_active_date), 'DD-MM-YYYY'),
                 expire: dateTime.format(new Date(userData.account_activation_end), 'DD-MM-YYYY'),
                 maxApp: userData.max_app_install,
-                appInstalled: userData.app_installed,
+                appInstalled: userData.app_install,
                 totalSubscriber: userData.total_subscribe
             }
             

@@ -17,6 +17,23 @@ require('./autoLoader')
 // calling express function
 const app = express()
 
+
+// HTTPS configurataion
+let credential
+if (process.env.NODE_ENV === "production") {
+    credential = {
+        key: fs.readFileSync(join(config.get('ssl.privkey')), 'utf8'),
+        cert: fs.readFileSync(join(config.get('ssl.cert')), 'utf8'),
+        ca: fs.readFileSync(join(config.get('ssl.chain')), 'utf8')
+    }
+} else {
+    credential = {
+        key: fs.readFileSync(join(BASE_DIR, config.get('ssl.privkey')), 'utf8'),
+        cert: fs.readFileSync(join(BASE_DIR, config.get('ssl.cert')), 'utf8'),
+        ca: fs.readFileSync(join(BASE_DIR, config.get('ssl.chain')), 'utf8')
+    }
+}
+
 // node js process error handle
 process.on('uncaughtException', (err) => {
     logger.error(err)
@@ -25,10 +42,6 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
     logger.error(err)
 })
-
-
-// HTTPS configurataion
-
 
 // security configuretaion
 app.use(helmet())
@@ -77,11 +90,7 @@ app.use((err, req, res, next) => {
 // start mongodb and then runing the app on defined port number
 mongoClient
     .then(() => {
-        https.createServer({
-            key: fs.readFileSync(join(BASE_DIR, config.get('ssl.privkey')), 'utf8'),
-            cert: fs.readFileSync(join(BASE_DIR, config.get('ssl.cert')), 'utf8'),
-            ca: fs.readFileSync(join(BASE_DIR, config.get('ssl.chain')), 'utf8')
-        }, app).listen(5000, () => console.log(`app is runing on port 5000`))
+        https.createServer(credential, app).listen(5000, () => console.log(`app is runing on port 5000`))
     })
     .catch(err => {
         logger.error(err)
