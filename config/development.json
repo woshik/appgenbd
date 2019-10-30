@@ -1,5 +1,6 @@
 {
 	"name": "App Gen BD",
+	"PORT": 3000,
 	"mail": {
 		"host": "server232.web-hosting.com",
 		"username": "tech@identicalit.com",

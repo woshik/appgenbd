@@ -61,10 +61,10 @@ exports.contentUpload = (req, res, next) => {
             user_id: req.user._id,
             _id: appId,
             content: { $elemMatch: { date: validateResult.value.messageDate } }
-        })
-        .then(message => {
-            console.log(message)
-            if (message && message.length === 10) {
+        }, { content: 1 })
+        .then(contentData => {
+            console.log(contentData)
+            if (contentData && contentData.length === 10) {
                 return res.status(200).json({
                     success: false,
                     message: 'Already you are submit 10 message for that date'
