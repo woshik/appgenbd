@@ -78,7 +78,6 @@ module.exports = (app) => {
                 }
 
                 if (key.model === 'users') {
-                    console.log(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6))
                     userData.active = dateTime.subtract(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6)).toDays() >= 0
                 }
                 done(null, userData)

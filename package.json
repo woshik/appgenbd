@@ -10,7 +10,7 @@
         "pm2": "export NODE_ENV=production && pm2 start index.js"
     },
     "engines": {
-        "node": "12.11.0"
+        "node": "12.13.0"
     },
     "author": "Woshikuzzaman Anik",
     "license": "MIT",

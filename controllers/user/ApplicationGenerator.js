@@ -1,8 +1,10 @@
+const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 const PDFDocument = require('pdfkit')
 const fs = require('fs')
 
 const applicationGeneratorView = (req, res, next) => {
-	res.render("user/applicationGenerator", {
+
+    let = {
 	    info: commonInfo,
 	    title: 'Application Generator',
 	    userName: req.user.name,
@@ -11,7 +13,9 @@ const applicationGeneratorView = (req, res, next) => {
 	    path: req.path,
 	    csrfToken: req.csrfToken(),
 	    applicationGeneratorForm: web.applicationGenerator.url,
-	});
+	}
+
+	res.render("user/applicationGenerator", );
 };
 
 const applicationGenerator = (req, res, next) => {
