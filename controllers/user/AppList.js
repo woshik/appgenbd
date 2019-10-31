@@ -29,11 +29,15 @@ exports.appList = (req, res, next) => {
 
     app.dataTable({
             user_id: req.user._id,
-            app_name: RegExp(`.*${req.body.search.value}.*`, 'i')
+            '$or': [
+                { app_name: RegExp(`.*${req.body.search.value}.*`, 'i') },
+                { app_id: RegExp(`.*${req.body.search.value}.*`, 'i') }
+            ]
         }, {
             _id: 0,
-            userId: 0,
-            password: 0
+            user_id: 0,
+            password: 0,
+            randomSerial: 0,
         }, parseInt(req.body.start), parseInt(req.body.length), sort)
         .then(result => {
             let response = []
@@ -43,7 +47,8 @@ exports.appList = (req, res, next) => {
                     item.app_id,
                     item.subscribe,
                     item.dial,
-                    `<a href="${web.appdetails.url.replace(':appId', item.randomSerial)}" class="btn btn-success">App Details</a>`
+                    dateTime.format(item.create_date, "DD-MM-YYYY hh:mm:ss A"),
+                    `<a href="${web.appdetails.url.replace(':appName', item.app_name)}" class="btn btn-success">App Details</a>`
                 ])
             })
 

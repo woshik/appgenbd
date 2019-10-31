@@ -6,6 +6,7 @@
     "main": "index.js",
     "scripts": {
         "start": "export NODE_ENV=development && node index.js",
+        "server": "export NODE_ENV=production && node index.js",
         "watch": "export NODE_ENV=development && nodemon index.js",
         "pm2": "export NODE_ENV=production && pm2 start index.js"
     },

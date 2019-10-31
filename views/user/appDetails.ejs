@@ -1,0 +1,136 @@
+<%- include('base/base_header.ejs') %>
+<div class="outer-w3-agile mt-3">
+    <h4 class="tittle-w3-agileits mb-4">
+        <%=title%>
+    </h4>
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="appDetails-tab" data-toggle="tab" href="#appDetails" role="tab" aria-controls="appDetails" aria-selected="false">App details</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="messageContent-tab" data-toggle="tab" href="#messageContent" role="tab" aria-controls="messageContent" aria-selected="false">Message Content</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane show active" id="appDetails" role="tabpanel" aria-labelledby="appDetails-tab" style="padding: 25px;">
+            <% if(appInfoNeeded) { %>
+            <div id="app-update-message"></div>
+            <div id="appUpdateSectionHidden">
+                <form action="<%=appUpdate%>" method="post" id="appUpdate">
+                    <div class="form-group row">
+                        <label for="appId" class="col-sm-2 col-form-label">App Id</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="appId" class="form-control" id="appId" placeholder="App Id" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="appPassword" class="col-sm-2 col-form-label">App Password</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="appPassword" class="form-control" id="appPassword" placeholder="App Password" autocomplete="off">
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                    <br>
+                </form>
+            </div>
+            <% } %>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Message Receiving URL</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" value="<%=sms%>" readonly>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Ussd Connection URL</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" value="<%=ussd%>" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="messageContent" role="tabpanel" aria-labelledby="messageContent-tab" style="padding: 25px;">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-striped" id="appDetailsTable" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Time</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include('base/base_footer.ejs') %>
+<script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+    var appList = $('#appDetailsTable').DataTable({
+        "processing": true,
+        "serverSide": true,
+        "order": [],
+        "ajax": {
+            url: "<%=appDetailUrl%>",
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            type: "POST"
+        },
+        "columnDefs": [{
+            "targets": [4],
+            "orderable": false
+        }],
+        "lengthMenu": [
+            [10, 25, 50, 75, 100, 200],
+            [10, 25, 50, 75, 100, 200]
+        ],
+    })
+
+    var timeOut;
+    $("#appUpdate").unbind("submit").bind("submit", function(e) {
+        e.preventDefault()
+        $("#app-update-message").fadeOut(0);
+        var form = $(this)
+        var url = form.attr("action")
+        var type = form.attr("method")
+        $.ajax({
+            url: url,
+            type: type,
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            data: form.serialize(),
+            dataType: "json",
+            success: function(res) {
+                if (res.success === true) {
+                    $('#appUpdateSectionHidden').slideUp()
+                    $("#app-update-message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message +
+                        '</div>').fadeIn(1000)
+                    setTimeout(function () {
+                        $('#appUpdateSectionHidden').empty()
+                    }, 2000)
+                    
+                } else {
+                    $("#app-update-message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message +
+                        '</div>').fadeIn(1000)
+                }
+
+                clearTimeout(timeOut)
+                timeOut = setTimeout(function() {
+                    $("#app-update-message").fadeOut(1000)
+                }, 5000)
+            }
+        })
+    })
+})
+</script>
+<%- include('base/close_footer.ejs') %>

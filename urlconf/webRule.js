@@ -135,11 +135,21 @@ module.exports = {
     },
 
     appdetails: {
-        url: '/appdetails/:appId',
+        url: '/appdetails/:appName',
         controller: 'AppDetails',
         methods: {
             appDetailsView: 'get',
             appDetails: 'post'
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
+
+    appdInfoUpdate: {
+        url: '/appupdate/:appName',
+        controller: 'AppDetails',
+        methods: {
+            appUpdate: 'post'
         },
         middleware: [isUserAuthenticated, canAccess],
         path: 'user'

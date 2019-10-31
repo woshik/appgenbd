@@ -66,7 +66,7 @@ exports.appName = (req, res, next) => {
                     subscribe: 0,
                     dial: 0,
                     randomSerial: randomSerial,
-                    create_date: dateTime.format(dateTime.addHours(new Date(), 6), "YYYY-MM-DD HH:mm:ss"),
+                    create_date: dateTime.addHours(new Date(), 6),
                 })
                 .then(dataInsectionResult => {
                     const user = new model("users")
@@ -136,25 +136,36 @@ exports.appInstall = (req, res, next) => {
 
     const app = new model("app");
 
-    app.updateOne({ user_id: req.user._id, app_name: validateResult.value.appName }, {
-            'app_id': validateResult.value.appId,
-            'password': validateResult.value.password
-        })
-        .then(updateData => {
-            if (!updateData.result.nModified) {
+    app.findOne({ app_id: validateResult.value.appId }, { _id: 1 })
+        .then(appInfo => {
+            if (appInfo) {
                 return res.status(200).json({
                     success: false,
-                    message: 'Your app not found.'
-                })
-
+                    message: 'This app id already exist.'
+                });
             }
-            return res.status(200).json({
-                success: true,
-                message: {
-                    msg: 'Your app is successfully installed',
-                    url: web.appName.url
-                }
-            })
+
+            app.updateOne({ user_id: req.user._id, app_name: validateResult.value.appName }, {
+                    'app_id': validateResult.value.appId,
+                    'password': validateResult.value.password
+                })
+                .then(updateData => {
+                    if (!updateData.result.nModified) {
+                        return res.status(200).json({
+                            success: false,
+                            message: 'Your app not found.'
+                        })
+
+                    }
+                    return res.status(200).json({
+                        success: true,
+                        message: {
+                            msg: 'Your app is successfully installed',
+                            url: web.appName.url
+                        }
+                    })
+                })
+                .catch(err => next(err))
         })
         .catch(err => next(err))
 }

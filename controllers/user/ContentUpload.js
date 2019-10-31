@@ -1,10 +1,9 @@
-const { ObjectId } = require('mongodb')
 const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 
 exports.contentUploadView = (req, res, next) => {
     const app = new model("app");
 
-    app.find({ user_id: req.user._id }, { app_name: 1 })
+    app.find({ user_id: req.user._id }, { app_name: 1 , _id: 0})
         .then(result => {
             let contentUpdateData = {
                 info: commonInfo,
@@ -27,14 +26,14 @@ exports.contentUploadView = (req, res, next) => {
 exports.contentUpload = (req, res, next) => {
 
     const schema = Joi.object({
-        appId: Joi.string().trim().pattern(/^[a-zA-Z0-9]+$/).required().label("App name"),
+        appName: Joi.string().trim().required().label("App name"),
         messageDate: Joi.date().greater(new Date(dateTime.format(dateTime.addHours(new Date, 6), "YYYY-MM-DD"))).required().label("Message receiving date"),
         messageTime: Joi.string().trim().pattern(/^[0-9:]+$/).required().label("Message receiving time"),
         content: Joi.string().trim().required().label("Message content")
     })
 
     const validateResult = schema.validate({
-        appId: req.body.appId,
+        appName: req.body.appName,
         messageDate: req.body.messageDate,
         messageTime: req.body.messageTime,
         content: req.body.messageContent
@@ -47,23 +46,15 @@ exports.contentUpload = (req, res, next) => {
         })
     }
 
-    try {
-        var appId = ObjectId(validateResult.value.appId)
-    } catch (ex) {
-        return res.status(200).json({
-            success: false,
-            message: 'Your app id isn\'t correct. Please don\'t change it.'
-        })
-    }
+
 
     app = new model('app')
     app.find({
             user_id: req.user._id,
-            _id: appId,
-            content: { $elemMatch: { date: validateResult.value.messageDate } }
+            app_name: validateResult.value.appName,
+            content: { $elemMatch: { date: req.body.messageDate } }
         }, { content: 1 })
         .then(contentData => {
-            console.log(contentData)
             if (contentData && contentData.length === 10) {
                 return res.status(200).json({
                     success: false,
@@ -71,10 +62,10 @@ exports.contentUpload = (req, res, next) => {
                 })
             }
 
-            app.customUpdateOne({ user_id: req.user._id, _id: appId }, {
+            app.customUpdateOne({ user_id: req.user._id, app_name: validateResult.value.appName }, {
                     "$push": {
                         "content": {
-                            "date": validateResult.value.messageDate,
+                            "date": req.body.messageDate,
                             "time": validateResult.value.messageTime,
                             "message": validateResult.value.content
                         }

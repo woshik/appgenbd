@@ -13,8 +13,8 @@ exports.registrationView = (req, res) => {
 
 exports.registration = (req, res, next) => {
     const schema = Joi.object({
-        name: Joi.string().trim().pattern(/^[a-zA-Z\s]+$/).required().label("Name"),
-        number: Joi.string().trim().pattern(/^(01|\+8801)[0-9]{9,14}/).required().label("Mobile number"),
+        name: Joi.string().trim().pattern(/^[a-zA-Z\s]+$/g).required().label("Name"),
+        number: Joi.string().trim().pattern(/^(\+8801)[0-9]{9}$/g).required().label("Mobile number"),
         email: Joi.string().trim().email().required().label("Email address"),
         password: Joi.string().trim().min(5).max(50).label("Password"),
         confirm_password: Joi.ref("password")
@@ -49,7 +49,8 @@ exports.registration = (req, res, next) => {
             hashPassword(validateResult.value.password)
                 .then(passwordHashed => {
                     let now = new Date()
-                    let BDnow = dateTime.format(dateTime.addHours(now, 6), "YYYY-MM-DD HH:mm:ss")
+                    let BdNowWithDateTime = dateTime.format(dateTime.addHours(now, 6), "YYYY-MM-DD HH:mm:ss")
+                    let BdNowWithDate = dateTime.format(dateTime.addHours(now, 6), "YYYY-MM-DD")
                     user.save({
                             userRDId: crypto.randomBytes(30).toString('hex'),
                             name: validateResult.value.name,
@@ -64,9 +65,9 @@ exports.registration = (req, res, next) => {
                             app_install: 0,
                             total_payment: 0,
                             total_subscribe: 0,
-                            account_activation_end: BDnow,
+                            account_activation_end: BdNowWithDate,
                             mail_for_verification: 1,
-                            account_active_date: BDnow,
+                            account_active_date: BdNowWithDate,
                             account_active: true,
                             account_create: BDnow,
                         })

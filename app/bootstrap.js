@@ -20,10 +20,12 @@ const app = express()
 
 // node js process error handle
 process.on('uncaughtException', (err) => {
+    console.log(err)
     logger.error(err)
 })
 
 process.on('unhandledRejection', (err) => {
+    console.log(err)
     logger.error(err)
 })
 
