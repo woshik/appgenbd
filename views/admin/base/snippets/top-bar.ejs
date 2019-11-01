@@ -19,12 +19,18 @@
                             <a style="text-align: center;display: block;"><%=email%></a>
                         </div>
                     </div>
-                    <a href="#" class="dropdown-item mt-3">
+                    <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#profileSetting" onclick="" data-backdrop="static">
                         <h4>
-                            <i class="far fa-user mr-3"></i>My Profile
+                            <i class="fas fa-user mr-3"></i>My Profile
                         </h4>
                     </a>
-                   
+                    
+                    <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#appSetting" onclick="" data-backdrop="static">
+                        <h4>
+                            <i class="fas fa-cogs mr-3"></i>App Setting
+                        </h4>
+                    </a>
+
                     <div class="dropdown-divider"></div>
                     
                     <a href="/logout/admin" class="dropdown-item btn">Logout</a>

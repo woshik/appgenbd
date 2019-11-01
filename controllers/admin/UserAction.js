@@ -1,9 +1,11 @@
 exports.payment = (req, res, next) => {
     const schema = Joi.object({
+        maxApp: Joi.number().min(15).required().label("Max App"),
         payment: Joi.number().min(350).required().label("Payment")
     })
 
     const validateResult = schema.validate({
+        maxApp: req.body.maxApp,
         payment: req.body.payment,
     })
 
