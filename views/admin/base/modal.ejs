@@ -10,9 +10,15 @@
             <div class="modal-body">
                 <div id="paymentError"></div>
                 <div class="form-group row">
-                    <label for="userPayment" class="col-sm-2 col-form-label">Payment</label>
+                    <label for="userMaxApp" class="col-sm-2 col-form-label">Max App</label>
                     <div class="col-sm-10">
-                        <input type="number" class="form-control" id="userPayment" placeholder="Payment">
+                        <input type="number" class="form-control" id="userMaxApp" placeholder="Max App">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="ammount" class="col-sm-2 col-form-label">Ammount</label>
+                    <div class="col-sm-10">
+                        <input type="number" class="form-control" id="ammount" placeholder="Ammount">
                     </div>
                 </div>
             </div>
@@ -22,6 +28,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="accountStatusChangeModalLabel" aria-hidden="true" id="accountStatusChange">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -70,21 +77,21 @@
             <div class="modal-body">
                 <div id="profile-setting-error-message"></div>
                 <div class="form-group row">
-                    <label for="adminEmail" class="col-sm-2 col-form-label">Email</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" name="adminEmail" id="adminEmail" placeholder="Email Address">
+                    <label for="adminEmail" class="col-sm-3 col-form-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="adminEmail" value="<%=email%>" placeholder="Email Address">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="adminPassword" class="col-sm-2 col-form-label">Password</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" name="adminPassword" id="adminPassword" placeholder="Password">
+                    <label for="adminPassword" class="col-sm-3 col-form-label">Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="adminPassword" placeholder="Password">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="adminConfirmPassword" class="col-sm-2 col-form-label">Confirm Password</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" name="adminConfirmPassword" id="adminConfirmPassword" placeholder="Confirm Password">
+                    <label for="adminConfirmPassword" class="col-sm-3 col-form-label">Confirm Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="adminConfirmPassword" placeholder="Confirm Password">
                     </div>
                 </div>
             </div>
@@ -106,17 +113,18 @@
             <div class="modal-body">
                 <div id="app-setting-error-message"></div>
                 <div class="form-group row">
-                    <label for="maxAppInstall" class="col-sm-2 col-form-label">Max App</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" name="maxAppInstall" id="maxAppInstall" placeholder="Max App">
+                    <label for="maxAppInstall" class="col-sm-3 col-form-label">Default Max App</label>
+                    <div class="col-sm-9">
+                        <input type="number" value="<%=maxAppCanInstall%>" class="form-control" id="maxAppInstall" placeholder="Default Max App">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="ammountPerMonth" class="col-sm-2 col-form-label">Ammount Per Month</label>
-                    <div class="col-sm-10">
-                        <input type="password" class="form-control" name="ammountPerMonth" id="ammountPerMonth" placeholder="Ammount Per Month">
+                    <label for="costPerMonth" class="col-sm-3 col-form-label">Cost Per Month</label>
+                    <div class="col-sm-9">
+                        <input type="number" value="<%=costPerMonth%>" class="form-control" id="costPerMonth" placeholder="Cost Per Month">
                     </div>
                 </div>
+                <input type="hidden" id="appSettingId" value="<%=appSettingId%>">
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success" id="appSettingButton">Change</button>

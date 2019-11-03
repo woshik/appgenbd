@@ -49,49 +49,72 @@ $(document).ready(function() {
             "orderable": false
         }],
         "lengthMenu": [
-            [10, 25, 50, 75, 100, -1],
-            [10, 25, 50, 75, 100, "All"]
+            [5, 10, 25, 50, 75, 100, -1],
+            [5, 10, 25, 50, 75, 100, "All"]
         ],
     })
 })
 
 function payment(id) {
     if (id) {
-        $("#paymentError").fadeOut(0)
-        $("#paymentButton").unbind("click").bind("click", function() {
-            $.ajax({
-                url: "<%=userPayment%>",
-                type: "POST",
-                headers: {
-                    'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                data: {
-                    'id': id,
-                    'payment': $('#userPayment').val()
-                },
-                dataType: "json",
-                success: function(res) {
-                    if (res.success === true) {
+        $.ajax({
+            url: "<%=maxAppInstallUrl%>",
+            type: "GET",
+            data: {
+                'id': id,
+            },
+            dataType: "json",
+            success: function(res) {
+                $("#paymentError").fadeOut(0)
+                if (res.success) {
+                    $("#userMaxApp").val(res.maxApp)
+                    $("#paymentButton").unbind("click").bind("click", function() {
+                        $("#paymentError").fadeOut(0)
+                        $.ajax({
+                            url: "<%=userPayment%>",
+                            type: "POST",
+                            headers: {
+                                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            data: {
+                                'id': id,
+                                'userMaxApp': $("#userMaxApp").val(),
+                                'ammount': $("#ammount").val(),
+                            },
+                            dataType: "json",
+                            success: function(res) {
+                                if (res.success) {
+                                    $("#paymentError").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                        res.message +
+                                        '</div>').fadeIn(1000)
+                                    userList.ajax.reload(null, false);
+                                } else {
+                                    $("#paymentError").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                        res.message +
+                                        '</div>').fadeIn(1000)
+                                }
 
-                    } else {
-                        clearTimeout(timeOut)
-                        $("#paymentError").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
-                            '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                            res.message +
-                            '</div>').fadeIn(1000)
-                        timeOut = setTimeout(function() {
-                            $("#paymentError").fadeOut(1000)
-                        }, 5000)
-                    }
+                                clearMessage("paymentError")
+                            }
+                        })
+                    })
+                } else {
+                    $("#paymentError").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message + '</div>').fadeIn(1000)
                 }
-            })
+
+                clearMessage("paymentError")
+            }
         })
     }
 }
 
 function accountStatusChange(id, accountStatus) {
     var accountStatusChangeText = accountStatus === 'true' ? "Deactive" : "Active"
-    document.getElementById("accountStatusChangeModalLabel").innerHTML = "Account "+accountStatusChangeText
+    document.getElementById("accountStatusChangeModalLabel").innerHTML = "Account " + accountStatusChangeText
     document.getElementById("accountStatusChangeButton").innerHTML = accountStatusChangeText
     document.getElementById("accountStatusChangeModalBody").innerHTML = "Do you want to really " + accountStatusChangeText.toLowerCase() + " this account ?"
     if (id && accountStatus) {
@@ -132,7 +155,6 @@ function accountStatusChange(id, accountStatus) {
 function accountDelete(id) {
     if (id) {
         $("#accountDeleteButton").unbind("click").bind("click", function() {
-            console.log('ok')
             $.ajax({
                 url: "<%=userAccountDelete%>",
                 type: "POST",
@@ -166,11 +188,76 @@ function accountDelete(id) {
     }
 }
 
+function appSetting() {
+    $("#appSettingButton").unbind("click").bind("click", function() {
+        $("#app-setting-error-message").fadeOut(0)
+        $.ajax({
+            url: "<%=appSetting%>",
+            type: "POST",
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            data: {
+                'id': $('#appSettingId').val(),
+                'maxAppInstall': $("#maxAppInstall").val(),
+                'costPerMonth': $("#costPerMonth").val(),
+            },
+            dataType: "json",
+            success: function(res) {
+                if (res.success === true) {
+                    $("#app-setting-error-message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message + '</div>').fadeIn(1000)
+                } else {
+                    $("#app-setting-error-message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>').fadeIn(1000)
+                }
 
-function clearMessage() {
+                clearMessage("app-setting-error-message")
+            }
+        })
+    })
+}
+
+function profileSetting() {
+    $("#profileSettingButton").unbind("click").bind("click", function() {
+        $("#profile-setting-error-message").fadeOut(0)
+        $.ajax({
+            url: "<%=profileSetting%>",
+            type: "POST",
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            data: {
+                'email': $("#adminEmail").val(),
+                'password': $("#adminPassword").val(),
+                'confirm_password': $("#adminConfirmPassword").val()
+            },
+            dataType: "json",
+            success: function(res) {
+                if (res.success === true) {
+                    $("#profile-setting-error-message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message + '</div>').fadeIn(1000)
+                    $("#adminPassword").val('')
+                    $("#adminConfirmPassword").val('')
+                } else {
+                    $("#profile-setting-error-message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>').fadeIn(1000)
+                }
+
+                clearMessage("profile-setting-error-message")
+            }
+        })
+    })
+}
+
+
+
+function clearMessage(idName) {
     clearTimeout(timeOut)
     timeOut = setTimeout(function() {
-        $("#message").fadeOut(1000)
+        $("#" + idName).fadeOut(1000)
     }, 5000)
 }
 </script>

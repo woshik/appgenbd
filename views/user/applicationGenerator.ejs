@@ -6,45 +6,34 @@
     <form action="<%=applicationGeneratorForm%>" method="post" id="applicationGeneratorForm">
         <div id="message"></div>
         <div class="form-group row">
-            <label for="username" class="col-sm-2 col-form-label">Name</label>
-            <div class="col-sm-10">
-                <input type="text" name="username" class="form-control" id="username" placeholder="Name">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="email" class="col-sm-2 col-form-label">Email</label>
-            <div class="col-sm-10">
-                <input type="text" class="form-control" name="email" id="email" placeholder="Email Address">
-            </div>
-        </div>
-        <div class="form-group row">
             <label for="appName" class="col-sm-2 col-form-label">App Name</label>
             <div class="col-sm-10">
-                <input type="text" class="form-control" name="appName" id="appName" placeholder="App Name">
-            </div>
-        </div>
-        <div class="form-group row">
-            <label for="appId" class="col-sm-2 col-form-label">App ID</label>
-            <div class="col-sm-10">
-                <input type="text" name="appId" class="form-control" id="appId" placeholder="App Id">
+                <select class="form-control" name="appName">
+                    <option value="">Select App Name</option>
+                    <% appList.forEach((item) => { %>
+                    <option value="<%=item.app_name%>">
+                        <%=item.app_name%>
+                    </option>
+                    <% }) %>
+                </select>
             </div>
         </div>
         <div class="form-group row">
             <label for="smsKeyword" class="col-sm-2 col-form-label">SMS Keyword</label>
             <div class="col-sm-10">
-                <input type="password" name="smsKeyword" class="form-control" id="smsKeyword" placeholder="SMS Keyword">
+                <input type="text" name="smsKeyword" class="form-control" id="smsKeyword" placeholder="SMS Keyword">
             </div>
         </div>
         <div class="form-group row">
             <label for="ussdcode" class="col-sm-2 col-form-label">USSD Code</label>
             <div class="col-sm-10">
-                <input type="password" name="ussdcode" class="form-control" id="ussdcode" placeholder="USSD Code">
+                <input type="text" name="ussdcode" class="form-control" id="ussdcode" placeholder="USSD Code">
             </div>
         </div>
         <div class="form-group row">
             <label for="perDaySms" class="col-sm-2 col-form-label">SMS Offer Per Day</label>
             <div class="col-sm-10">
-                <input type="password" name="perDaySms" class="form-control" id="perDaySms" placeholder="SMS Offer Per Day">
+                <input type="text" name="perDaySms" class="form-control" id="perDaySms" placeholder="SMS Offer Per Day">
             </div>
         </div>
         <div class="form-group row">
@@ -63,7 +52,7 @@
         </div>
         <br>
         <div style="text-align: center;">
-            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="submit" class="btn btn-success">Generate</button>
             <button type="reset" class="btn btn-danger">Reset</button>
         </div>
     </form>

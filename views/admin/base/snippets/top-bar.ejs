@@ -1,39 +1,32 @@
 <nav class="navbar navbar-default mb-xl-5 mb-4">
     <div class="container-fluid">
-
         <div class="navbar-header">
-            
         </div>
-        
         <ul class="top-icons-agileits-w3layouts float-right">
-           
-
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="far fa-user"></i>
                 </a>
-                <div class="dropdown-menu drop-3">
-                    <div class="profile d-flex mr-o">
-                        <div class="profile-r align-self-center">
-                            <a style="text-align: center;display: block;"><%=email%></a>
+                <div class="dropdown-menu drop-3" style="margin: 0; padding: 0">
+                    <div style="margin: 1em">
+                        <div class="profile d-flex mr-o">
+                            <div class="profile-r align-self-center" style="width: 100%;">
+                                <div class="text-center"><%=email%></div>
+                            </div>
                         </div>
+                        <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#profileSetting" onclick="profileSetting()" data-backdrop="static">
+                            <h4>
+                                <i class="fas fa-user mr-3"></i>My Profile
+                            </h4>
+                        </a>
+                        <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#appSetting" onclick="appSetting()" data-backdrop="static">
+                            <h4>
+                                <i class="fas fa-cogs mr-3"></i>App Setting
+                            </h4>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout/admin" class="dropdown-item btn">Logout</a>
                     </div>
-                    <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#profileSetting" onclick="" data-backdrop="static">
-                        <h4>
-                            <i class="fas fa-user mr-3"></i>My Profile
-                        </h4>
-                    </a>
-                    
-                    <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#appSetting" onclick="" data-backdrop="static">
-                        <h4>
-                            <i class="fas fa-cogs mr-3"></i>App Setting
-                        </h4>
-                    </a>
-
-                    <div class="dropdown-divider"></div>
-                    
-                    <a href="/logout/admin" class="dropdown-item btn">Logout</a>
                 </div>
             </li>
         </ul>

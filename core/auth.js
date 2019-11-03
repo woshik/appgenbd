@@ -72,13 +72,20 @@ module.exports = (app) => {
                 app_install: 1,
                 super_user: 1
             })
-            .then(userData => {
+            .then(async userData => {
                 if (!userData) {
                     return done(null, false)
                 }
 
                 if (key.model === 'users') {
                     userData.active = dateTime.subtract(new Date(userData.account_activation_end), dateTime.addHours(new Date(), 6)).toDays() >= 0
+                } else {
+                    let setting = new model('setting')
+                    await setting.find({})
+                        .then(data => {
+                            (data && data.length === 1) ? (userData.setting = data[0]) : (userData.setting = null)
+                        })
+                        .catch(err => next(err))
                 }
                 done(null, userData)
             })

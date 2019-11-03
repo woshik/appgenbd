@@ -1,12 +1,15 @@
+const { ObjectId } = require('mongodb')
+
 exports.payment = (req, res, next) => {
+    console.log(req.body)
     const schema = Joi.object({
-        maxApp: Joi.number().min(15).required().label("Max App"),
-        payment: Joi.number().min(350).required().label("Payment")
+        userMaxApp: Joi.number().min(req.user.setting.max_app).required().label("Max App"),
+        ammount: Joi.number().min(req.user.setting.cost_per_month).required().label("Ammount"),
     })
 
     const validateResult = schema.validate({
-        maxApp: req.body.maxApp,
-        payment: req.body.payment,
+        userMaxApp: req.body.userMaxApp,
+        ammount: req.body.ammount
     })
 
     if (validateResult.error) {
@@ -16,19 +19,27 @@ exports.payment = (req, res, next) => {
         })
     }
 
-    let month = validateResult.value.payment / 350;
-
-    if (!Number.isInteger(month)) {
+    if (validateResult.value.userMaxApp % req.user.setting.max_app !== 0) {
         return res.status(200).json({
             success: false,
-            message: 'Enter Payments of per month'
+            message: 'Please, enter correct app package.'
+        })
+    }
+
+    if (((validateResult.value.userMaxApp / req.user.setting.max_app) * req.user.setting.cost_per_month) !== validateResult.value.ammount) {
+        return res.status(200).json({
+            success: false,
+            message: 'Payment ammount isn\'t correct.'
         })
     }
 
     try {
         var id = ObjectId(req.body.id)
     } catch (err) {
-        next(err)
+        return res.status(200).json({
+            success: false,
+            message: 'Please, don\'t violate the process.'
+        })
     }
 
     let user = new model('users')
@@ -38,27 +49,31 @@ exports.payment = (req, res, next) => {
 
             user.customUpdateOne({ _id: userData._id }, {
                     "$set": {
-                        "account_activation_end": dateTime.format(dateTime.addMonths(BDnow, month), "YYYY-MM-DD HH:mm:ss"),
+                        "account_activation_end": dateTime.format(dateTime.addMonths(BDnow, 1), "YYYY-MM-DD"),
+                        "account_active_date": dateTime.format(BDnow, "YYYY-MM-DD"),
+                        "max_app_install": validateResult.value.userMaxApp,
                     },
                     "$inc": {
-                        "total_payment": validateResult.value.payment
+                        "total_payment": validateResult.value.ammount
                     },
                     "$push": {
                         "tracking": {
                             "payment_date": dateTime.format(BDnow, "YYYY-MM-DD HH:mm:ss"),
-                            "ammount": validateResult.value.payment
+                            "ammount": validateResult.value.ammount
                         }
                     }
                 })
                 .then(userUpdateValue => {
                     if (!userUpdateValue.result.nModified) {
                         return res.status(200).json({
+                            success: false,
                             message: 'Server Error. Please try again later.'
                         })
                     }
                     return res.status(200).json({
+                        success: true,
                         message: "Transaction Successful"
-                    });
+                    })
                 })
                 .catch(err => next(err))
         })
@@ -69,10 +84,9 @@ exports.accountStatusChange = (req, res, next) => {
     try {
         var id = ObjectId(req.body.id)
     } catch (err) {
-        next(err)
-
         return res.status(200).json({
-            message: 'Illegal user id'
+            success: false,
+            message: 'Please, don\'t violate the process.'
         })
     }
     console.log(req.body.id)
@@ -102,7 +116,10 @@ exports.accountDelete = (req, res, next) => {
     try {
         var id = ObjectId(req.body.id)
     } catch (err) {
-        next(err)
+        return res.status(200).json({
+            success: false,
+            message: 'Please, don\'t violate the process.'
+        })
     }
 
     let user = new model('users')

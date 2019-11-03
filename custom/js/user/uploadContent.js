@@ -1,9 +1,5 @@
 $(document).ready(function() {
     var timeOut;
-    $('#datetimepicker2').datetimepicker({
-        language: 'en',
-        pick12HourFormat: true
-    })
     $("#uploadContentForm").unbind("submit").bind("submit", function(e) {
         e.preventDefault()
         $("#message").fadeOut(0);
@@ -40,6 +36,8 @@ $(document).ready(function() {
         })
     })
 
-
-
+    $('#messageDateTime').datetimepicker({
+        debug: true,
+        disabledHours: [1,2,3,4]
+    })
 })

@@ -56,7 +56,7 @@ exports.fromErrorMessage = error => {
         case "date.base":
             return "Please, enter valid date."
         case "number.base":
-            return "Please, enter valid ammount"
+            return `Please, enter valid ${error.context.label.toLowerCase()}`
         default:
             return error.message
     }

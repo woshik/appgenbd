@@ -102,6 +102,16 @@ module.exports = {
         path: 'user'
     },
 
+    userProfileSetting: {
+        url: '/userprofilesetting',
+        controller: 'Dashboard',
+        methods: {
+            userProfileSetting: 'post',
+        },
+        middleware: [isUserAuthenticated],
+        path: 'user'
+    },
+
     appInstall: {
         url: '/installapp',
         controller: 'InstallApp',
@@ -177,7 +187,15 @@ module.exports = {
         path: 'user'
     },
 
-
+    download: {
+        url: '/applicationgenerator/download/:fileName',
+        controller: 'ApplicationGenerator',
+        methods: {
+            download: 'get',
+        },
+        middleware: [isUserAuthenticated, canAccess],
+        path: 'user'
+    },
 
 
 
@@ -218,11 +236,41 @@ module.exports = {
         path: 'admin'
     },
 
+    appSetting: {
+        url: '/appsetting',
+        controller: 'AppSetting',
+        methods: {
+            appSetting: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
+    profileSetting: {
+        url: '/profilesetting',
+        controller: 'Dashboard',
+        methods: {
+            profileSetting: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
     userList: {
         url: '/userlist',
         controller: 'UserList',
         methods: {
             userList: 'post',
+        },
+        middleware: [isSuperUser],
+        path: 'admin'
+    },
+
+    userMaxAppInstall: {
+        url: '/usermaxappinstall',
+        controller: 'UserList',
+        methods: {
+            userMaxAppInstall: 'get',
         },
         middleware: [isSuperUser],
         path: 'admin'

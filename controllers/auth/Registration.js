@@ -69,7 +69,7 @@ exports.registration = (req, res, next) => {
                             mail_for_verification: 1,
                             account_active_date: BdNowWithDate,
                             account_active: true,
-                            account_create: BDnow,
+                            account_create: BdNowWithDateTime,
                         })
                         .then(dataInsectionResult => {
                             sendMail(dataInsectionResult.ops[0].email, "Varification Code", dataInsectionResult.ops[0].token)

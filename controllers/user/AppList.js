@@ -52,7 +52,7 @@ exports.appList = (req, res, next) => {
                 ])
             })
 
-            return res.json({
+            return res.status(200).json({
                 data: response,
                 recordsTotal: result.recordsTotal,
                 recordsFiltered: result.recordsFiltered,

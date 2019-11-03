@@ -10,23 +10,26 @@
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="far fa-user"></i>
                 </a>
-                <div class="dropdown-menu drop-3">
-                    <div class="profile d-flex mr-o">
-                        <div class="profile-r align-self-center">
-                            <h3 class="sub-title-w3-agileits" style="text-transform: capitalize;text-align: center;">
-                                <%=userName%>
-                            </h3>
-                            <a style="text-align: center;display: block;">
-                                <%=email%></a>
+                <div class="dropdown-menu drop-3" style="margin: 0; padding: 0">
+                    <div style="margin: 1em">
+                        <div class="profile d-flex mr-o">
+                            <div class="profile-r align-self-center" style="width: 100%;">
+                                <h3 class="sub-title-w3-agileits" style="text-transform: capitalize;text-align: center;">
+                                    <%=userName%>
+                                </h3>
+                                <div class="text-center">
+                                    <%=email%>
+                                </div>
+                            </div>
                         </div>
+                        <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#userProfileSetting" onclick="" data-backdrop="static">
+                            <h4>
+                                <i class="far fa-user mr-3"></i>My Setting
+                            </h4>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout/user" class="dropdown-item btn">Logout</a>
                     </div>
-                    <a href="javascript:void(0)" class="dropdown-item mt-3" type="button" ata-toggle="modal" data-target="#userSetting" onclick="" data-backdrop="static">
-                        <h4>
-                            <i class="far fa-user mr-3"></i>My Setting
-                        </h4>
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="/logout/user" class="dropdown-item btn">Logout</a>
                 </div>
             </li>
         </ul>
