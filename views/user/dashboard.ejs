@@ -1,17 +1,20 @@
 <%- include('base/base_header.ejs') %>
-<% if (active) { %>
 <div class="container-fluid">
+    <%if(!active){%>
+    <div class="alert alert-danger" role="alert">
+        Your account is expired, please pay your monthly bill. For any help contant 01947738405.
+    </div>
+    <%}%>
     <div class="row">
         <div class="outer-w3-agile col-xl">
             <h4 class="tittle-w3-agileits mb-2">Server Overview</h4>
-            
             <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-1">
                 <div class="s-l">
                     <h5>Account Active</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=active%>
+                        <%=accountActiveDate%>
                     </h6>
                 </div>
             </div>
@@ -21,7 +24,7 @@
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=expire%>
+                        <%=accountExpireDate%>
                     </h6>
                 </div>
             </div>
@@ -31,7 +34,7 @@
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=maxApp%>
+                        <%=maxAppCanInstall%>
                     </h6>
                 </div>
             </div>
@@ -64,19 +67,5 @@
         <!--// Calender -->
     </div>
 </div>
-<% } else { %>
-<h2 class="main-title-w3layouts mb-2 text-center">Account Inactive</h2>
-<div class="blank-page-content" style="padding: 35px 210px;">
-    <div class="outer-w3-agile mt-3" style="padding: 10px 60px;width: 585px;margin: 0 auto;">
-        <p class="paragraph-agileits-w3layouts">Now your account is inactive.<br>
-            For activing your account please Bkash 350Tk on this number, 01947738405 with refarence code 'proapp'.<br>
-            After Bkash on this number please contact with admin on this number, 01947738405 for activing your account.<br>
-            This is our monthly fee, your can install 15 app.<br>
-            If you need more app to install, please contact with us.<br>
-            After 1 month you have to recharge again for running your app.
-        </p>
-    </div>
-</div>
-<% } %>
 <%- include('base/base_footer.ejs') %>
 <%- include('base/close_footer.ejs') %>

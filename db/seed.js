@@ -22,7 +22,7 @@ MongoClient.connect('mongodb://localhost:27017/appgenbd', { useNewUrlParser: tru
                                     })
                                     .catch(err => console.log(err.message))
                             })
-                            .cathc(err => console.log(err.message))
+                            .catch(err => console.log(err.message))
                     })
                     .catch(err => console.log(err.message))
             })

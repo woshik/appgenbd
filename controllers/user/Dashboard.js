@@ -16,9 +16,9 @@ exports.dashboardView = (req, res, next) => {
                 sidebar: sidebar,
                 csrfToken: req.csrfToken(),
                 path: req.path,
-                active: dateTime.format(new Date(userData.account_active_date), 'DD-MM-YYYY'),
-                expire: dateTime.format(new Date(userData.account_activation_end), 'DD-MM-YYYY'),
-                maxApp: userData.max_app_install,
+                accountActiveDate: dateTime.format(new Date(userData.account_active_date), 'DD-MM-YYYY'),
+                accountExpireDate: dateTime.format(new Date(userData.account_activation_end), 'DD-MM-YYYY'),
+                maxAppCanInstall: userData.max_app_install,
                 appInstalled: userData.app_install,
                 totalSubscriber: userData.total_subscribe,
             }

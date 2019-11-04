@@ -151,7 +151,7 @@ module.exports = {
             appDetailsView: 'get',
             appDetails: 'post'
         },
-        middleware: [isUserAuthenticated, canAccess],
+        middleware: [isUserAuthenticated],
         path: 'user'
     },
 
@@ -161,7 +161,7 @@ module.exports = {
         methods: {
             appUpdate: 'post'
         },
-        middleware: [isUserAuthenticated, canAccess],
+        middleware: [isUserAuthenticated],
         path: 'user'
     },
 
@@ -172,7 +172,7 @@ module.exports = {
             contentUploadView: 'get',
             contentUpload: 'post'
         },
-        middleware: [isUserAuthenticated, canAccess],
+        middleware: [isUserAuthenticated],
         path: 'user'
     },
 
