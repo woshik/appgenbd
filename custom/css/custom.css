@@ -44,3 +44,11 @@ td {
 .btn-icon {
     margin: 2px
 }
+
+.correct {
+    color: #27ae60;
+}
+
+.wrong {
+    color: #c0392b;
+}

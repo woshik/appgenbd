@@ -57,6 +57,8 @@ $(document).ready(function() {
 
 function payment(id) {
     if (id) {
+        $("#userMaxApp").val('')
+        $("#ammount").val('')
         $.ajax({
             url: "<%=maxAppInstallUrl%>",
             type: "GET",
@@ -251,8 +253,6 @@ function profileSetting() {
         })
     })
 }
-
-
 
 function clearMessage(idName) {
     clearTimeout(timeOut)

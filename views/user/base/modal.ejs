@@ -40,3 +40,51 @@
         </div>
     </div>
 </div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppInfoModalLabel" aria-hidden="true" id="updateAppInfo">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="update-app-info-message"></div>
+                <div class="form-group row">
+                    <label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="updateAppInfoId" class="form-control" id="updateAppInfoId" placeholder="App Id" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
+                    <div class="col-sm-9">
+                        <input type="text" name="updateAppInfoPassword" class="form-control" id="updateAppInfoPassword" placeholder="App Password" autocomplete="off">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appStatusChangeModalLabel" aria-hidden="true" id="appStatusChange">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="appStatusChangeModalLabel"></h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="appStatusChangeModalBody"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" id="appStatusChangeButton"></button>
+            </div>
+        </div>
+    </div>
+</div>

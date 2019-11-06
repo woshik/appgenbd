@@ -1,10 +1,12 @@
-const express = require('express')
+const express = require("express")
 const router = express.Router()
-const config = require('config')
 
-// controller importing
-const ussd = require(path.join(CONTROLLER_BASEDIR, "api", "ussd"))
+Object.entries(api).forEach(([routeName, routeInfo]) => {
+    Object.entries(routeInfo.methods).forEach(([method, httpVerb]) => {
+        let middleware = routeInfo.middleware || []
+        let path = routeInfo.path || ''
+        router[httpVerb](routeInfo.url, middleware, require(join(BASE_DIR, 'controllers', path, routeInfo.controller))[method])
+    })
+})
 
-router.post(api.ussd, ussd);
-
-module.exports = router;
+module.exports = router

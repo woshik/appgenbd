@@ -156,10 +156,21 @@ module.exports = {
     },
 
     appdInfoUpdate: {
-        url: '/appupdate/:appName',
-        controller: 'AppDetails',
+        url: '/appupdate',
+        controller: 'AppList',
         methods: {
             appUpdate: 'post'
+        },
+        middleware: [isUserAuthenticated],
+        path: 'user'
+    },
+
+    appStatusChange: {
+        url: '/appstatuschange',
+        controller: 'AppList',
+        methods: {
+            getAppStatus: 'get',
+            appStatusChange: 'post',
         },
         middleware: [isUserAuthenticated],
         path: 'user'

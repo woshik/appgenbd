@@ -44,7 +44,7 @@ app.use(express.static(join(BASE_DIR, 'public')))
 app.use(express.static(join(BASE_DIR, 'custom')))
 
 // api routing
-//app.use("/api", require(join(__dirname, "routes", "api")))
+app.use("/api", require(join(BASE_DIR, "routes", "api")))
 
 //session configuretion
 sessionStore(app)

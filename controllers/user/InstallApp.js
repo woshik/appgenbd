@@ -67,6 +67,7 @@ exports.appName = (req, res, next) => {
                     dial: 0,
                     randomSerial: randomSerial,
                     create_date: dateTime.addHours(new Date(), 6),
+                    app_active: false
                 })
                 .then(dataInsectionResult => {
                     const user = new model("users")
@@ -147,7 +148,8 @@ exports.appInstall = (req, res, next) => {
 
             app.updateOne({ user_id: req.user._id, app_name: validateResult.value.appName }, {
                     'app_id': validateResult.value.appId,
-                    'password': validateResult.value.password
+                    'password': validateResult.value.password,
+                    'app_active': true,
                 })
                 .then(updateData => {
                     if (!updateData.result.nModified) {
