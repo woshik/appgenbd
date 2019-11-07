@@ -10,6 +10,7 @@ exports.appListView = (req, res, next) => {
         sidebar: sidebar,
         path: req.path,
         csrfToken: req.csrfToken(),
+        flashMessage: req.flash('app-list-message'),
         appListUrl: web.appList.url,
         appInfoUpdateUrl: web.appdInfoUpdate.url,
         appStatusChangeUrl: web.appStatusChange.url,
@@ -44,14 +45,14 @@ exports.appList = (req, res, next) => {
             let response = []
             result.data.map((appData) => {
 
-                let actionBtn = (!!appData.app_id && !!appData.password) ? `
+                let actionBtn = (!!appData.app_id && !!appData.password) ? appData.app_active ? `
                 <a href="${web.appdetails.url.replace(':appName', appData.app_name)}" title="Details" class="btn btn-primary btn-icon" >
                     <i class="fas fa-eye"></i>
                 </a>
-                <a href="" class="btn btn-primary btn-icon">
+                <a href="${web.contentUpload.url.replace(':appName', appData.app_name)}" class="btn btn-primary btn-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
                 </a>
-                ` : `
+                `: '' : `
                 <a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfo" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
                     <i class="fas fa-file-invoice"></i>
                 </a>`

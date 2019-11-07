@@ -177,7 +177,7 @@ module.exports = {
     },
 
     contentUpload: {
-        url: '/contentupload',
+        url: '/contentupload/:appName',
         controller: 'ContentUpload',
         methods: {
             contentUploadView: 'get',

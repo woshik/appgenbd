@@ -4,6 +4,14 @@
         <h4 class="tittle-w3-agileits mb-4">
             <%=title%>
         </h4>
+        <%if(flashMessage){%>
+        <div id="flashMessage">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <%=flashMessage%>
+            </div>
+        </div>
+        <%}%>
         <div id="app-list-message"></div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
@@ -49,6 +57,10 @@ $(document).ready(function() {
             [15, 25, 50, 75, 100, 200]
         ],
     })
+
+    setTimeout(function() {
+        $("#flashMessage").fadeOut(1000)
+    }, 5000)
 })
 
 function appInfoUpdate(AppName) {

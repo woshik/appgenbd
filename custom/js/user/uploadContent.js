@@ -2,7 +2,6 @@ $(document).ready(function() {
     var timeOut;
     $("#uploadContentForm").unbind("submit").bind("submit", function(e) {
         e.preventDefault()
-        $("#message").fadeOut(0);
         var form = $(this)
         var url = form.attr("action")
         var type = form.attr("method")
@@ -15,6 +14,8 @@ $(document).ready(function() {
             data: form.serialize(),
             dataType: "json",
             success: function(res) {
+                $("#message"+res.possition).fadeOut(0);
+
                 if (res.success === true) {
                     form[0].reset()
                     $("#message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
@@ -22,10 +23,11 @@ $(document).ready(function() {
                         res.message +
                         '</div>').fadeIn(1000)
                 } else {
-                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                    $("#message-"+res.possition).html('<div class="alert alert-warning alert-dismissible" role="alert">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                         res.message +
                         '</div>').fadeIn(1000)
+                    $("#collapse-"+res.possition).collapse('show')
                 }
 
                 clearTimeout(timeOut)
@@ -34,10 +36,5 @@ $(document).ready(function() {
                 }, 5000)
             }
         })
-    })
-
-    $('#messageDateTime').datetimepicker({
-        debug: true,
-        disabledHours: [1,2,3,4]
     })
 })

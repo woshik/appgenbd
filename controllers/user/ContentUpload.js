@@ -1,46 +1,80 @@
 const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 
 exports.contentUploadView = (req, res, next) => {
-    let app = new model("app");
-    app.find({ user_id: req.user._id }, { app_name: 1 , _id: 0})
+    let app = new model("app")
+    app.findOne({ user_id: req.user._id, app_name: req.params.appName, app_active: true }, { _id: 1 })
         .then(result => {
+            if (!result) {
+                req.flash('app-list-message', 'App not found.')
+                return res.redirect(web.appList.url)
+            }
+
             let contentUpdateData = {
                 info: commonInfo,
                 title: 'Content Upload',
                 userName: req.user.name,
                 email: req.user.email,
                 sidebar: sidebar,
+                current: req.path,
                 path: req.path,
                 csrfToken: req.csrfToken(),
-                appList: result,
-                uploadContentForm: web.contentUpload.url,
+                uploadContentForm: web.contentUpload.url.replace(':appName', req.params.appName),
             }
-            res.render("user/contentUpload", contentUpdateData);
+            return res.render("user/contentUpload", contentUpdateData);
         })
         .catch(err => next(err))
 };
 
-exports.contentUpload = (req, res, next) => {
-    console.log(req.body)
-    /*const schema = Joi.object({
-        appName: Joi.string().trim().required().label("App name"),
-        dateTime: Joi.date().greater().required().label("Message receiving date"),
-        content: Joi.string().trim().required().label("Message content")
-    })
+exports.contentUpload = async (req, res, next) => {
+    let message = req.body.messageContent
+    let dateTime = req.body.dateTime
 
-    const validateResult = schema.validate({
-        appName: req.body.appName,
-        messageDate: req.body.messageDate,
-        messageTime: req.body.messageTime,
-        content: req.body.messageContent
-    })
+    if (typeof message === "string") {
+        message = [message]
+        dateTime = [dateTime]
+    }
 
-    if (validateResult.error) {
-        return res.status(200).json({
+    if (message.length === dateTime.length) {
+        let length = message.length
+
+        for (let i = 0; i < length; i++) {
+
+            let result = new Promise((response, reject) => {
+                const schema = Joi.object({
+                    dateTime: Joi.string().trim().required().pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9] [0-1][0-9]:00 (am|pm)$/).label("Message receiving date time"),
+                    content: Joi.string().trim().required().label("Message content")
+                })
+
+                const validateResult = schema.validate({
+                    dateTime: dateTime[i],
+                    content: message[i]
+                })
+
+                if (validateResult.error) {
+                    response({
+                        success: false,
+                        possition: i + 1,
+                        message: fromErrorMessage(validateResult.error.details[0])
+                    })
+                }
+            })
+
+            result.then(data => {
+                    if (!data.success) {
+                        return res.json(data)
+                    }
+                })
+                .catch(err => next(err))
+        }
+    } else {
+        return res.json({
             success: false,
-            message: fromErrorMessage(validateResult.error.details[0])
+            message: "Please don't edit yourself, you will be back listed."
         })
-    }*/
+    }
+
+
+
 
 
 

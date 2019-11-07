@@ -186,7 +186,7 @@ ul.top-icons-agileits-w3layouts a.nav-link i {
 	padding: 2px 0 0;
 }
 
-.dropdown-menu {
+.profile-dropdown-menu {
 	right: -20%;
 	left: auto;
 	min-width: 20rem;
@@ -1968,7 +1968,7 @@ ul.percentg-circles-w3ls .chart .figure {
 }
 
 @media(max-width:480px) {
-	.dropdown-menu {
+	.profile-dropdown-menu {
 		min-width: 17rem;
 	}
 	.s-r h6 i {
@@ -2026,7 +2026,7 @@ ul.percentg-circles-w3ls .chart .figure {
 }
 
 @media(max-width:440px) {
-	.dropdown-menu {
+	.profile-dropdown-menu {
 		right: -84%;
 	}
 	canvas.SimpleChartcanvas {

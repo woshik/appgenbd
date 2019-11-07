@@ -1,12 +1,12 @@
 const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
 
 exports.appDetailsView = (req, res, next) => {
-
     let app = new model('app')
-    app.findOne({ user_id: req.user._id, app_name: req.params.appName, app_active: true }, { randomSerial: 1 })
+    app.findOne({ user_id: req.user._id, app_name: req.params.appName, app_active: true }, { randomSerial: 1, _id: 0 })
         .then(appData => {
             if (!appData) {
-
+                req.flash('app-list-message', 'App not found.')
+                return res.redirect(web.appList.url)
             }
 
             let appDetailsData = {
@@ -22,12 +22,9 @@ exports.appDetailsView = (req, res, next) => {
                 sms: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/sms`
             }
 
-            res.render("user/appDetails", appDetailsData)
+            return res.render("user/appDetails", appDetailsData)
         })
-        .catch(err => {
-            next(err)
-        })
-
+        .catch(err => next(err))
 }
 
 exports.appDetails = (req, res, next) => {

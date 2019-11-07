@@ -14,11 +14,6 @@ module.exports = {
 		url: web.appList.url,
 		icon: '<i class="fas fa-list-ul"></i>'
 	},
-	uploadContent: {
-		title: 'Content Upload',
-		url: web.contentUpload.url,
-		icon: '<i class="fas fa-cloud-upload-alt"></i>'
-	},
 	generateApplication: {
 		title: 'Application Generator',
 		url: web.applicationGenerator.url,
