@@ -24,7 +24,6 @@ $(document).ready(function() {
                         "</div>").fadeIn(1000);
                 }
             }
-        });
-        return false;
-    });
-});
+        })
+    })
+})

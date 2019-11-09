@@ -67,7 +67,8 @@ exports.appName = (req, res, next) => {
                     dial: 0,
                     randomSerial: randomSerial,
                     create_date: dateTime.addHours(new Date(), 6),
-                    app_active: false
+                    app_active: false,
+                    content: []
                 })
                 .then(dataInsectionResult => {
                     const user = new model("users")

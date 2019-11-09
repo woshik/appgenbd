@@ -187,6 +187,17 @@ module.exports = {
         path: 'user'
     },
 
+    updateContentUpload: {
+        url: '/editcontent',
+        controller: 'AppDetails',
+        methods: {
+            getContent: "get",
+            updateContent: "post"
+        },
+        middleware: [isUserAuthenticated],
+        path: 'user'
+    },
+
     applicationGenerator: {
         url: '/applicationgenerator',
         controller: 'ApplicationGenerator',

@@ -35,7 +35,7 @@
                             <th scope="col">Time</th>
                             <th scope="col">Message</th>
                             <th scope="col">Status</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Edit Message</th>
                         </tr>
                     </thead>
                 </table>
@@ -46,11 +46,13 @@
 <%- include('base/base_footer.ejs') %>
 <script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
 <script type="text/javascript">
+var timeOut;
 $(document).ready(function() {
     var appList = $('#appDetailsTable').DataTable({
         "processing": true,
         "serverSide": true,
-        "order": [],
+        "ordering": false,
+        "searching": false,
         "ajax": {
             url: "<%=appDetailUrl%>",
             headers: {
@@ -58,15 +60,69 @@ $(document).ready(function() {
             },
             type: "POST"
         },
-        "columnDefs": [{
-            "targets": [4],
-            "orderable": false
-        }],
         "lengthMenu": [
             [10, 25, 50, 75, 100, 200],
             [10, 25, 50, 75, 100, 200]
         ],
     })
 })
+
+function updateAppMessage(date, time, appName) {
+    if (date && time && appName) {
+        $("#update-app-message-content").fadeOut(0);
+        $.ajax({
+            url: "<%=updateContentUrl%>",
+            type: "GET",
+            headers: {
+                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            data: {
+                date: date,
+                time: time,
+                appName: appName
+            },
+            dataType: "json",
+            success: function(res) {
+                if (res.success === true) {
+                    $("#updateAppMessageContent").val(res.message)
+                    $("#updateAppMessageBtn").unbind("click").bind("click", function(e) {
+                        $.ajax({
+                            url: "<%=updateContentUrl%>",
+                            type: "POST",
+                            headers: {
+                                'CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            data: {
+                                date: date,
+                                time: time,
+                                appName: appName,
+                                message: $("#updateAppMessageContent").val()
+                            },
+                            dataType: "json",
+                            success: function(res) {
+                                if (res.success === true) {
+
+                                } else {
+                                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + "</div>").fadeIn(1000)
+                                }
+                            }
+                        })
+                    })
+                } else {
+                    $("#update-app-message-content").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                        res.message +
+                        "</div>").fadeIn(1000);
+                }
+            }
+        })
+
+        clearTimeout(timeOut)
+        timeOut = setTimeout(function() {
+            $("#message").fadeOut(500)
+        }, 5000)
+    }
+}
 </script>
 <%- include('base/close_footer.ejs') %>

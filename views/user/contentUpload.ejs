@@ -4,6 +4,7 @@
 </h4>
 <button class="btn btn-primary" id="addCardBtn"><i class="fas fa-plus-circle"></i> Add Box</button>
 <div class="outer-w3-agile col-xl mt-3">
+    <div id="error-message"></div>
     <form action="<%=uploadContentForm%>" method="post" id="uploadContentForm">
         <div class="accordion" id="contentUploadFormBlock">
             <div class="card" id="card-1">
@@ -36,6 +37,7 @@
                                     <textarea class="form-control" name="messageContent" rows="3"></textarea>
                                 </div>
                             </div>
+                            <input type="hidden" name="position" value="1">
                         </div>
                     </div>
                 </div>
@@ -53,7 +55,12 @@
 calanderInit()
 inputDetect(1)
 $('#addCardBtn').unbind("click").bind("click", function(e) {
-    var count = parseInt($(".card").last()[0].id.slice(5)) + 1;
+    var count
+    try {
+        count = parseInt($(".card").last()[0].id.slice(5)) + 1;
+    } catch {
+        count = 1;
+    }
     var content = '<div class="card" id="card-' + count + '">' +
         '<div class="card-header" id="heading-' + count + '">' +
         '<h2 class="mb-0">' +
@@ -89,6 +96,7 @@ $('#addCardBtn').unbind("click").bind("click", function(e) {
         '<textarea class="form-control" name="messageContent" rows="3"></textarea>' +
         '</div>' +
         '</div>' +
+        '<input type="hidden" name="position" value="' + count + '">' +
         '</div>' +
         '</div>' +
         '</div>' +
@@ -110,7 +118,7 @@ function calanderInit() {
         format: 'yyyy-mm-dd HH:ii p'
     });
 
-    
+
 }
 
 function deleteCard(id) {
@@ -120,9 +128,9 @@ function deleteCard(id) {
 }
 
 function inputDetect(count) {
-    $('#dateTime-'+count).on('change', function(e) {
-        $("#head-text-"+count).text('')
-        $("#head-text-"+count).append(count+'. Date - '+e.target.value)
+    $('#dateTime-' + count).on('change', function(e) {
+        $("#head-text-" + count).text('')
+        $("#head-text-" + count).append(count + '. Date - ' + e.target.value)
     });
 }
 </script>

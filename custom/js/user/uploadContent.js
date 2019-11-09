@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var timeOut;
+    $("#error-message").fadeOut(0)
     $("#uploadContentForm").unbind("submit").bind("submit", function(e) {
         e.preventDefault()
         var form = $(this)
@@ -14,26 +15,29 @@ $(document).ready(function() {
             data: form.serialize(),
             dataType: "json",
             success: function(res) {
-                $("#message"+res.possition).fadeOut(0);
-
-                if (res.success === true) {
-                    form[0].reset()
-                    $("#message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                        res.message +
-                        '</div>').fadeIn(1000)
+                if (res.length) {
+                    res.forEach(function(alert) {
+                        if (alert.success) {
+                            $("#card-" + alert.position).remove();
+                        } else {
+                            $("#card-" + alert.position).css('border', '3px red solid');
+                            $("#message-" + alert.position).html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+                                alert.message +
+                                '</div>').fadeIn(1000)
+                        }
+                    })
                 } else {
-                    $("#message-"+res.possition).html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                    $("#error-message").html('<div class="alert alert-danger alert-dismissible" role="alert">' +
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                         res.message +
                         '</div>').fadeIn(1000)
-                    $("#collapse-"+res.possition).collapse('show')
-                }
 
-                clearTimeout(timeOut)
-                timeOut = setTimeout(function() {
-                    $("#message").fadeOut(1000)
-                }, 5000)
+                    clearTimeout(timeOut)
+                    timeOut = setTimeout(function() {
+                        $("#error-message").fadeOut(1000)
+                    }, 5000)
+                }
             }
         })
     })

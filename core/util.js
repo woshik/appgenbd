@@ -37,10 +37,11 @@ exports.fromErrorMessage = error => {
         case "string.empty":
             return `${error.context.label} is required`
         case "string.pattern.base":
-            if (error.path[0] === "name")
+            if (error.path[0] === "name"){
                 return `${error.context.label} contains only characters`
-            if (error.path[0] === "number" || error.path[0] === "code")
-                return `Enter valid ${error.context.label}`;
+            } else {
+                return `Enter valid ${error.context.label.toLowerCase()}`;
+            }
         case "string.email":
             return "Enter valid mail address"
         case "string.min":

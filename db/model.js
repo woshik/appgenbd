@@ -1,7 +1,6 @@
 module.exports = class Model {
     constructor(collectionName) {
-        const { join } = require("path")
-        this.db = require(join(__dirname, 'database')).getDB()
+        this.db = require('./database').getDB()
         this.collectionName = collectionName
     }
 
@@ -119,14 +118,44 @@ module.exports = class Model {
         return new Promise((resolve, reject) => {
             this.db.createCollection(this.collectionName)
                 .then(result => {
-                    result.find(where, { projection: show, skip: start, limit: limit, sort: sort  }).toArray()
+                    result.find(where, { projection: show, skip: start, limit: limit, sort: sort }).toArray()
                         .then(async (Data) => {
                             resolve({
                                 data: Data,
-                                recordsTotal: await result.find({ userId: where.userId }).count(),
+                                recordsTotal: await result.find({ user_id: where.user_id }).count(),
                                 recordsFiltered: await result.find(where).count()
                             })
                         })
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    dataTableForArrayElement(where, projection, base) {
+        return new Promise((resolve, reject) => {
+            this.db.createCollection(this.collectionName)
+                .then(result => {
+                    result.findOne(where, { projection: projection })
+                        .then(Data => resolve({
+                            data: Data,
+                            recordsTotal: this.aggregate(where, { size: { $size: "$content" } }),
+                        }))
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
+        })
+    }
+
+    aggregate(match, projection) {
+        return new Promise((resolve, reject) => {
+            this.db.createCollection(this.collectionName)
+                .then(result => {
+                    result.aggregate([
+                            { $match: match },
+                            { $project: projection }
+                        ]).toArray()
+                        .then(Data => resolve(Data))
                         .catch(err => reject(err))
                 })
                 .catch(err => reject(err))

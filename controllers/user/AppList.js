@@ -49,7 +49,7 @@ exports.appList = (req, res, next) => {
                 <a href="${web.appdetails.url.replace(':appName', appData.app_name)}" title="Details" class="btn btn-primary btn-icon" >
                     <i class="fas fa-eye"></i>
                 </a>
-                <a href="${web.contentUpload.url.replace(':appName', appData.app_name)}" class="btn btn-primary btn-icon">
+                <a href="${web.contentUpload.url.replace(':appName', appData.app_name)}" title="Message upload" class="btn btn-primary btn-icon">
                     <i class="fas fa-cloud-upload-alt"></i>
                 </a>
                 `: '' : `
@@ -82,7 +82,7 @@ exports.appList = (req, res, next) => {
                 data: response,
                 recordsTotal: result.recordsTotal,
                 recordsFiltered: result.recordsFiltered,
-                draw: parseInt(req.query.draw),
+                draw: parseInt(req.body.draw),
             })
         })
         .catch(err => next(err))

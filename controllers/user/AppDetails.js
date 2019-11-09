@@ -19,7 +19,8 @@ exports.appDetailsView = (req, res, next) => {
                 csrfToken: req.csrfToken(),
                 appDetailUrl: req.path,
                 ussd: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/ussd`,
-                sms: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/sms`
+                sms: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/sms`,
+                updateContentUrl: web.updateContentUpload.url
             }
 
             return res.render("user/appDetails", appDetailsData)
@@ -29,46 +30,110 @@ exports.appDetailsView = (req, res, next) => {
 
 exports.appDetails = (req, res, next) => {
     const app = new model("app")
-    let order = ['app_name', 'app_id', 'subscribe', 'dial']
-    let sort = {}
-
-    if (req.body.order) {
-        sort[order[parseInt(req.body.order[0].column)]] = req.body.order[0].dir === 'asc' ? 1 : -1
-    } else {
-        sort[order[0]] = 1
-    }
-
-    app.dataTable({
+    app.dataTableForArrayElement({
             user_id: req.user._id,
-            '$or': [
-                { app_name: RegExp(`.*${req.body.search.value}.*`, 'i') },
-                { app_id: RegExp(`.*${req.body.search.value}.*`, 'i') }
-            ]
+            app_name: req.params.appName,
         }, {
-            _id: 0,
-            user_id: 0,
-            password: 0,
-            randomSerial: 0,
-        }, parseInt(req.body.start), parseInt(req.body.length), sort)
-        .then(result => {
+            _id: 1,
+            content: {
+                $slice: [parseInt(req.body.start), parseInt(req.body.length)],
+            }
+        }, { content: 1 })
+        .then(async result => {
+            let size = await result.recordsTotal.then(data => data[0].size).catch(err => next(err))
             let response = []
-            result.data.map((item, index) => {
+            result.data.content && result.data.content.map((item) => {
+
                 response.push([
-                    item.app_name,
-                    item.app_id,
-                    item.subscribe,
-                    item.dial,
-                    dateTime.format(item.create_date, "DD-MM-YYYY hh:mm:ss A"),
-                    `<a href="${web.appdetails.url.replace(':appName', item.app_name)}" class="btn btn-success">App Details</a>`
+                    item.date,
+                    item.time,
+                    item.message.substring(0, 80),
+                    item.send ? 'Send' : 'Panding',
+                    `<a href="javascript:void(0)" title="Edit Message" class="btn btn-info btn-icon" type="button" data-toggle="modal" data-target="#updateAppMessage" onclick="updateAppMessage('${item.date}','${item.time}','${req.params.appName}')" data-backdrop="static">
+                        <i class="far fa-edit"></i>
+                    </a>`
                 ])
             })
 
             return res.json({
                 data: response,
-                recordsTotal: result.recordsTotal,
-                recordsFiltered: result.recordsFiltered,
-                draw: parseInt(req.query.draw),
+                recordsTotal: size,
+                recordsFiltered: size,
+                draw: parseInt(req.body.draw),
             })
         })
         .catch(err => next(err))
+}
+
+exports.getContent = (req, res, next) => {
+    const schema = Joi.object({ 
+        date: Joi.string().trim().pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/).required().label("Date"),
+        time: Joi.string().trim().pattern(/^[0-1][0-9]:00 (am|pm)$/).required().label("Time"),
+        appName: Joi.string().trim().required().label("App name"),
+    })
+
+    const validateResult = schema.validate({
+        date: req.query.date,
+        time: req.query.time,
+        appName: req.query.appName
+    })
+
+    if (validateResult.error) {
+        return res.status(200).json({
+            success: false,
+            message: fromErrorMessage(validateResult.error.details[0])
+        })
+    }
+
+    const app = new model("app")
+    app.aggregate({
+            user_id: req.user._id,
+            app_name: validateResult.value.appName,
+        }, {
+            _id: 0,
+            content: {
+                $filter: {
+                    input: "$content",
+                    as: "content",
+                    cond: { $eq: ["$$content.date", validateResult.value.date] }
+                }
+            },
+        })
+        .then(result => {
+            if (! result[0].content) {
+                return res.json({
+                    success: false,
+                    message: "App not found."
+                })
+            }
+
+            return res.json({
+                    success: true,
+                    message: result[0].content[0].message
+                })
+        })
+        .catch(err => next(err))
+}
+
+exports.updateContent = (req, res, next) => {
+    const schema = Joi.object({ 
+        date: Joi.string().trim().pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/).required().label("Date"),
+        time: Joi.string().trim().pattern(/^[0-1][0-9]:00 (am|pm)$/).required().label("Time"),
+        appName: Joi.string().trim().required().label("App name"),
+        message: Joi.string().trim().required().label("Message")
+    })
+
+    const validateResult = schema.validate({
+        date: req.body.date,
+        time: req.body.time,
+        appName: req.body.appName,
+        message: req.body.message
+    })
+
+    if (validateResult.error) {
+        return res.status(200).json({
+            success: false,
+            message: fromErrorMessage(validateResult.error.details[0])
+        })
+    }
 }
