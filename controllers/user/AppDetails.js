@@ -66,7 +66,7 @@ exports.appDetails = (req, res, next) => {
 }
 
 exports.getContent = (req, res, next) => {
-    const schema = Joi.object({ 
+    const schema = Joi.object({
         date: Joi.string().trim().pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/).required().label("Date"),
         time: Joi.string().trim().pattern(/^[0-1][0-9]:00 (am|pm)$/).required().label("Time"),
         appName: Joi.string().trim().required().label("App name"),
@@ -86,21 +86,20 @@ exports.getContent = (req, res, next) => {
     }
 
     const app = new model("app")
-    app.aggregate({
+    app.findOne({
             user_id: req.user._id,
             app_name: validateResult.value.appName,
         }, {
             _id: 0,
             content: {
-                $filter: {
-                    input: "$content",
-                    as: "content",
-                    cond: { $eq: ["$$content.date", validateResult.value.date] }
+                $elemMatch: {
+                    date: validateResult.value.date, 
+                    time: validateResult.value.time,
                 }
             },
         })
         .then(result => {
-            if (! result[0].content) {
+            if (result.length === 0) {
                 return res.json({
                     success: false,
                     message: "App not found."
@@ -108,15 +107,15 @@ exports.getContent = (req, res, next) => {
             }
 
             return res.json({
-                    success: true,
-                    message: result[0].content[0].message
-                })
+                success: true,
+                message: result.content[0].message
+            })
         })
         .catch(err => next(err))
 }
 
 exports.updateContent = (req, res, next) => {
-    const schema = Joi.object({ 
+    const schema = Joi.object({
         date: Joi.string().trim().pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/).required().label("Date"),
         time: Joi.string().trim().pattern(/^[0-1][0-9]:00 (am|pm)$/).required().label("Time"),
         appName: Joi.string().trim().required().label("App name"),
@@ -136,4 +135,26 @@ exports.updateContent = (req, res, next) => {
             message: fromErrorMessage(validateResult.error.details[0])
         })
     }
+
+    const app = new model("app")
+    app.updateOne({
+            user_id: req.user._id,
+            app_name: validateResult.value.appName,
+            "content.date": validateResult.value.date,
+            "content.time": validateResult.value.time
+        }, { "content.$.message": validateResult.value.message })
+        .then(updateInfo => {
+            if (!updateInfo.result.nModified) {
+                return res.json({
+                    success: false,
+                    message: 'Server Error. Please try again later.'
+                })
+            }
+
+            return res.json({
+                success:true,
+                message: "successfully updated."
+            })
+        })
+        .catch(err => next(err))
 }

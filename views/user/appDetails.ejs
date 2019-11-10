@@ -27,6 +27,7 @@
             </div>
         </div>
         <div class="tab-pane fade" id="messageContent" role="tabpanel" aria-labelledby="messageContent-tab" style="padding: 25px;">
+            <div id="content-message"></div>
             <div class="table-responsive">
                 <table class="table table-bordered table-hover table-striped" id="appDetailsTable" style="width:100%;">
                     <thead>
@@ -46,9 +47,9 @@
 <%- include('base/base_footer.ejs') %>
 <script type="text/javascript" src="/dashboard/DataTables/datatables.min.js"></script>
 <script type="text/javascript">
-var timeOut;
+var timeOut, appList;
 $(document).ready(function() {
-    var appList = $('#appDetailsTable').DataTable({
+    appList = $('#appDetailsTable').DataTable({
         "processing": true,
         "serverSide": true,
         "ordering": false,
@@ -70,6 +71,7 @@ $(document).ready(function() {
 function updateAppMessage(date, time, appName) {
     if (date && time && appName) {
         $("#update-app-message-content").fadeOut(0);
+        $("#content-message").fadeOut(0);
         $.ajax({
             url: "<%=updateContentUrl%>",
             type: "GET",
@@ -100,11 +102,16 @@ function updateAppMessage(date, time, appName) {
                             },
                             dataType: "json",
                             success: function(res) {
-                                if (res.success === true) {
-
-                                } else {
-                                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                if (res.success) {
+                                    $("#content-message").html('<div class="alert alert-success alert-dismissible" role="alert">' +
                                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + "</div>").fadeIn(1000)
+                                    clearMessage("content-message")
+                                    appList.ajax.reload(null, false)
+                                    $('#updateAppMessage').modal('hide')
+                                } else {
+                                    $("#update-app-message-content").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
+                                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + "</div>").fadeIn(1000)
+                                    clearMessage("update-app-message-content")
                                 }
                             }
                         })
@@ -114,15 +121,19 @@ function updateAppMessage(date, time, appName) {
                         '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
                         res.message +
                         "</div>").fadeIn(1000);
+
+                    clearMessage("update-app-message-content")
                 }
             }
         })
-
-        clearTimeout(timeOut)
-        timeOut = setTimeout(function() {
-            $("#message").fadeOut(500)
-        }, 5000)
     }
+}
+
+function clearMessage(idName) {
+    clearTimeout(timeOut)
+    timeOut = setTimeout(function() {
+        $("#" + idName).fadeOut(1000)
+    }, 5000)
 }
 </script>
 <%- include('base/close_footer.ejs') %>

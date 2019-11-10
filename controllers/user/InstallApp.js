@@ -1,5 +1,6 @@
 const { randomBytes } = require('crypto')
 const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
+const networkInterfaces = require('os').networkInterfaces()
 
 exports.appInstallView = (req, res, next) => {
 
@@ -89,8 +90,8 @@ exports.appName = (req, res, next) => {
                             return res.status(200).json({
                                 success: true,
                                 message: {
-                                    'ussd': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/ussd`,
-                                    'sms': `${req.protocol}://${req.hostname}/api/${randomSerial}/${validateResult.value.appName}/sms`,
+                                    'ussd': `http://${networkInterfaces.eth0[0].address}/api/${randomSerial}/${validateResult.value.appName}/ussd`,
+                                    'sms': `http://${networkInterfaces.eth0[0].address}/api/${randomSerial}/${validateResult.value.appName}/sms`,
                                     'url': web.appInstall.url,
                                 }
                             })
