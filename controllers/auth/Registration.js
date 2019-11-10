@@ -13,8 +13,8 @@ exports.registrationView = (req, res) => {
 
 exports.registration = (req, res, next) => {
     const schema = Joi.object({
-        name: Joi.string().trim().pattern(/^[a-zA-Z\s]+$/g).required().label("Name"),
-        number: Joi.string().trim().pattern(/^(\+8801)[0-9]{9}$/g).required().label("Mobile number"),
+        name: Joi.string().trim().pattern(/^[a-zA-Z\s]+$/).required().label("Name"),
+        number: Joi.string().trim().pattern(/^(\+8801)[0-9]{9}$/).required().label("Mobile number"),
         email: Joi.string().trim().email().required().label("Email address"),
         password: Joi.string().trim().min(5).max(50).label("Password"),
         confirm_password: Joi.ref("password")
