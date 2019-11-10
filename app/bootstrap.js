@@ -77,6 +77,7 @@ app.use((err, req, res, next) => {
 mongoClient
     .then(() => {
         if (process.env.NODE_ENV === "production") {
+            http.createServer(app).listen(config.get("PORT"), () => console.log(`app is runing http server on port ${config.get("PORT")}`))
             https.createServer({
                 key: fs.readFileSync(join(config.get('ssl.privkey')), 'utf8'),
                 cert: fs.readFileSync(join(config.get('ssl.cert')), 'utf8'),
