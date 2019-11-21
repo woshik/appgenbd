@@ -1,3 +1,5 @@
+"use strict";
+
 const winstonDailyRotateFile = require('winston-daily-rotate-file')
 const { createLogger, format, transports } = require('winston')
 const { align, combine, timestamp, printf } = format
@@ -68,17 +70,11 @@ exports.hashPassword = (password) => {
         bcrypt.genSalt(10)
             .then(getSalt => {
                 bcrypt.hash(password, getSalt)
-                    .then(hashPassword => {
-                        resolve(hashPassword);
-                    })
-                    .catch(err => {
-                        reject(err);
-                    });
+                    .then(hashPassword => resolve(hashPassword))
+                    .catch(err => reject(err)
             })
-            .catch(err => {
-                reject(err);
-            });
-    });
+            .catch(err => reject(err))
+    })
 }
 
 exports.logger = createLogger({
@@ -98,29 +94,8 @@ exports.logger = createLogger({
     ]
 })
 
-exports.flash = () => {
-    return function(req, res, next) {
-        if (req.flash) return next()
-        req.flash = function(type, msg) {
-            if (this.session === undefined) throw Error('req.flash() requires sessions');
-            let msgs = this.session.flash = this.session.flash || {};
-            if (type && msg) {
-                return msgs[type] = msg;
-            } else if (type) {
-                let arr = msgs[type];
-                delete msgs[type];
-                return arr || false;
-            } else {
-                this.session.flash = {};
-                return msgs;
-            }
-        }
-        next();
-    }
-}
-
-exports.commonInfo = {
+exports.companyInfo = {
     appName: config.get('app_name'),
     company: config.get('company'),
-    website: config.get('link'),
+    website: config.get('company_website'),
 }

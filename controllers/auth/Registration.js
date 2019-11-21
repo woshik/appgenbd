@@ -72,6 +72,8 @@ exports.registration = (req, res, next) => {
                             account_create: BdNowWithDateTime,
                         })
                         .then(dataInsectionResult => {
+                            console.log(dataInsectionResult)
+
                             sendMail(dataInsectionResult.ops[0].email, "Varification Code", dataInsectionResult.ops[0].token)
                                 .then(response => {})
                                 .catch(err => res.next(err))

@@ -1,5 +1,8 @@
 {
-	"name": "App Gen BD",
+	"app_name": "App Gen BD",
+	"company": "Hyper Queue",
+	"company_website": "https://www.hyperqueue.com",
+	"domain": "appgenbd.com",
 	"PORT": 5000,
 	"mail": {
 		"host": "server232.web-hosting.com",

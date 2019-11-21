@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include('snippets/header') %>
+    <%- include('templates'+layout+'style') %>
+</head>
+
+<body>
+    <div class="wrapper">
+        <%- include('snippets/side-bar.ejs') %>
+        <div id="content">
+            <%- include('snippets/top-bar.ejs') %>
+            <%- include('templates'+layout+'content') %>
+            <%- include('snippets/copy-right.ejs') %>
+        </div>
+    </div>
+    <%- include('snippets/footer') %>
+    <%- include('templates'+layout+'script') %>
+</body>
+
+</html>

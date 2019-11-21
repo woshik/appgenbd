@@ -1,7 +1,7 @@
 const { ObjectId } = require('mongodb')
 
 exports.payment = (req, res, next) => {
-    console.log(req.body)
+
     const schema = Joi.object({
         userMaxApp: Joi.number().min(req.user.setting.max_app).required().label("Max App"),
         ammount: Joi.number().min(req.user.setting.cost_per_month).required().label("Ammount"),

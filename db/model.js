@@ -1,3 +1,5 @@
+"use strict";
+
 module.exports = class Model {
     constructor(collectionName) {
         this.db = require('./database').getDB()
