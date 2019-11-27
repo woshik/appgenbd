@@ -1,4 +1,6 @@
-module.exports = {
+const web = require(join(BASE_DIR, 'urlconf/webRule'))
+
+exports.user = {
 	dashboard : {
 		title: 'Dashboard',
 		url: web.userDashboard.url,
@@ -20,3 +22,5 @@ module.exports = {
 		icon: '<i class="fas fa-file-pdf"></i>'
 	}
 }
+
+exports.admin = null

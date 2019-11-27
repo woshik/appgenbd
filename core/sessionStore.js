@@ -5,7 +5,7 @@ const session = require("express-session")
 const MongoStore = require("connect-mongo")(session)
 const sessionLifeTime = 24 * 60 * 60 * 1000
 
-exports.sessionStore = session({
+module.exports = session({
     name: 'sid',
     resave: false,
     saveUninitialized: false,
@@ -23,7 +23,7 @@ exports.sessionStore = session({
     }),
     cookie: {
         maxAge: sessionLifeTime,
-        SameSite: true
+        SameSite: true,
         secure: process.env.NODE_ENV === "production" ? true : false,
     }
 })

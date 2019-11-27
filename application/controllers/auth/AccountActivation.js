@@ -1,0 +1,84 @@
+"use strict";
+
+const Joi = require('@hapi/joi')
+const dateTime = require('date-and-time')
+const web = require(join(BASE_DIR, 'urlconf/webRule'))
+const { checkUser, checkCode } = require(join(MODEL_DIR, 'auth/Model_Account_Verification'))
+const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, 'core/util'))
+
+exports.accountActivationView = (req, res, next) => {
+
+    const schema = Joi.object({
+        email: Joi.string().trim().email().required(),
+        rd: Joi.string().trim().hex().required(),
+    });
+
+    const validateResult = schema.validate({
+        email: req.query.email,
+        rd: req.query.rd
+    });
+
+    if (validateResult.error || !checkRouteRD(validateResult.value.rd)) {
+        req.flash('userLoginPageMessage', 'Invalid request.')
+        return res.redirect(web.userLogin.url)
+    }
+
+    checkUser(validateResult.value)
+        .then(({ success, info, sendCode = null }) => {
+            if (success) {
+                return res.render("auth/base-template", {
+                    layout: "account-activation",
+                    info: companyInfo,
+                    title: "Account Activation",
+                    csrfToken: req.csrfToken(),
+                    verificationFormURL: web.accountActivation.url,
+                    sendCodeAgainURL: web.sendCodeAgain.url,
+                    loginPageURL: web.userLogin.url,
+                    flashMessage: req.flash('accountActivationPageMessage') || sendCode,
+                    email: req.query.email,
+                    rd: req.query.rd,
+                })
+            } else {
+                req.flash('userLoginPageMessage', info)
+                return res.redirect(web.userLogin.url)
+            }
+        })
+        .catch(err => next(err))
+}
+
+exports.accountActivation = (req, res, next) => {
+    const schema = Joi.object({
+        email: Joi.string().trim().email().required().label("Email address"),
+        code: Joi.string().trim().hex().length(6).required().label("Verification code"),
+        rd: Joi.string().trim().hex().length(16).required().label("rd code"),
+    });
+
+    const validateResult = schema.validate({
+        email: req.body.email,
+        code: req.body.code,
+        rd: req.body.rd
+    });
+
+    if (validateResult.error) {
+        return res.json({
+            success: false,
+            info: fromErrorMessage(validateResult.error.details[0])
+        });
+    }
+
+    checkCode(validateResult.value)
+        .then(({ success, info }) => {
+            if (success) {
+                req.flash('userLoginPageMessage', 'Account successfully activated.')
+                return res.json({ success: success, url: web.userLogin.url })
+            } else {
+                return res.json({ success: success, message: info })
+            }
+        })
+        .catch(err => next(err))
+}
+
+function checkRouteRD(rd) {
+    let now = dateTime.addHours(new Date(), 6)
+    return rd.slice(8, 14) === `${dateTime.format(now, 'DD')}aa${dateTime.format(now, 'MM')}`
+}

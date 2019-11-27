@@ -71,7 +71,7 @@ exports.hashPassword = (password) => {
             .then(getSalt => {
                 bcrypt.hash(password, getSalt)
                     .then(hashPassword => resolve(hashPassword))
-                    .catch(err => reject(err)
+                    .catch(err => reject(err))
             })
             .catch(err => reject(err))
     })
@@ -96,6 +96,6 @@ exports.logger = createLogger({
 
 exports.companyInfo = {
     appName: config.get('app_name'),
-    company: config.get('company'),
+    company: config.get('company_name'),
     website: config.get('company_website'),
 }

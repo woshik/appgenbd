@@ -8,9 +8,10 @@
     "start": "export NODE_ENV=development && node index.js",
     "server": "export NODE_ENV=production && node index.js",
     "watch": "export NODE_ENV=development && nodemon index.js",
+    "dev": "webpack --config webpack.config.js"
   },
   "engines": {
-    "node": "12.13.0"
+    "node": "12.13.1"
   },
   "author": "Hyper Queue",
   "license": "MIT",
@@ -19,27 +20,27 @@
     "url": "git+https://github.com/woshik/appgenbd"
   },
   "dependencies": {
-    "@hapi/joi": "^16.1.2",
+    "@hapi/joi": "^16.1.7",
     "axios": "^0.19.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
-    "config": "^3.2.2",
+    "config": "^3.2.4",
     "connect-mongo": "^3.1.2",
     "cron": "^1.7.2",
     "csurf": "^1.10.0",
-    "date-and-time": "^0.10.0",
-    "ejs": "^2.7.1",
+    "date-and-time": "^0.11.0",
+    "ejs": "^2.7.4",
     "express": "^4.17.1",
     "express-session": "^1.17.0",
     "helmet": "^3.21.1",
     "html-entities": "^1.2.1",
-    "mongodb": "^3.3.2",
-    "nodemailer": "^6.3.0",
+    "mongodb": "^3.3.4",
+    "nodemailer": "^6.3.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "pdfkit": "^0.10.0",
     "serve-favicon": "^2.5.0",
     "winston": "^3.2.1",
-    "winston-daily-rotate-file": "^4.2.1"
+    "winston-daily-rotate-file": "^4.3.0"
   }
 }

@@ -1,4 +1,6 @@
-const { isUserAuthenticated, isUserCanSee, canAccess, isSuperUser } = require(join(__dirname, "..", "core", "middlewares"))
+"use strict";
+
+const { isUserAuthenticated, isUserCanSee, canAccess, isSuperUser } = require(join(BASE_DIR, "core", "middlewares"))
 
 module.exports = {
     userLogin: {
@@ -11,6 +13,7 @@ module.exports = {
         middleware: [isUserCanSee],
         path: 'auth'
     },
+    
     registration: {
         url: '/registration',
         controller: 'Registration',
@@ -22,19 +25,19 @@ module.exports = {
         path: 'auth'
     },
 
-    emailVerification: {
-        url: '/verification/:id',
-        controller: 'EmailVerification',
+    accountActivation: {
+        url: '/account/active',
+        controller: 'AccountActivation',
         methods: {
-            emailVerificationView: 'get',
-            emailVerification: 'post',
+            accountActivationView: 'get',
+            accountActivation: 'post',
         },
         middleware: [isUserCanSee],
         path: 'auth'
     },
 
-    sendEmailAgain: {
-        url: '/sendemailagain/:id',
+    sendCodeAgain: {
+        url: '/sendcode/:id',
         controller: 'Registration',
         methods: {
             sendMailAgain: 'post',
@@ -55,7 +58,7 @@ module.exports = {
     },
 
     forgotPasswordCodeVerify: {
-        url: '/forgotpassword/verification/:id',
+        url: '/forgotpassword/verification',
         controller: 'ForgotPassword',
         methods: {
             forgotPasswordCodeVerifyView: 'get',

@@ -8,9 +8,8 @@ let _db;
 
 exports.mongoClient = new Promise((resolve, reject) => {
     MongoClient.connect(config.get('database_connection_string'), { useNewUrlParser: true, useUnifiedTopology: true })
-        .then(client => {
-            _db = client.db('appgenbd');
-            global.model = require(join(BASE_DIR, 'db', 'model'))
+        .then(db => {
+            _db = db.db('appgenbd');
             resolve()
         })
         .catch(err => {

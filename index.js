@@ -3,7 +3,7 @@
 const cluster = require("cluster")
 let worker_id;
 
-// global declaration for bootstrap worker
+// global declaration
 global.join = require("path").join;
 global.BASE_DIR = __dirname;
 
@@ -29,10 +29,10 @@ if (cluster.isMaster) {
     }
 } else if (parseInt(cluster.worker.process.env.worker_id) === 1) {
     process.send({ type: "cron", id: cluster.worker.id })
-    //require(join(BASE_DIR, 'cron', 'serverCronJob'))
+    require(join(BASE_DIR, 'cron', 'serverCronJob'))
 } else {
     // application bootstrap
-    require(join(BASE_DIR, 'app', 'bootstrap'))
+    require(join(BASE_DIR, 'bootstrap', 'app'))
 }
 
 function masterCommunicator(id) {

@@ -1,12 +1,14 @@
+"use strict";
+
 $(document).ready(function() {
-    let timeOut
+    var timeOut;
     $("#registrationForm").unbind("submit").bind("submit", function(e) {
-        e.preventDefault()
-        var form = $(this)
-        var url = form.attr("action")
-        var type = form.attr("method")
-        var button = $("#buttonload")
-        $("#message").fadeOut(0)
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr("action");
+        var type = form.attr("method");
+        var button = $("#buttonload");
+        $("#message").fadeOut(0);
         $.ajax({
             url: url,
             type: type,
@@ -15,26 +17,22 @@ $(document).ready(function() {
             },
             data: form.serialize(),
             dataType: "json",
-            beforeSend: function() {
-                button.text("Account Creating...")
-                    .append('<i class="fa fa-circle-o-notch fa-spin" style="margin-left: 7px;font-size: 17px;"></i>')
-                    .attr("disabled", "disabled")
-                    .css("cursor", "no-drop")
+            beforeSend: function beforeSend() {
+                button.text("Account Creating...").append('<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">').attr("disabled", "disabled").css("cursor", "no-drop");
             },
-            success: function(res) {
-                button.removeAttr("disabled").css("cursor", "").text("Create Account").children().remove()
+            success: function success(res) {
+                button.removeAttr("disabled").css("cursor", "").text("Create Account").children().remove();
+
                 if (res.success === true) {
-                    window.location = res.message
+                    window.location = res.url;
                 } else {
-                    clearTimeout(timeOut)
-                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                        res.message + "</div>").fadeIn(1000)
-                    timeOut = setTimeout(function(){
-                        $("#message").fadeOut(1000)
-                    },5000)
+                    clearTimeout(timeOut);
+                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + "</div>").fadeIn(1000);
+                    timeOut = setTimeout(function() {
+                        $("#message").fadeOut(1000);
+                    }, 5000);
                 }
             }
-        })
-    })
-})
+        });
+    });
+});

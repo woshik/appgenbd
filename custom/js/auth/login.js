@@ -1,12 +1,13 @@
-$(document).ready(function() {
-    let timeOut
-    $("#loginForm").unbind("submit").bind("submit", function(e) {
-        e.preventDefault()
-        var form = $(this)
-        var url = form.attr("action")
-        var type = form.attr("method")
+"use strict";
 
-        $("#message").fadeOut(0)
+$(document).ready(function() {
+    var timeOut;
+    $("#loginForm").unbind("submit").bind("submit", function(e) {
+        e.preventDefault();
+        var form = $(this);
+        var url = form.attr("action");
+        var type = form.attr("method");
+        $("#message").fadeOut(0);
         $.ajax({
             url: url,
             type: type,
@@ -15,20 +16,21 @@ $(document).ready(function() {
             },
             data: form.serialize(),
             dataType: "json",
-            success: function(res) {
+            success: function success(res) {
                 if (res.success === true) {
-                    window.location = res.message
+                    window.location = res.message;
                 } else {
-                    clearTimeout(timeOut)
-                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' +
-                        '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-                        res.message +
-                        '</div>').fadeIn(1000)
+                    $("#message").html('<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + '</div>').fadeIn(1000);
+                    clearTimeout(timeOut);
                     timeOut = setTimeout(function() {
-                        $("#message").fadeOut(500)
-                    }, 5000)
+                        $("#message").fadeOut(500);
+                    }, 5000);
                 }
             }
-        })
-    })
-})
+        });
+    });
+
+     setTimeout(function() {
+        $("#flashMessage").fadeOut(1000);
+    }, 5000);
+});

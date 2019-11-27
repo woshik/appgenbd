@@ -8,7 +8,7 @@ module.exports = class Model {
 
     save(data) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.insertOne(data)
                         .then(result => resolve(result))
@@ -20,7 +20,7 @@ module.exports = class Model {
 
     updateOne(where, updateValue) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.updateOne(where, { '$set': updateValue })
                         .then(result => resolve(result))
@@ -32,7 +32,7 @@ module.exports = class Model {
 
     customUpdateOne(where, updateValue) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.updateOne(where, updateValue)
                         .then(result => resolve(result))
@@ -44,7 +44,7 @@ module.exports = class Model {
 
     updateMany(where, updateValue) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.updateMany(where, { '$set': updateValue })
                         .then(result => resolve(result))
@@ -56,7 +56,7 @@ module.exports = class Model {
 
     customUpdateMany(where, updateValue) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.updateMany(where, updateValue)
                         .then(result => resolve(result))
@@ -68,7 +68,7 @@ module.exports = class Model {
 
     findOne(where, show) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     show = show || {}
                     result.findOne(where, { projection: show })
@@ -81,7 +81,7 @@ module.exports = class Model {
 
     find(where, show) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     show = show || {}
                     result.find(where, { projection: show }).toArray()
@@ -94,7 +94,7 @@ module.exports = class Model {
 
     deleteOne(where) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.deleteOne(where)
                         .then(result => resolve(result))
@@ -106,7 +106,7 @@ module.exports = class Model {
 
     deleteMany(where) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.deleteMany(where)
                         .then(result => resolve(result))
@@ -118,7 +118,7 @@ module.exports = class Model {
 
     dataTable(where, show, start, limit, sort) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.find(where, { projection: show, skip: start, limit: limit, sort: sort }).toArray()
                         .then(async (Data) => {
@@ -136,7 +136,7 @@ module.exports = class Model {
 
     dataTableForArrayElement(where, projection, base) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.findOne(where, { projection: projection })
                         .then(Data => resolve({
@@ -151,7 +151,7 @@ module.exports = class Model {
 
     aggregate(match, projection) {
         return new Promise((resolve, reject) => {
-            this.db.createCollection(this.collectionName)
+            this.db.collection(this.collectionName)
                 .then(result => {
                     result.aggregate([
                             { $match: match },
