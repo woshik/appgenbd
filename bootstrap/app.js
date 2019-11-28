@@ -1,99 +1,99 @@
 "use strict";
 
 // import other usefull modules
-const http = require('http')
-const https = require('https')
-const express = require('express')
-const helmet = require('helmet')
-const compression = require('compression')
-const csrf = require('csurf')
-const config = require("config")
-const { readFileSync } = require('fs')
-const favicon = require('serve-favicon')
+const http = require( 'http' )
+const https = require( 'https' )
+const express = require( 'express' )
+const helmet = require( 'helmet' )
+const compression = require( 'compression' )
+const csrf = require( 'csurf' )
+const config = require( "config" )
+const { readFileSync } = require( 'fs' )
+const favicon = require( 'serve-favicon' )
 
 // import module from project
-const { mongoClient } = require(join(BASE_DIR, 'db', 'database'))
-const sessionStore = require(join(BASE_DIR, 'core', 'sessionStore'))
-const { logger } = require(join(BASE_DIR, 'core', 'util'))
-const auth = require(join(BASE_DIR, 'core', 'auth'))
-const { flash, unsetFlashMessage } = require(join(BASE_DIR, "core", "middlewares"))
+const { mongoClient } = require( join( BASE_DIR, 'db', 'database' ) )
+const sessionStore = require( join( BASE_DIR, 'core', 'sessionStore' ) )
+const { logger } = require( join( BASE_DIR, 'core', 'util' ) )
+const auth = require( join( BASE_DIR, 'core', 'auth' ) )
+const { flash, unsetFlashMessage } = require( join( BASE_DIR, "core", "middlewares" ) )
 
-// global declaration 
-global.MODEL_DIR = join(BASE_DIR, "application/models")
-global.CONTROLLER_DIR = join(BASE_DIR, "application/controllers")
+// global declaration
+global.MODEL_DIR = join( BASE_DIR, "application/models" )
+global.CONTROLLER_DIR = join( BASE_DIR, "application/controllers" )
 
 // calling express function
 const app = express()
 
 //favicon
-app.use(favicon(join(BASE_DIR, 'public', 'images', 'icons', 'favicon.ico')))
+app.use( favicon( join( BASE_DIR, 'public', 'images', 'icons', 'favicon.ico' ) ) )
 
 // node js process error handle
-process.on('uncaughtException', (err) => {
-    console.log(err)
-    logger.error(err)
-})
+process.on( 'uncaughtException', ( err ) => {
+	console.log( err )
+	logger.error( err )
+} )
 
-process.on('unhandledRejection', (err) => {
-    console.log(err)
-    logger.error(err)
-})
+process.on( 'unhandledRejection', ( err ) => {
+	console.log( err )
+	logger.error( err )
+} )
 
 // security configuretaion
-app.use(helmet())
-app.use(compression())
+app.use( helmet() )
+app.use( compression() )
 
 // set view engine configuretaion
-app.set('view engine', 'ejs')
-app.set('views', join(BASE_DIR, 'application/views'))
+app.set( 'view engine', 'ejs' )
+app.set( 'views', join( BASE_DIR, 'application/views' ) )
 
 // app configuretaion
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(express.static(join(BASE_DIR, 'public')))
-app.use(express.static(join(BASE_DIR, 'custom')))
+app.use( express.json() )
+app.use( express.urlencoded( { extended: true } ) )
+app.use( express.static( join( BASE_DIR, 'public' ) ) )
+app.use( express.static( join( BASE_DIR, 'custom' ) ) )
 
 // api routing
 //app.use("/api", require(join(BASE_DIR, "routes", "api")))
 
 //session configuretion
-app.use(sessionStore)
+app.use( sessionStore )
 
 // csrf configuretion
-app.use(csrf())
+app.use( csrf() )
 
 // auth configuretion
-auth(app)
+auth( app )
 
 // set flash message
-app.use(flash)
+app.use( flash )
 
 // web routing
-app.use("/", require(join(BASE_DIR, "routes", "web")))
+app.use( "/", require( join( BASE_DIR, "routes", "web" ) ) )
 
 // 404 page not found
-app.use((req, res) => res.render("error/page", { status: 404, appName: config.get("app_name") }))
+app.use( ( req, res ) => res.render( "error/page", { status: 404, appName: config.get( "app_name" ) } ) )
 
 // error handle
-app.use((err, req, res, next) => {
-    console.log(err)
-    logger.error(err)
-    return res.render("error/page", { status: 500, appName: config.get("app_name") });
-})
+app.use( ( err, req, res, next ) => {
+	console.log( err )
+	logger.error( err )
+	return res.render( "error/page", { status: 500, appName: config.get( "app_name" ) } );
+} )
 
 // start mongodb and then runing the app on defined port number
 mongoClient
-    .then(() => {
-        if (process.env.NODE_ENV === "production") {
-            https.createServer({
-                key: readFileSync(join(config.get('ssl.privkey')), 'utf8'),
-                cert: readFileSync(join(config.get('ssl.cert')), 'utf8'),
-                ca: readFileSync(join(config.get('ssl.chain')), 'utf8')
-            }, app).listen(config.get("PORT"), () => console.log(`app is runing https server on port ${config.get("PORT")}`))
-        } else {
-            http.createServer(app).listen(config.get("PORT"), () => console.log(`app is runing http server on port ${config.get("PORT")}`))
-        }
-    })
-    .catch(err => {
-        logger.error(err)
-    })
+	.then( () => {
+		if ( process.env.NODE_ENV === "production" ) {
+			https.createServer( {
+				key: readFileSync( join( config.get( 'ssl.privkey' ) ), 'utf8' ),
+				cert: readFileSync( join( config.get( 'ssl.cert' ) ), 'utf8' ),
+				ca: readFileSync( join( config.get( 'ssl.chain' ) ), 'utf8' )
+			}, app ).listen( config.get( "PORT" ), () => console.log( `app is runing https server on port ${config.get("PORT")}` ) )
+		} else {
+			http.createServer( app ).listen( config.get( "PORT" ), () => console.log( `app is runing http server on port ${config.get("PORT")}` ) )
+		}
+	} )
+	.catch( err => {
+		logger.error( err )
+	} )
