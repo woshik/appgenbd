@@ -1,7 +1,9 @@
 "use strict";
 
 const Joi = require( '@hapi/joi' )
-const { randomBytes } = require( 'crypto' )
+const {
+	randomBytes
+} = require( 'crypto' )
 const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	hashPassword,

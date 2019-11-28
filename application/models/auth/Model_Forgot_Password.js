@@ -13,7 +13,7 @@ const {
 
 exports.checkEmail = email => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
+		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB();
 		db.createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {

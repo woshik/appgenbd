@@ -92,7 +92,7 @@ exports.checkCode = ( {
 									}, {
 										$set: {
 											account_active: true,
-											userRDId: randomBytes( 4 ).toString( 'hex' )
+											userRDId: null
 										}
 									} )
 									.then( updateInfo => resolve( {

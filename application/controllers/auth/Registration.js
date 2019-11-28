@@ -1,13 +1,13 @@
 "use strict";
 
-const Joi = require( '@hapi/joi' )
-const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
-const model_registration = require( join( MODEL_DIR, 'auth/Model_Registration' ) )
+const Joi = require( '@hapi/joi' );
+const web = require( join( BASE_DIR, 'urlconf/webRule' ) );
+const model_registration = require( join( MODEL_DIR, 'auth/Model_Registration' ) );
 const {
 	sendMail,
 	companyInfo,
 	fromErrorMessage
-} = require( join( BASE_DIR, 'core/util' ) )
+} = require( join( BASE_DIR, 'core/util' ) );
 
 exports.registrationView = ( req, res ) => {
 	res.render( "auth/base-template", {
@@ -57,15 +57,15 @@ exports.registration = ( req, res, next ) => {
 					success: false,
 					message: info
 				} )
+			} else {
+				sendMail( info.ops[ 0 ].email, "Varification Code", info.ops[ 0 ].token ).catch( err => console.log( err ) )
+				req.flash( 'accountActivationPageMessage', 'Please, check your email account.' )
+
+				return res.json( {
+					success: true,
+					url: `${web.accountActivation.url}?email=${encodeURIComponent(info.ops[0].email)}&rd=${info.ops[0].userRDId}`
+				} )
 			}
-
-			sendMail( info.ops[ 0 ].email, "Varification Code", info.ops[ 0 ].token ).catch( err => console.log( err ) )
-			req.flash( 'accountActivationPageMessage', 'Please, check your email account.' )
-
-			return res.json( {
-				success: true,
-				url: `${web.accountActivation.url}?email=${encodeURIComponent(info.ops[0].email)}&rd=${info.ops[0].userRDId}`
-			} )
 		} )
 		.catch( err => next( err ) )
 }

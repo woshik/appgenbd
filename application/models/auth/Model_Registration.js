@@ -35,7 +35,7 @@ module.exports = ( userInfo ) => {
 										timeStamp = now2.setMinutes( now2.getMinutes() + 10 )
 
 									userCollection.insertOne( {
-											userRDId: `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}aa${dateTime.format(now, 'MM')}${now2.setMinutes( now2.getMinutes() + 20 )}`,
+											userRDId: `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}${now2.setMinutes( now2.getMinutes() + 20 )}`,
 											name: userInfo.name,
 											number: userInfo.number,
 											email: userInfo.email,

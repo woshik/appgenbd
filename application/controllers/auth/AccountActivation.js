@@ -6,7 +6,7 @@ const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	checkUser,
 	checkCode
-} = require( join( MODEL_DIR, 'auth/Model_Account_Verification' ) )
+} = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
 const {
 	companyInfo,
 	fromErrorMessage
@@ -59,20 +59,20 @@ exports.accountActivationView = ( req, res, next ) => {
 exports.accountActivation = ( req, res, next ) => {
 	const schema = Joi.object( {
 		email: Joi.string().trim().email().required(),
-		code: Joi.string().trim().hex().length( 6 ).required().label( "Verification code" ),
 		rd: Joi.string().trim().hex().required(),
+		code: Joi.string().trim().hex().length( 6 ).required().label( "Verification code" ),
 	} );
 
 	const validateResult = schema.validate( {
 		email: req.body.email,
+		rd: req.body.rd,
 		code: req.body.code,
-		rd: req.body.rd
 	} );
 
 	if ( validateResult.error || !checkRDParam( req.body.rd ) ) {
 		return res.json( {
 			success: false,
-			info: fromErrorMessage( validateResult.error.details[ 0 ] )
+			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? fromErrorMessage( validateResult.error.details[ 0 ] ) : 'Invalid request.'
 		} );
 	}
 
@@ -99,5 +99,5 @@ exports.accountActivation = ( req, res, next ) => {
 
 function checkRDParam( rd ) {
 	let now = dateTime.addHours( new Date(), 6 )
-	return parseInt( rd.slice( 14 ) ) > now.getTime() && rd.slice( 8, 14 ) === `${dateTime.format(now, 'DD')}aa${dateTime.format(now, 'MM')}`
+	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}`
 }
