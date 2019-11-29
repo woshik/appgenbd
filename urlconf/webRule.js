@@ -78,7 +78,7 @@ module.exports = {
 		url: '/sendcode',
 		controller: 'SendCodeAgain',
 		methods: {
-			sendMailAgain: 'post',
+			sendCodeAgain: 'post',
 		},
 		middleware: [ isUserCanSee ],
 		path: 'auth'

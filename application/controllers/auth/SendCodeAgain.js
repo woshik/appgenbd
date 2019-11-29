@@ -1,4 +1,4 @@
-exports.sendMailAgain = ( req, res, next ) => {
+exports.sendCodeAgain = ( req, res, next ) => {
 	const user = new model( "users" );
 	user.findOne( {
 			userRDId: req.params.id

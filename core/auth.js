@@ -85,7 +85,14 @@ module.exports = ( app ) => {
 	passport.serializeUser( ( user, done ) => {
 		let key = {
 			id: user._id
-		}!!user.super_user ? ( key.model = 'admin' ) : ( key.model = 'users' )
+		}
+
+		if ( !!user.super_user ) {
+			key.model = 'admin'
+		} else {
+			key.model = 'users'
+		}
+
 		return done( null, key )
 	} )
 
