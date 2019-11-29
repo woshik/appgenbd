@@ -8,15 +8,24 @@ const helmet = require( 'helmet' )
 const compression = require( 'compression' )
 const csrf = require( 'csurf' )
 const config = require( "config" )
-const { readFileSync } = require( 'fs' )
+const {
+	readFileSync
+} = require( 'fs' )
 const favicon = require( 'serve-favicon' )
 
 // import module from project
-const { mongoClient } = require( join( BASE_DIR, 'db', 'database' ) )
+const {
+	mongoClient
+} = require( join( BASE_DIR, 'db', 'database' ) )
 const sessionStore = require( join( BASE_DIR, 'core', 'sessionStore' ) )
-const { logger } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	logger
+} = require( join( BASE_DIR, 'core', 'util' ) )
 const auth = require( join( BASE_DIR, 'core', 'auth' ) )
-const { flash, unsetFlashMessage } = require( join( BASE_DIR, "core", "middlewares" ) )
+const {
+	flash,
+	unsetFlashMessage
+} = require( join( BASE_DIR, "core", "middlewares" ) )
 
 // global declaration
 global.MODEL_DIR = join( BASE_DIR, "application/models" )
@@ -49,7 +58,9 @@ app.set( 'views', join( BASE_DIR, 'application/views' ) )
 
 // app configuretaion
 app.use( express.json() )
-app.use( express.urlencoded( { extended: true } ) )
+app.use( express.urlencoded( {
+	extended: true
+} ) )
 app.use( express.static( join( BASE_DIR, 'public' ) ) )
 app.use( express.static( join( BASE_DIR, 'custom' ) ) )
 
@@ -72,13 +83,19 @@ app.use( flash )
 app.use( "/", require( join( BASE_DIR, "routes", "web" ) ) )
 
 // 404 page not found
-app.use( ( req, res ) => res.render( "error/page", { status: 404, appName: config.get( "app_name" ) } ) )
+app.use( ( req, res ) => res.render( "error/page", {
+	status: 404,
+	appName: config.get( "app_name" )
+} ) )
 
 // error handle
 app.use( ( err, req, res, next ) => {
 	console.log( err )
 	logger.error( err )
-	return res.render( "error/page", { status: 500, appName: config.get( "app_name" ) } );
+	return res.render( "error/page", {
+		status: 500,
+		appName: config.get( "app_name" )
+	} );
 } )
 
 // start mongodb and then runing the app on defined port number

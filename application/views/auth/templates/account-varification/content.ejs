@@ -1,0 +1,41 @@
+<form action="<%=verificationFormURL%>" method="POST" class="login100-form" id="verificationForm">
+
+	<span class="login100-form-title p-b-34">
+		<%=title%>
+	</span>
+
+	<% if (flashMessage) { %>
+	<div class="alert alert-info alert-dismissible" id="flashMessage" role="alert" style="width: 100%;">
+		<%=flashMessage%>
+	</div>
+	<% } %>
+
+	<div id="message" style="width: 100%"></div>
+
+	<div class="wrap-input100 m-b-20">
+		<input id="name" class="input100" type="text" name="code" placeholder="verification Code" autocomplete="off">
+		<span class="focus-input100"></span>
+	</div>
+
+	<input type="hidden" name="email" value="<%=email%>">
+	<input type="hidden" name="rd" value="<%=rd%>">
+
+	<div class="container-login100-form-btn">
+		<button class="login100-form-btn">
+			Submit
+		</button>
+	</div>
+
+	<div class="w-full text-center p-t-40 p-b-110">
+		<a href="<%=sendCodeAgainURL%>" id="mailSending" class="txt4">
+			Send Code Again
+		</a>
+	</div>
+
+	<div class="w-full text-center">
+		<a href="<%=loginPageURL%>" class="txt4">
+			Back To Login
+		</a>
+	</div>
+
+</form>

@@ -37,11 +37,16 @@ exports.checkUser = ( {
 								info: 'Your account already activated.'
 							} )
 						} else if ( !checkTokenTime( user.token_refresh ) ) {
-							generateAndSendNewCode( resolve, reject, userCollection, user._id, email, {
-								success: true,
-								info: null,
-								sendCode: 'Please, check your email account.'
-							} )
+							generateNewCode( userCollection, user._id )
+								.then( updateInfo => {
+									sendMail( email, "Varification Code", updateInfo.ops[ 0 ].token ).catch( err => console.log( err ) )
+									return resolve( {
+										success: true,
+										info: null,
+										sendCode: 'Please, check your email account.'
+									} )
+								} )
+								.catch( err => reject( err ) )
 						} else {
 							resolve( {
 								success: true,
@@ -107,10 +112,15 @@ exports.checkCode = ( {
 								} )
 							}
 						} else {
-							generateAndSendNewCode( userCollection, user._id, email, {
-								success: false,
-								info: 'Please, check your email account again. New code sent.'
-							} )
+							generateNewCode( userCollection, user._id )
+								.then( updateInfo => {
+									sendMail( email, "Varification Code", updateInfo.ops[ 0 ].token ).catch( err => console.log( err ) )
+									return resolve( {
+										success: false,
+										info: 'Please, check your email account again. New code sent.'
+									} )
+								} )
+								.catch( err => reject( err ) )
 						}
 					} )
 					.catch( err => reject( err ) )
@@ -120,23 +130,22 @@ exports.checkCode = ( {
 }
 
 function checkTokenTime( tokenTime ) {
-	return tokenTime > dateTime.addHours( new Date(), 6 ).getTime()
+	return ( tokenTime - 60000 ) > dateTime.addHours( new Date(), 6 ).getTime()
 }
 
-function generateAndSendNewCode( resolve, reject, userCollection, id, email, response ) {
-	let now = dateTime.addHours( new Date(), 6 ),
-		token = randomBytes( 3 ).toString( 'hex' )
+function generateNewCode( userCollection, id ) {
+	return new Promise( ( resolve, reject ) => {
+		let now = dateTime.addHours( new Date(), 6 )
 
-	sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
-
-	userCollection.updateOne( {
-			_id: id
-		}, {
-			$set: {
-				token: token,
-				token_refresh: now.setMinutes( now.getMinutes() + 10 )
-			}
-		} )
-		.then( updateInfo => resolve( response ) )
-		.catch( err => reject( err ) )
+		userCollection.updateOne( {
+				_id: id
+			}, {
+				$set: {
+					token: randomBytes( 3 ).toString( 'hex' ),
+					token_refresh: now.setMinutes( now.getMinutes() + 10 )
+				}
+			} )
+			.then( updateInfo => resolve( updateInfo ) )
+			.catch( err => reject( err ) )
+	} )
 }
