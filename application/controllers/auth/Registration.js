@@ -15,10 +15,10 @@ exports.registrationView = ( req, res ) => {
 	res.render( "auth/base-template", {
 		layout: 'registration',
 		info: companyInfo,
-		title: "Account Registration",
+		title: "User Registration",
 		csrfToken: req.csrfToken(),
-		registrationForm: web.registration.url,
-		loginPage: web.userLogin.url
+		registrationFormURL: web.registration.url,
+		loginPageURL: web.userLogin.url
 	} )
 }
 
@@ -60,7 +60,7 @@ exports.registration = ( req, res, next ) => {
 					message: info
 				} )
 			} else {
-				sendMail( info.ops[ 0 ].email, "Varification Code", info.ops[ 0 ].token ).catch( err => console.log( err ) )
+				sendMail( info.email, "Varification Code", info.token ).catch( err => console.log( err ) )
 				req.flash( 'accountActivationPageMessage', 'Please, check your email account.' )
 
 				return res.json( {

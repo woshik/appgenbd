@@ -1,16 +1,15 @@
 "use strict";
 
-$( "#message" ).fadeOut( 0 );
-var timeOut,
-	button = $( "#buttonload" ),
-	btnText = button.text().trim();
-
 $( document ).ready( function () {
+	$( "#message" ).fadeOut( 0 );
+	var timeOut,
+		button = $( "#buttonload" ),
+		btnText = button.text().trim();
 	$( "#activationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
-		var form = $( this );
-		var url = form.attr( "action" );
-		var type = form.attr( "method" );
+		var form = $( this ),
+			url = form.attr( "action" ),
+			type = form.attr( "method" );
 		$.ajax( {
 			url: url,
 			type: type,
@@ -37,7 +36,6 @@ $( document ).ready( function () {
 			}
 		} );
 	} );
-
 	$( '#mailSending' ).click( function ( e ) {
 		e.preventDefault();
 		$.ajax( {
@@ -57,8 +55,7 @@ $( document ).ready( function () {
 			}
 		} );
 	} );
-
-	clearMessage( "flashMessage" )
+	clearMessage( "flashMessage" );
 } );
 
 function clearMessage( id ) {

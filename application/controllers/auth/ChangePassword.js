@@ -1,11 +1,10 @@
 "use strict";
 
 const Joi = require( '@hapi/joi' )
-const dateTime = require( 'date-and-time' )
 const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	checkUser,
-	checkCode
+	changePassword
 } = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
 const {
 	companyInfo,
@@ -14,26 +13,16 @@ const {
 
 exports.accountVerificationView = ( req, res, next ) => {
 
-	const schema = Joi.object( {
-		email: Joi.string().trim().email().required(),
-		rd: Joi.string().trim().hex().required(),
-	} );
-
-	const validateResult = schema.validate( {
-		email: req.query.email,
-		rd: req.query.rd
-	} );
-
-	if ( validateResult.error ) {
+	// TODO: here we can check email & rd parameter using joi but I that not needed.
+	if ( ( !req.query.email && !req.query.rd ) || !checkRDParam( req.query.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
 
-	checkUser( validateResult.value )
+	checkUser( req.query.email, req.query.rd )
 		.then( ( {
 			success,
-			info,
-			sendCode = null
+			info
 		} ) => {
 			if ( success ) {
 				return res.render( "auth/base-template", {
@@ -56,6 +45,14 @@ exports.accountVerificationView = ( req, res, next ) => {
 
 exports.changePassword = ( req, res, next ) => {
 
+	// TODO: here we can check email & rd parameter using joi but I that not needed.
+	if ( ( !req.body.email && !req.body.rd ) ) {
+		return res.json( {
+			success: false,
+			message: 'Invalid request.'
+		} );
+	}
+
 	const schema = Joi.object( {
 		password: Joi.string().trim().min( 5 ).max( 50 ).label( "Password" ),
 		confirm_password: Joi.ref( "password" )
@@ -67,54 +64,29 @@ exports.changePassword = ( req, res, next ) => {
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
 
-	const user = new model( "users" );
-
-	user.findOne( {
-			userRDId: req.params.id,
-			token: parseInt( req.params.code ),
-			forgot: 1
-		} )
-		.then( userAvailable => {
-
-			if ( !userAvailable ) {
-				return res.status( 200 ).json( {
+	changePassword( req.body.email, req.body.rd, validateResult.value.password )
+		.then( ( {
+			success,
+			info
+		} ) => {
+			if ( success ) {
+				req.flash( 'userLoginPageMessage', info )
+				return res.json( {
+					success: true,
+					message: web.userLogin.url
+				} )
+			} else {
+				return res.json( {
 					success: false,
-					message: "User not found"
+					message: info
 				} )
 			}
-
-			hashPassword( validateResult.value.password )
-				.then( passwordHashed => {
-					let password = {
-						'password': passwordHashed,
-						'forget': 0
-					}
-					user.updateOne( {
-							_id: userAvailable._id
-						}, password )
-						.then( userUpdateValue => {
-							if ( !userUpdateValue.result.nModified ) {
-								return res.status( 200 ).json( {
-									success: false,
-									message: 'Server Error. Please try again later.'
-								} )
-							}
-
-							req.flash( 'userLoginScreenSuccessMessage', 'Password Successfully Changed' )
-							return res.status( 200 ).json( {
-								success: true,
-								message: web.userLogin.url
-							} )
-						} )
-						.catch( err => next( err ) )
-				} )
-				.catch( err => next( err ) )
 		} )
 		.catch( err => next( err ) )
 }

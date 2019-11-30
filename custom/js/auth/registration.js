@@ -1,15 +1,14 @@
 "use strict";
 
 $( document ).ready( function () {
-	var timeOut;
-	var button = $( "#buttonload" );
-
+	var timeOut,
+		button = $( "#buttonload" );
+	$( "#message" ).fadeOut( 0 );
 	$( "#registrationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
-		var form = $( this );
-		var url = form.attr( "action" );
-		var type = form.attr( "method" );
-		$( "#message" ).fadeOut( 0 );
+		var form = $( this ),
+			url = form.attr( "action" ),
+			type = form.attr( "method" );
 		$.ajax( {
 			url: url,
 			type: type,
@@ -25,8 +24,8 @@ $( document ).ready( function () {
 				if ( res.success === true ) {
 					window.location = res.url;
 				} else {
-					clearTimeout( timeOut );
 					$( "#message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + "</div>" ).fadeIn( 1000 );
+					clearTimeout( timeOut );
 					timeOut = setTimeout( function () {
 						$( "#message" ).fadeOut( 1000 );
 					}, 5000 );

@@ -8,10 +8,7 @@ const {
 	sendMail
 } = require( join( BASE_DIR, 'core/util' ) )
 
-exports.checkUser = ( {
-	email,
-	rd
-} ) => {
+exports.checkUser = ( email, rd ) => {
 	return new Promise( ( resolve, reject ) => {
 		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
 		db.createCollection( 'users' )
@@ -31,10 +28,10 @@ exports.checkUser = ( {
 								success: false,
 								info: 'Account not found. Try again.'
 							} )
-						} else if ( user.account_active ) {
+						} else if ( !user.account_active ) {
 							resolve( {
 								success: false,
-								info: 'Your account already activated.'
+								info: 'Your account not active.'
 							} )
 						} else if ( !checkTokenTime( user.token_refresh ) ) {
 							generateNewCode( userCollection, user._id )
@@ -60,11 +57,7 @@ exports.checkUser = ( {
 	} )
 }
 
-exports.checkCode = ( {
-	email,
-	rd,
-	code
-} ) => {
+exports.checkCode = ( email, rd, code ) => {
 	return new Promise( ( resolve, reject ) => {
 		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
 		db.createCollection( 'users' )
@@ -95,7 +88,7 @@ exports.checkCode = ( {
 								updateRDAndForgetParam( userCollection, user._id )
 									.then( rd => {
 										return resolve( {
-											success: false,
+											success: true,
 											info: rd
 										} )
 									} )
@@ -146,11 +139,11 @@ function generateNewCode( userCollection, id ) {
 	} )
 }
 
-function updateRDAndForgetParam( userCollection, id, forgotRd = null ) {
+function updateRDAndForgetParam( userCollection, id ) {
 	return new Promise( ( resolve, reject ) => {
 		let now = dateTime.addHours( new Date(), 6 ),
-			forgetPasswordTime = now.setMinutes( now.getMinutes() + 10 )
-		rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 20 )}`
+			forgetPasswordTime = now.setMinutes( now.getMinutes() + 10 ),
+			rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}abd${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 20 )}`
 
 		userCollection.updateOne( {
 				_id: id

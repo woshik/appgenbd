@@ -32,7 +32,7 @@ exports.checkEmail = email => {
 								info: 'Account not found.'
 							} )
 						} else if ( !user.account_active ) {
-							if ( user.userRDId && checkRDParam( user.userRDId ) ) {
+							if ( checkRDParam( user.userRDId ) ) {
 								return resolve( {
 									success: false,
 									info: `Your account not active. To active your account <a href="${accountActivation.url}?email=${encodeURIComponent(email)}&rd=${user.userRDId}">click here</a>`
@@ -48,7 +48,7 @@ exports.checkEmail = email => {
 									.catch( err => reject( err ) )
 							}
 						} else {
-							if ( user.userRDId && checkRDParam( user.userRDId, true ) ) {
+							if ( checkRDParam( user.userRDId, true ) ) {
 								return resolve( {
 									success: true,
 									info: user.userRDId

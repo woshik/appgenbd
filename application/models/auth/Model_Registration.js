@@ -25,7 +25,7 @@ exports.registration = userInfo => {
 						if ( !!id ) {
 							return resolve( {
 								success: false,
-								info: 'This user already registered'
+								info: 'This user already registered. One email address & mobile number use only once.'
 							} );
 						} else {
 							hashPassword( userInfo.password )
@@ -51,7 +51,8 @@ exports.registration = userInfo => {
 											success: true,
 											info: {
 												email: result.ops[ 0 ].email,
-												rd: result.ops[ 0 ].userRDId
+												rd: result.ops[ 0 ].userRDId,
+												token: result.ops[ 0 ].token
 											}
 										} ) )
 										.catch( err => reject( err ) );

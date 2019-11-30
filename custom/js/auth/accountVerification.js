@@ -1,20 +1,16 @@
 "use strict";
 
-$( "#message" ).fadeOut( 0 );
-var timeOut,
-	button = $( "#buttonload" ),
-	btnText = button.text().trim();
-
 $( document ).ready( function () {
+	$( "#message" ).fadeOut( 0 );
+	var timeOut,
+		button = $( "#buttonload" ),
+		btnText = button.text().trim();
 	$( "#verificationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
-		$( "#message" ).fadeOut( 0 );
 		var form = $( this );
-		var url = form.attr( "action" );
-		var type = form.attr( "method" );
 		$.ajax( {
-			url: url,
-			type: type,
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
@@ -38,15 +34,17 @@ $( document ).ready( function () {
 			}
 		} );
 	} );
-
 	$( '#mailSending' ).click( function ( e ) {
-		$( "#message" ).fadeOut( 0 );
 		e.preventDefault();
 		$.ajax( {
 			url: e.target.href,
 			type: "POST",
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
+			},
+			data: {
+				email: $( "#email" ).val(),
+				rd: $( "#rd" ).val()
 			},
 			dataType: "json",
 			success: function success( res ) {
@@ -55,7 +53,6 @@ $( document ).ready( function () {
 			}
 		} );
 	} );
-
 	clearMessage( "flashMessage" );
 } );
 

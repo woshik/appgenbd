@@ -13,26 +13,13 @@ const {
 } = require( join( BASE_DIR, 'core/util' ) )
 
 exports.accountVerificationView = ( req, res, next ) => {
-
-	const schema = Joi.object( {
-		email: Joi.string().trim().email().required(),
-		rd: Joi.string().trim().hex().required(),
-	} );
-
-	const validateResult = schema.validate( {
-		email: req.query.email,
-		rd: req.query.rd
-	} );
-
-	if ( validateResult.error ) {
-		req.flash( 'userLoginPageMessage', 'Invalid request.' )
-		return res.redirect( web.userLogin.url )
-	} else if ( !checkRDParam( validateResult.value.rd ) ) {
+	// TODO: here we can check email & rd parameter using joi but I that not needed.
+	if ( ( !req.query.email && !req.query.rd ) || !checkRDParam( req.query.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
 
-	checkUser( validateResult.value )
+	checkUser( req.query.email, req.query.rd )
 		.then( ( {
 			success,
 			info,
@@ -61,15 +48,20 @@ exports.accountVerificationView = ( req, res, next ) => {
 }
 
 exports.accountVerification = ( req, res, next ) => {
+
+	// TODO: here we can check email & rd parameter using joi but I that not needed.
+	if ( ( !req.body.email && !req.body.rd ) || !checkRDParam( req.body.rd ) ) {
+		return res.json( {
+			success: false,
+			message: 'Invalid request.'
+		} );
+	}
+
 	const schema = Joi.object( {
-		email: Joi.string().trim().email().required(),
-		rd: Joi.string().trim().hex().required(),
-		code: Joi.string().trim().hex().length( 6 ).required().label( "Verification code" ),
+		code: Joi.string().trim().hex().length( 6 ).required().label( "Verification code" )
 	} );
 
 	const validateResult = schema.validate( {
-		email: req.body.email,
-		rd: req.body.rd,
 		code: req.body.code,
 	} );
 
@@ -78,14 +70,9 @@ exports.accountVerification = ( req, res, next ) => {
 			success: false,
 			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? 'Enter correct verification code.' : 'Invalid request.'
 		} );
-	} else if ( !checkRDParam( validateResult.value.rd ) ) {
-		return res.json( {
-			success: false,
-			message: 'Invalid request.'
-		} )
 	}
 
-	checkCode( validateResult.value )
+	checkCode( req.body.email, req.body.rd, validateResult.value.code )
 		.then( ( {
 			success,
 			info
@@ -107,5 +94,5 @@ exports.accountVerification = ( req, res, next ) => {
 
 function checkRDParam( rd ) {
 	let now = dateTime.addHours( new Date(), 6 )
-	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}`
+	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}abd${dateTime.format(now, 'MM')}`
 }
