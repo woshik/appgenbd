@@ -1,21 +1,55 @@
-exports.changePasswordView = ( req, res, nex ) => {
-	const user = new model( "users" )
-	user.findOne( {
-			userRDId: req.params.id,
-			token: parseInt( req.params.code )
-		} )
-		.then( userData => {
-			if ( !userData || !userData.email_verify || userData.forgot !== 1 ) {
-				req.flash( 'userLoginScreenErrorMessage', 'The link you used is invalid. Please try again.' )
+"use strict";
+
+const Joi = require( '@hapi/joi' )
+const dateTime = require( 'date-and-time' )
+const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
+const {
+	checkUser,
+	checkCode
+} = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core/util' ) )
+
+exports.accountVerificationView = ( req, res, next ) => {
+
+	const schema = Joi.object( {
+		email: Joi.string().trim().email().required(),
+		rd: Joi.string().trim().hex().required(),
+	} );
+
+	const validateResult = schema.validate( {
+		email: req.query.email,
+		rd: req.query.rd
+	} );
+
+	if ( validateResult.error ) {
+		req.flash( 'userLoginPageMessage', 'Invalid request.' )
+		return res.redirect( web.userLogin.url )
+	}
+
+	checkUser( validateResult.value )
+		.then( ( {
+			success,
+			info,
+			sendCode = null
+		} ) => {
+			if ( success ) {
+				return res.render( "auth/base-template", {
+					layout: "change-password",
+					info: companyInfo,
+					title: "Change Password",
+					csrfToken: req.csrfToken(),
+					changePasswordFormURL: web.changePassword.url,
+					email: req.query.email,
+					rd: req.query.rd,
+				} )
+			} else {
+				req.flash( 'userLoginPageMessage', info )
 				return res.redirect( web.userLogin.url )
 			}
 
-			res.render( "auth/changePassword", {
-				info: commonInfo,
-				title: "Change Password",
-				csrfToken: req.csrfToken(),
-				changePasswordForm: web.passwordChange.url.replace( ":id", userData.userRDId ).replace( ":code", userData.token )
-			} );
 		} )
 		.catch( err => next( err ) )
 }

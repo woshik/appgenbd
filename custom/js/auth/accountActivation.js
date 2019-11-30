@@ -1,9 +1,10 @@
 "use strict";
 
 $( "#message" ).fadeOut( 0 );
-var timeOut;
-var button = $( "#buttonload" );
-var btnText = button.text().trim();
+var timeOut,
+	button = $( "#buttonload" ),
+	btnText = button.text().trim();
+
 $( document ).ready( function () {
 	$( "#activationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
@@ -35,7 +36,6 @@ $( document ).ready( function () {
 				}
 			}
 		} );
-		return false;
 	} );
 
 	$( '#mailSending' ).click( function ( e ) {

@@ -65,7 +65,7 @@ exports.registration = ( req, res, next ) => {
 
 				return res.json( {
 					success: true,
-					url: `${web.accountActivation.url}?email=${encodeURIComponent(info.ops[0].email)}&rd=${info.ops[0].userRDId}`
+					url: `${web.accountActivation.url}?email=${encodeURIComponent(info.email)}&rd=${info.userRDId}`
 				} )
 			}
 		} )

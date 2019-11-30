@@ -49,7 +49,10 @@ exports.registration = userInfo => {
 										} )
 										.then( result => resolve( {
 											success: true,
-											info: result
+											info: {
+												email: result.ops[ 0 ].email,
+												rd: result.ops[ 0 ].userRDId
+											}
 										} ) )
 										.catch( err => reject( err ) );
 								} )

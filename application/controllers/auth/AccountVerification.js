@@ -1,8 +1,19 @@
 "use strict";
 
 const Joi = require( '@hapi/joi' )
+const dateTime = require( 'date-and-time' )
+const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
+const {
+	checkUser,
+	checkCode
+} = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core/util' ) )
 
 exports.accountVerificationView = ( req, res, next ) => {
+
 	const schema = Joi.object( {
 		email: Joi.string().trim().email().required(),
 		rd: Joi.string().trim().hex().required(),
@@ -13,7 +24,10 @@ exports.accountVerificationView = ( req, res, next ) => {
 		rd: req.query.rd
 	} );
 
-	if ( validateResult.error || !checkRDParam( req.query.rd ) ) {
+	if ( validateResult.error ) {
+		req.flash( 'userLoginPageMessage', 'Invalid request.' )
+		return res.redirect( web.userLogin.url )
+	} else if ( !checkRDParam( validateResult.value.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
@@ -30,10 +44,10 @@ exports.accountVerificationView = ( req, res, next ) => {
 					info: companyInfo,
 					title: "Account Varification",
 					csrfToken: req.csrfToken(),
-					verificationFormURL: web.accountActivation.url,
+					verificationFormURL: web.accountVerification.url,
 					sendCodeAgainURL: web.sendCodeAgain.url,
 					loginPageURL: web.userLogin.url,
-					flashMessage: req.flash( 'accountActivationPageMessage' ) || sendCode,
+					flashMessage: req.flash( 'accountVerificationPageMessage' ) || sendCode,
 					email: req.query.email,
 					rd: req.query.rd,
 				} )
@@ -48,100 +62,44 @@ exports.accountVerificationView = ( req, res, next ) => {
 
 exports.accountVerification = ( req, res, next ) => {
 	const schema = Joi.object( {
-		code: Joi.string().trim().required().label( "Verification code" )
-	} )
+		email: Joi.string().trim().email().required(),
+		rd: Joi.string().trim().hex().required(),
+		code: Joi.string().trim().hex().length( 6 ).required().label( "Verification code" ),
+	} );
 
 	const validateResult = schema.validate( {
-		code: req.body.code
-	} )
+		email: req.body.email,
+		rd: req.body.rd,
+		code: req.body.code,
+	} );
 
 	if ( validateResult.error ) {
 		return res.json( {
 			success: false,
-			message: fromErrorMessage( validateResult.error.details[ 0 ] )
+			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? 'Enter correct verification code.' : 'Invalid request.'
+		} );
+	} else if ( !checkRDParam( validateResult.value.rd ) ) {
+		return res.json( {
+			success: false,
+			message: 'Invalid request.'
 		} )
 	}
 
-	const user = new model( "users" )
-	user.findOne( {
-			userRDId: req.params.id
-		} )
-		.then( userData => {
-
-			if ( !userData || !userData.email_verify ) {
-				return res.status( 200 ).json( {
-					success: false,
-					message: "User account not found"
+	checkCode( validateResult.value )
+		.then( ( {
+			success,
+			info
+		} ) => {
+			if ( success ) {
+				return res.json( {
+					success: success,
+					url: `${web.accountActivation.url}?email=${encodeURIComponent(validateResult.value.email)}&rd=${info.userRDId}`
 				} )
-			}
-
-			if ( userData.forgot !== 1 ) {
-				return res.status( 200 ).json( {
-					success: false,
-					message: "User account not active"
-				} )
-			}
-
-			if ( userData.forgot_token_time.getTime() > new Date().getTime() ) {
-				if ( userData.token !== parseInt( validateResult.value.code ) ) {
-					return res.status( 200 ).json( {
-						success: false,
-						message: "Please enter valid verification code"
-					} )
-				}
-
-				let userRDId = crypto.randomBytes( 30 ).toString( 'hex' )
-				user.updateOne( {
-						userRDId: req.params.id
-					}, {
-						"userRDId": userRDId
-					} )
-					.then( userUpdateValue => {
-						if ( !userUpdateValue.result.nModified ) {
-							return res.status( 200 ).json( {
-								success: false,
-								message: 'Server Error. Please try again later.'
-							} )
-						}
-
-						return res.status( 200 ).json( {
-							success: true,
-							message: web.passwordChange.url.replace( ":id", userRDId ).replace( ":code", validateResult.value.code )
-						} )
-					} )
-					.catch( err => next( err ) )
-
 			} else {
-
-				let tokenTime = new Date()
-				tokenTime.setMinutes( tokenTime.getMinutes() + 10 )
-				let token = Math.floor( Math.random() * 100001 )
-
-				sendMail( userData.email, "Varification Code", token )
-					.then( response => {} )
-					.catch( err => next( err ) )
-
-				user.updateOne( {
-						userRDId: req.params.id
-					}, {
-						"token": token,
-						"forgot_token_time": tokenTime
-					} )
-					.then( userUpdateValue => {
-
-						if ( !userUpdateValue.result.nModified ) {
-							return res.status( 200 ).json( {
-								success: false,
-								message: 'Server Error. Please try again later.'
-							} )
-						}
-
-						return res.status( 200 ).json( {
-							success: false,
-							message: "Please, check your email account again. Verification code time finish."
-						} )
-					} )
-					.catch( err => next( err ) )
+				return res.json( {
+					success: success,
+					message: info
+				} )
 			}
 		} )
 		.catch( err => next( err ) )

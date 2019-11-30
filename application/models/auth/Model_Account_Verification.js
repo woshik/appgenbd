@@ -1,0 +1,166 @@
+"use strict";
+
+const {
+	randomBytes
+} = require( 'crypto' )
+const dateTime = require( 'date-and-time' )
+const {
+	sendMail
+} = require( join( BASE_DIR, 'core/util' ) )
+
+exports.checkUser = ( {
+	email,
+	rd
+} ) => {
+	return new Promise( ( resolve, reject ) => {
+		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
+		db.createCollection( 'users' )
+			.then( userCollection => {
+				userCollection.findOne( {
+						email: email,
+						userRDId: rd
+					}, {
+						projection: {
+							account_active: 1,
+							token_refresh: 1
+						}
+					} )
+					.then( user => {
+						if ( !user ) {
+							resolve( {
+								success: false,
+								info: 'Account not found. Try again.'
+							} )
+						} else if ( user.account_active ) {
+							resolve( {
+								success: false,
+								info: 'Your account already activated.'
+							} )
+						} else if ( !checkTokenTime( user.token_refresh ) ) {
+							generateNewCode( userCollection, user._id )
+								.then( token => {
+									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
+									return resolve( {
+										success: true,
+										info: null,
+										sendCode: 'Please, check your email account.'
+									} )
+								} )
+								.catch( err => reject( err ) )
+						} else {
+							resolve( {
+								success: true,
+								info: null
+							} )
+						}
+					} )
+					.catch( err => reject( err ) )
+			} )
+			.catch( err => reject( err ) )
+	} )
+}
+
+exports.checkCode = ( {
+	email,
+	rd,
+	code
+} ) => {
+	return new Promise( ( resolve, reject ) => {
+		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
+		db.createCollection( 'users' )
+			.then( userCollection => {
+				userCollection.findOne( {
+						email: email,
+						userRDId: rd
+					}, {
+						projection: {
+							account_active: 1,
+							token_refresh: 1,
+							token: 1
+						}
+					} )
+					.then( user => {
+						if ( !user ) {
+							resolve( {
+								success: false,
+								info: 'Account not found. Try again.'
+							} )
+						} else if ( !user.account_active ) {
+							resolve( {
+								success: false,
+								info: 'Your account not active.'
+							} )
+						} else if ( checkTokenTime( user.token_refresh ) ) {
+							if ( user.token === code ) {
+								updateRDAndForgetParam( userCollection, user._id )
+									.then( rd => {
+										return resolve( {
+											success: false,
+											info: rd
+										} )
+									} )
+									.catch( err => reject( err ) )
+							} else {
+								resolve( {
+									success: false,
+									info: 'Please enter valid verification code.'
+								} )
+							}
+						} else {
+							generateNewCode( userCollection, user._id )
+								.then( token => {
+									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
+									return resolve( {
+										success: false,
+										info: 'Please, check your email account again. New code sent.'
+									} )
+								} )
+								.catch( err => reject( err ) )
+						}
+					} )
+					.catch( err => reject( err ) )
+			} )
+			.catch( err => reject( err ) )
+	} )
+}
+
+function checkTokenTime( tokenTime ) {
+	return tokenTime > dateTime.addHours( new Date(), 6 ).getTime()
+}
+
+function generateNewCode( userCollection, id ) {
+	return new Promise( ( resolve, reject ) => {
+		let now = dateTime.addHours( new Date(), 6 ),
+			token = randomBytes( 3 ).toString( 'hex' )
+
+		userCollection.updateOne( {
+				_id: id
+			}, {
+				$set: {
+					token: token,
+					token_refresh: now.setMinutes( now.getMinutes() + 10 )
+				}
+			} )
+			.then( updateInfo => resolve( token ) )
+			.catch( err => reject( err ) )
+	} )
+}
+
+function updateRDAndForgetParam( userCollection, id, forgotRd = null ) {
+	return new Promise( ( resolve, reject ) => {
+		let now = dateTime.addHours( new Date(), 6 ),
+			forgetPasswordTime = now.setMinutes( now.getMinutes() + 10 )
+		rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 20 )}`
+
+		userCollection.updateOne( {
+				_id: id
+			}, {
+				$set: {
+					forget_password: forgetPasswordTime,
+					userRDId: rd,
+				}
+			} )
+			.then( updateInfo => resolve( rd ) )
+			.catch( err => reject( err ) )
+	} )
+}
