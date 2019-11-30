@@ -56,7 +56,7 @@ exports.accountVerification = ( req, res, next ) => {
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )

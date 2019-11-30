@@ -52,10 +52,6 @@ $( document ).ready( function () {
 			},
 			dataType: "json",
 			success: function success( res ) {
-				if ( res.url !== undefined ) {
-					window.location = res.url;
-				}
-
 				$( "#message" ).html( '<div class="alert alert-info alert-dismissible" role="alert">' + res.message + "</div>" ).fadeIn( 1000 );
 				clearMessage( "message" );
 			}

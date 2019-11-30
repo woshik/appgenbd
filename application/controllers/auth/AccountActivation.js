@@ -24,7 +24,10 @@ exports.accountActivationView = ( req, res, next ) => {
 		rd: req.query.rd
 	} );
 
-	if ( validateResult.error || !checkRDParam( req.query.rd ) ) {
+	if ( validateResult.error ) {
+		req.flash( 'userLoginPageMessage', 'Invalid request.' )
+		return res.redirect( web.userLogin.url )
+	} else if ( !checkRDParam( validateResult.value.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
@@ -69,11 +72,16 @@ exports.accountActivation = ( req, res, next ) => {
 		code: req.body.code,
 	} );
 
-	if ( validateResult.error || !checkRDParam( req.body.rd ) ) {
+	if ( validateResult.error ) {
 		return res.json( {
 			success: false,
 			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? 'Enter correct verification code.' : 'Invalid request.'
 		} );
+	} else if ( !checkRDParam( validateResult.value.rd ) ) {
+		return res.json( {
+			success: false,
+			message: 'Invalid request.'
+		} )
 	}
 
 	checkCode( validateResult.value )

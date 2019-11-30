@@ -9,7 +9,6 @@ const {
 } = require( join( BASE_DIR, 'core', 'util' ) )
 
 exports.userLoginView = ( req, res ) => {
-	console.log( now )
 	res.render( "auth/base-template", {
 		layout: 'user-login',
 		info: companyInfo,
@@ -51,7 +50,7 @@ exports.userLogin = ( req, res, next ) => {
 		} else {
 			req.login( user, ( err ) => {
 				if ( !!err ) {
-					next( err )
+					return next( err )
 				} else {
 					return res.json( {
 						success: true,

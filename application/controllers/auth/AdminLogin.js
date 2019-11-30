@@ -30,27 +30,31 @@ exports.adminLogin = ( req, res, next ) => {
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
 
 	passport.authenticate( 'admin', function ( err, user, info ) {
-		if ( err ) return next( err )
-		if ( !user ) {
-			return res.status( 200 ).json( {
+		if ( err ) {
+			return next( err )
+		} else if ( !user ) {
+			return res.json( {
 				success: false,
 				message: info.message
 			} )
-		}
-
-		req.login( user, ( err ) => {
-			if ( !!err ) next( err )
-			return res.status( 200 ).json( {
-				success: true,
-				message: web.adminDashboard.url
+		} else {
+			req.login( user, ( err ) => {
+				if ( !!err ) {
+					return ext( err )
+				} else {
+					return res.status( 200 ).json( {
+						success: true,
+						message: web.adminDashboard.url
+					} )
+				}
 			} )
-		} )
+		}
 	} )( req, res, next )
 }
