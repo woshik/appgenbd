@@ -38,8 +38,8 @@ exports.checkUser = ( {
 							} )
 						} else if ( !checkTokenTime( user.token_refresh ) ) {
 							generateNewCode( userCollection, user._id )
-								.then( updateInfo => {
-									sendMail( email, "Varification Code", updateInfo.ops[ 0 ].token ).catch( err => console.log( err ) )
+								.then( token => {
+									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
 									return resolve( {
 										success: true,
 										info: null,
@@ -113,8 +113,8 @@ exports.checkCode = ( {
 							}
 						} else {
 							generateNewCode( userCollection, user._id )
-								.then( updateInfo => {
-									sendMail( email, "Varification Code", updateInfo.ops[ 0 ].token ).catch( err => console.log( err ) )
+								.then( token => {
+									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
 									return resolve( {
 										success: false,
 										info: 'Please, check your email account again. New code sent.'
@@ -130,22 +130,23 @@ exports.checkCode = ( {
 }
 
 function checkTokenTime( tokenTime ) {
-	return ( tokenTime - 60000 ) > dateTime.addHours( new Date(), 6 ).getTime()
+	return tokenTime > dateTime.addHours( new Date(), 6 ).getTime()
 }
 
 function generateNewCode( userCollection, id ) {
 	return new Promise( ( resolve, reject ) => {
-		let now = dateTime.addHours( new Date(), 6 )
+		let now = dateTime.addHours( new Date(), 6 ),
+			token = randomBytes( 3 ).toString( 'hex' )
 
 		userCollection.updateOne( {
 				_id: id
 			}, {
 				$set: {
-					token: randomBytes( 3 ).toString( 'hex' ),
+					token: token,
 					token_refresh: now.setMinutes( now.getMinutes() + 10 )
 				}
 			} )
-			.then( updateInfo => resolve( updateInfo ) )
+			.then( updateInfo => resolve( token ) )
 			.catch( err => reject( err ) )
 	} )
 }

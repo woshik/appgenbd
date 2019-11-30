@@ -2,7 +2,9 @@
 
 const Joi = require( '@hapi/joi' );
 const web = require( join( BASE_DIR, 'urlconf/webRule' ) );
-const model_registration = require( join( MODEL_DIR, 'auth/Model_Registration' ) );
+const {
+	registration
+} = require( join( MODEL_DIR, 'auth/Model_Registration' ) );
 const {
 	sendMail,
 	companyInfo,
@@ -22,11 +24,11 @@ exports.registrationView = ( req, res ) => {
 
 exports.registration = ( req, res, next ) => {
 
-	req.body.number = `+8801${req.body.number}`
+	req.body.mobile_number = `+8801${req.body.mobile_number}`
 
 	const schema = Joi.object( {
 		name: Joi.string().trim().pattern( /^[a-zA-Z\s]+$/ ).required().label( "Name" ),
-		number: Joi.string().trim().pattern( /^(\+8801)[0-9]{9}$/ ).required().label( "Mobile number" ),
+		mobile_number: Joi.string().trim().pattern( /^(\+8801)[0-9]{9}$/ ).required().label( "Mobile number" ),
 		email: Joi.string().trim().email().required().label( "Email address" ),
 		password: Joi.string().trim().min( 5 ).max( 50 ).label( "Password" ),
 		confirm_password: Joi.ref( "password" )
@@ -34,7 +36,7 @@ exports.registration = ( req, res, next ) => {
 
 	const validateResult = schema.validate( {
 		name: req.body.name,
-		number: req.body.number,
+		mobile_number: req.body.mobile_number,
 		email: req.body.email,
 		password: req.body.password,
 		confirm_password: req.body.confirm_password
@@ -47,7 +49,7 @@ exports.registration = ( req, res, next ) => {
 		} )
 	}
 
-	model_registration( validateResult.value )
+	registration( validateResult.value )
 		.then( ( {
 			success,
 			info

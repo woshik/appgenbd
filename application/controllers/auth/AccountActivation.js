@@ -41,7 +41,7 @@ exports.accountActivationView = ( req, res, next ) => {
 					info: companyInfo,
 					title: "Account Activation",
 					csrfToken: req.csrfToken(),
-					verificationFormURL: web.accountActivation.url,
+					activationFormURL: web.accountActivation.url,
 					sendCodeAgainURL: web.sendCodeAgain.url,
 					loginPageURL: web.userLogin.url,
 					flashMessage: req.flash( 'accountActivationPageMessage' ) || sendCode,
@@ -72,7 +72,7 @@ exports.accountActivation = ( req, res, next ) => {
 	if ( validateResult.error || !checkRDParam( req.body.rd ) ) {
 		return res.json( {
 			success: false,
-			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? fromErrorMessage( validateResult.error.details[ 0 ] ) : 'Invalid request.'
+			message: validateResult.error.details[ 0 ].message.indexOf( 'Verification code' ) > -1 ? 'Enter correct verification code.' : 'Invalid request.'
 		} );
 	}
 

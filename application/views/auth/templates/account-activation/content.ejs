@@ -1,4 +1,4 @@
-<form action="<%=verificationFormURL%>" method="POST" class="login100-form" id="verificationForm">
+<form action="<%=activationFormURL%>" method="POST" class="login100-form" id="activationForm">
 
 	<span class="login100-form-title p-b-34">
 		<%=title%>
@@ -17,23 +17,23 @@
 		<span class="focus-input100"></span>
 	</div>
 
-	<input type="hidden" name="email" value="<%=email%>">
-	<input type="hidden" name="rd" value="<%=rd%>">
+	<input type="hidden" name="email" id="email" value="<%=email%>">
+	<input type="hidden" name="rd" id="rd" value="<%=rd%>">
 
 	<div class="container-login100-form-btn">
-		<button class="login100-form-btn">
+		<button class="login100-form-btn" id="buttonload">
 			Submit
 		</button>
 	</div>
 
-	<div class="w-full text-center p-t-40 p-b-110">
+	<div class=" w-full text-center p-t-40 p-b-110">
 		<a href="<%=sendCodeAgainURL%>" id="mailSending" class="txt4">
 			Send Code Again
 		</a>
 	</div>
 
 	<div class="w-full text-center">
-		<a href="<%=loginPageURL%>" class="txt4">
+		<a href="<%=loginPageURL%>" class="txt4" id="buttonload">
 			Back To Login
 		</a>
 	</div>

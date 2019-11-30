@@ -2,12 +2,13 @@
 
 $( document ).ready( function () {
 	var timeOut;
+	var button = $( "#buttonload" );
+
 	$( "#registrationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
 		var form = $( this );
 		var url = form.attr( "action" );
 		var type = form.attr( "method" );
-		var button = $( "#buttonload" );
 		$( "#message" ).fadeOut( 0 );
 		$.ajax( {
 			url: url,
@@ -21,8 +22,6 @@ $( document ).ready( function () {
 				button.text( "Account Creating..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
 			},
 			success: function success( res ) {
-				button.removeAttr( "disabled" ).css( "cursor", "" ).text( "Create Account" ).children().remove();
-
 				if ( res.success === true ) {
 					window.location = res.url;
 				} else {
@@ -31,6 +30,11 @@ $( document ).ready( function () {
 					timeOut = setTimeout( function () {
 						$( "#message" ).fadeOut( 1000 );
 					}, 5000 );
+				}
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( "Create Account" ).children().remove();
 				}
 			}
 		} );

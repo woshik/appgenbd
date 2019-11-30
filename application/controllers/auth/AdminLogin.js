@@ -1,14 +1,20 @@
 "use strict";
 
 const passport = require( "passport" )
+const Joi = require( '@hapi/joi' )
+const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
 
 exports.adminLoginView = ( req, res ) => {
-	res.render( "auth/adminLogin", {
-		info: commonInfo,
+	res.render( "auth/base-template", {
+		layout: 'admin-login',
+		info: companyInfo,
 		title: "Admin Login",
 		csrfToken: req.csrfToken(),
-		loginForm: web.adminLogin.url,
-		flashMessage: req.flash( 'adminLoginPageMessage' ),
+		flashMessage: req.flash( 'adminLoginPageMessage' )
 	} )
 }
 

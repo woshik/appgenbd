@@ -1,5 +1,9 @@
 "use strict";
 
+// global declaration
+global.MODEL_DIR = join( BASE_DIR, "application/models" )
+global.CONTROLLER_DIR = join( BASE_DIR, "application/controllers" )
+
 // import other usefull modules
 const http = require( 'http' )
 const https = require( 'https' )
@@ -27,9 +31,7 @@ const {
 	unsetFlashMessage
 } = require( join( BASE_DIR, "core", "middlewares" ) )
 
-// global declaration
-global.MODEL_DIR = join( BASE_DIR, "application/models" )
-global.CONTROLLER_DIR = join( BASE_DIR, "application/controllers" )
+
 
 // calling express function
 const app = express()

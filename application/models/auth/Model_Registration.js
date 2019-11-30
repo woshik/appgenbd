@@ -8,13 +8,14 @@ const {
 	hashPassword
 } = require( join( BASE_DIR, 'core', 'util' ) )
 
-module.exports = ( userInfo ) => {
+exports.registration = userInfo => {
 	return new Promise( ( resolve, reject ) => {
 		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
 		db.createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
-						email: userInfo.email
+						email: userInfo.email,
+						mobile: userInfo.mobile_number
 					}, {
 						projection: {
 							_id: 1
@@ -24,26 +25,26 @@ module.exports = ( userInfo ) => {
 						if ( !!id ) {
 							return resolve( {
 								success: false,
-								info: 'Email address already registered'
+								info: 'This user already registered'
 							} );
 						} else {
 							hashPassword( userInfo.password )
 								.then( passwordHashed => {
 									let now = dateTime.addHours( new Date(), 6 ),
 										now2 = now,
-										BdNowWithDate = dateTime.format( now, "YYYY-MM-DD" ),
+										bdNowWithDate = dateTime.format( now, "YYYY-MM-DD" ),
 										timeStamp = now2.setMinutes( now2.getMinutes() + 10 )
 
 									userCollection.insertOne( {
 											userRDId: `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}${now2.setMinutes( now2.getMinutes() + 20 )}`,
 											name: userInfo.name,
-											number: userInfo.number,
+											mobile: userInfo.mobile_number,
 											email: userInfo.email,
 											password: passwordHashed,
 											token: randomBytes( 3 ).toString( 'hex' ),
 											token_refresh: timeStamp,
-											account_activation_start_date: BdNowWithDate,
-											account_activation_end_date: BdNowWithDate,
+											account_activation_start_date: bdNowWithDate,
+											account_activation_end_date: bdNowWithDate,
 											account_create: dateTime.format( now, "YYYY-MM-DD hh:mm:ss A" ),
 										} )
 										.then( result => resolve( {

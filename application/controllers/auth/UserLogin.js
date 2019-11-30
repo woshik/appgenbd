@@ -9,6 +9,7 @@ const {
 } = require( join( BASE_DIR, 'core', 'util' ) )
 
 exports.userLoginView = ( req, res ) => {
+	console.log( now )
 	res.render( "auth/base-template", {
 		layout: 'user-login',
 		info: companyInfo,
@@ -33,27 +34,31 @@ exports.userLogin = ( req, res, next ) => {
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
 
 	passport.authenticate( 'users', function ( err, user, info ) {
-		if ( err ) return next( err )
-		if ( !user ) {
-			return res.status( 200 ).json( {
+		if ( err ) {
+			return next( err )
+		} else if ( !user ) {
+			return res.json( {
 				success: false,
 				message: info.message
 			} )
-		}
-
-		req.login( user, ( err ) => {
-			if ( !!err ) next( err )
-			return res.status( 200 ).json( {
-				success: true,
-				message: web.userDashboard.url
+		} else {
+			req.login( user, ( err ) => {
+				if ( !!err ) {
+					next( err )
+				} else {
+					return res.json( {
+						success: true,
+						message: web.userDashboard.url
+					} )
+				}
 			} )
-		} )
+		}
 	} )( req, res, next )
 }

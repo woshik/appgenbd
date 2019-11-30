@@ -2,7 +2,10 @@
 
 const passport = require( 'passport' )
 const localStrategy = require( 'passport-local' ).Strategy
-const bcrypt = require( 'bcryptjs' )
+const {
+	user,
+	admin
+} = require( join( MODEL_DIR, 'auth/Model_Login' ) );
 const {
 	ObjectId
 } = require( 'mongodb' )
@@ -12,44 +15,18 @@ module.exports = ( app ) => {
 		new localStrategy( {
 			usernameField: 'email'
 		}, ( email, password, done ) => {
-			let user = new model( 'users' )
-			user.findOne( {
-					email: email
-				} )
-				.then( userData => {
-					if ( !userData ) return done( null, false, {
-						message: "Email address not register"
-					} )
-					bcrypt.compare( password, userData.password )
-						.then( isMatch => {
-							if ( isMatch ) {
-								if ( userData.email_verify ) {
-									if ( userData.account_active && !userData.account_delete ) {
-										return done( null, userData )
-									} else {
-										return done( null, false, {
-											message: 'Your account is deactivated. Please contact with admin.'
-										} )
-									}
-								} else {
-									let userRDId = crypto.randomBytes( 30 ).toString( 'hex' )
-									user.updateOne( {
-											email: email
-										}, {
-											"userRDId": userRDId
-										} )
-										.then( userUpdateValue => {} )
-										.catch( err => next( err ) )
-									return done( null, false, {
-										message: 'Please active your account first, <a href=' + web.emailVerification.url.replace( ":id", userRDId ) + '>Click Here</a>'
-									} )
-								}
-							}
-							return done( null, false, {
-								message: "Password doesn't match"
-							} )
+			user( email, password )
+				.then( ( {
+					success,
+					info
+				} ) => {
+					if ( success ) {
+						return done( null, info )
+					} else {
+						return done( null, false, {
+							message: info
 						} )
-						.catch( err => done( err ) )
+					}
 				} )
 				.catch( err => done( err ) )
 		} )
@@ -59,41 +36,36 @@ module.exports = ( app ) => {
 		new localStrategy( {
 			usernameField: 'email'
 		}, ( email, password, done ) => {
-			let admin = new model( 'admin' )
-			admin.findOne( {
-					email: email
-				} )
-				.then( userData => {
-					if ( !userData ) return done( null, false, {
-						message: "Email address not register"
-					} )
-					bcrypt.compare( password, userData.password )
-						.then( isMatch => {
-							if ( isMatch ) {
-								return done( null, userData )
-							}
-							return done( null, false, {
-								message: "Password doesn't match"
-							} )
+			admin( email, password )
+				.then( ( {
+					success,
+					info
+				} ) => {
+					if ( success ) {
+						return done( null, info )
+					} else {
+						return done( null, false, {
+							message: info
 						} )
-						.catch( err => done( err ) )
+					}
 				} )
 				.catch( err => done( err ) )
 		} )
 	)
 
 	passport.serializeUser( ( user, done ) => {
-		let key = {
-			id: user._id
-		}
-
-		if ( !!user.super_user ) {
-			key.model = 'admin'
-		} else {
-			key.model = 'users'
-		}
-
-		return done( null, key )
+		console.log( user )
+		// let key = {
+		// 	id: user._id
+		// }
+		//
+		// if ( !!user.super_user ) {
+		// 	key.model = 'admin'
+		// } else {
+		// 	key.model = 'users'
+		// }
+		//
+		// return done( null, key )
 	} )
 
 	passport.deserializeUser( ( key, done ) => {
