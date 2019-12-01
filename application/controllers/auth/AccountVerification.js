@@ -6,7 +6,7 @@ const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	checkUser,
 	checkCode
-} = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
+} = require( join( MODEL_DIR, 'auth/Model_Account_Verification' ) )
 const {
 	companyInfo,
 	fromErrorMessage
@@ -80,7 +80,7 @@ exports.accountVerification = ( req, res, next ) => {
 			if ( success ) {
 				return res.json( {
 					success: success,
-					url: `${web.accountActivation.url}?email=${encodeURIComponent(validateResult.value.email)}&rd=${info.userRDId}`
+					url: `${web.changePassword.url}?email=${encodeURIComponent(validateResult.value.email)}&rd=${info.userRDId}`
 				} )
 			} else {
 				return res.json( {

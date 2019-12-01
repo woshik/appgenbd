@@ -8,10 +8,7 @@ const {
 	sendMail
 } = require( join( BASE_DIR, 'core/util' ) )
 
-exports.checkUser = ( {
-	email,
-	rd
-} ) => {
+exports.checkUser = ( email, rd ) => {
 	return new Promise( ( resolve, reject ) => {
 		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
 		db.createCollection( 'users' )
@@ -30,20 +27,16 @@ exports.checkUser = ( {
 							resolve( {
 								info: 'Account not found. Try again.'
 							} )
-						} else if ( user.account_active ) {
-							resolve( {
-								info: 'Your account already activated.'
-							} )
 						} else if ( checkTokenTime( user.token_refresh ) ) {
 							resolve( {
-								info: 'Your code already send to your email address. Try again later.'
+								info: 'Your code already send to your email account. Please check.'
 							} )
 						} else {
 							generateNewCode( userCollection, user._id )
 								.then( token => {
 									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
 									return resolve( {
-										info: 'Please, check your email account again. New code sent.'
+										info: 'Please, check your email account. New code sent.'
 									} )
 								} )
 								.catch( err => reject( err ) )

@@ -1,10 +1,13 @@
 "use strict";
 
+var timeOut;
+
 $( document ).ready( function () {
 	$( "#message" ).fadeOut( 0 );
-	var timeOut,
-		button = $( "#buttonload" ),
+
+	var button = $( "#buttonload" ),
 		btnText = button.text().trim();
+
 	$( "#verificationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
 		var form = $( this );
@@ -44,7 +47,8 @@ $( document ).ready( function () {
 			},
 			data: {
 				email: $( "#email" ).val(),
-				rd: $( "#rd" ).val()
+				rd: $( "#rd" ).val(),
+				verify: true
 			},
 			dataType: "json",
 			success: function success( res ) {

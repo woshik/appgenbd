@@ -11,10 +11,10 @@ const {
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core/util' ) )
 
-exports.accountVerificationView = ( req, res, next ) => {
+exports.changePasswordView = ( req, res, next ) => {
 
 	// TODO: here we can check email & rd parameter using joi but I that not needed.
-	if ( ( !req.query.email && !req.query.rd ) || !checkRDParam( req.query.rd ) ) {
+	if ( ( !req.query.email && !req.query.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}

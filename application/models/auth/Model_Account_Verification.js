@@ -33,7 +33,7 @@ exports.checkUser = ( email, rd ) => {
 								success: false,
 								info: 'Your account not active.'
 							} )
-						} else if ( !checkTokenTime( user.token_refresh ) ) {
+						} else if ( !user.token_refresh && !checkTokenTime( user.token_refresh ) ) {
 							generateNewCode( userCollection, user._id )
 								.then( token => {
 									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )

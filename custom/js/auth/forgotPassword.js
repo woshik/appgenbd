@@ -3,8 +3,8 @@
 var timeOut;
 $( document ).ready( function () {
 	$( "#message" ).fadeOut( 0 );
-	var button = $( "#buttonload" );
-	var btnText = button.text().trim();
+	var button = $( "#buttonload" ),
+		btnText = button.text().trim();
 	$( "#forgotPasswordForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
 		var form = $( this );

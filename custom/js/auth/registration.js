@@ -6,12 +6,11 @@ $( document ).ready( function () {
 	$( "#message" ).fadeOut( 0 );
 	$( "#registrationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
-		var form = $( this ),
-			url = form.attr( "action" ),
-			type = form.attr( "method" );
+		var form = $( this );
+
 		$.ajax( {
-			url: url,
-			type: type,
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},

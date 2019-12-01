@@ -8,11 +8,10 @@ $( document ).ready( function () {
 	$( "#loginForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
 		var form = $( this );
-		var url = form.attr( "action" );
-		var type = form.attr( "method" );
+
 		$.ajax( {
-			url: url,
-			type: type,
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},

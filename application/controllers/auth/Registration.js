@@ -24,12 +24,12 @@ exports.registrationView = ( req, res ) => {
 
 exports.registration = ( req, res, next ) => {
 
-	req.body.mobile_number = `+8801${req.body.mobile_number}`
+	req.body.mobile_number = `+880${req.body.mobile_number}`
 
 	const schema = Joi.object( {
 		name: Joi.string().trim().pattern( /^[a-zA-Z\s]+$/ ).required().label( "Name" ),
-		mobile_number: Joi.string().trim().pattern( /^(\+8801)[0-9]{9}$/ ).required().label( "Mobile number" ),
-		email: Joi.string().trim().email().required().label( "Email address" ),
+		mobile_number: Joi.string().trim().pattern( /^(\+880)[0-9]{10}$/ ).required().label( "Mobile number" ),
+		email: Joi.string().trim().lowercase().email().required().label( "Email address" ),
 		password: Joi.string().trim().min( 5 ).max( 50 ).label( "Password" ),
 		confirm_password: Joi.ref( "password" )
 	} )
@@ -54,18 +54,18 @@ exports.registration = ( req, res, next ) => {
 			success,
 			info
 		} ) => {
-			if ( !success ) {
-				return res.json( {
-					success: false,
-					message: info
-				} )
-			} else {
+			if ( success ) {
 				sendMail( info.email, "Varification Code", info.token ).catch( err => console.log( err ) )
 				req.flash( 'accountActivationPageMessage', 'Please, check your email account.' )
 
 				return res.json( {
 					success: true,
-					url: `${web.accountActivation.url}?email=${encodeURIComponent(info.email)}&rd=${info.userRDId}`
+					url: `${web.accountActivation.url}?email=${encodeURIComponent(info.email)}&rd=${info.rd}`
+				} )
+			} else {
+				return res.json( {
+					success: false,
+					message: info
 				} )
 			}
 		} )

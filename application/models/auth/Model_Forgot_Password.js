@@ -48,17 +48,23 @@ exports.checkEmail = email => {
 									.catch( err => reject( err ) )
 							}
 						} else {
-							if ( checkRDParam( user.userRDId, true ) ) {
+							if ( user.userRDId && checkRDParam( user.userRDId, true ) ) {
 								return resolve( {
 									success: true,
-									info: user.userRDId
+									info: {
+										email: email,
+										rd: user.userRDId
+									}
 								} )
 							} else {
 								updateRDParam( userCollection, user._id, true )
 									.then( rd => {
 										return resolve( {
 											success: true,
-											info: rd
+											info: {
+												email: email,
+												rd: user.userRDId
+											}
 										} )
 									} )
 									.catch( err => reject( err ) )

@@ -1,6 +1,5 @@
 "use strict";
 
-const Joi = require( '@hapi/joi' )
 const dateTime = require( 'date-and-time' )
 const {
 	checkUser
@@ -8,29 +7,15 @@ const {
 
 exports.sendCodeAgain = ( req, res, next ) => {
 
-	const schema = Joi.object( {
-		email: Joi.string().trim().email().required(),
-		rd: Joi.string().trim().hex().required(),
-	} );
-
-	const validateResult = schema.validate( {
-		email: req.body.email,
-		rd: req.body.rd
-	} );
-
-	if ( validateResult.error ) {
+	// TODO: here we can check email & rd parameter using joi but I think that not needed.
+	if ( ( !req.body.email && !req.body.rd ) || !checkRDParam( req.body.rd, req.body.verify ) ) {
 		return res.json( {
 			success: false,
 			message: 'Invalid request.'
-		} )
-	} else if ( !checkRDParam( validateResult.value.rd ) ) {
-		return res.json( {
-			success: false,
-			message: 'Invalid request.'
-		} )
+		} );
 	}
 
-	checkUser( validateResult.value )
+	checkUser( req.body.email, req.body.rd )
 		.then( ( {
 			info
 		} ) => {
@@ -41,7 +26,7 @@ exports.sendCodeAgain = ( req, res, next ) => {
 		.catch( err => next( err ) )
 }
 
-function checkRDParam( rd ) {
+function checkRDParam( rd, routeVerify = null ) {
 	let now = dateTime.addHours( new Date(), 6 )
-	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}`
+	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}${routeVerify?'abd':'ace'}${dateTime.format(now, 'MM')}`
 }

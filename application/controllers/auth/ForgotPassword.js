@@ -24,7 +24,7 @@ exports.forgotPasswordView = ( req, res ) => {
 
 exports.forgotPassword = ( req, res, next ) => {
 	const schema = Joi.object( {
-		email: Joi.string().trim().email().required().label( "Email address" ),
+		email: Joi.string().trim().lowercase().email().required().label( "Email address" ),
 	} )
 
 	const validateResult = schema.validate( {
@@ -48,7 +48,7 @@ exports.forgotPassword = ( req, res, next ) => {
 
 				return res.json( {
 					success: true,
-					url: `${web.accountVerification.url}?email=${encodeURIComponent(validateResult.value.email)}&rd=${info.userRDId}`
+					url: `${web.accountVerification.url}?email=${encodeURIComponent(info.email)}&rd=${info.rd}`
 				} )
 			} else {
 				return res.json( {

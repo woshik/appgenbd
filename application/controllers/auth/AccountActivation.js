@@ -71,7 +71,7 @@ exports.accountActivation = ( req, res, next ) => {
 		} );
 	}
 
-	checkCode( req.query.body, req.body.rd, validateResult.value.code )
+	checkCode( req.body.email, req.body.rd, validateResult.value.code )
 		.then( ( {
 			success,
 			info

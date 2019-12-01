@@ -53,19 +53,18 @@ module.exports = ( app ) => {
 		} )
 	)
 
-	passport.serializeUser( ( user, done ) => {
-		console.log( user )
-		// let key = {
-		// 	id: user._id
-		// }
-		//
-		// if ( !!user.super_user ) {
-		// 	key.model = 'admin'
-		// } else {
-		// 	key.model = 'users'
-		// }
-		//
-		// return done( null, key )
+	passport.serializeUser( ( id, done ) => {
+		let key = {
+			id: id
+		}
+
+		if ( !!user.super_user ) {
+			key.model = 'admin'
+		} else {
+			key.model = 'users'
+		}
+
+		return done( null, key )
 	} )
 
 	passport.deserializeUser( ( key, done ) => {

@@ -1,18 +1,20 @@
 "use strict";
 
+var timeOut;
+
 $( document ).ready( function () {
 	$( "#message" ).fadeOut( 0 );
-	var timeOut,
-		button = $( "#buttonload" ),
+
+	var button = $( "#buttonload" ),
 		btnText = button.text().trim();
+
 	$( "#activationForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
-		var form = $( this ),
-			url = form.attr( "action" ),
-			type = form.attr( "method" );
+		var form = $( this );
+
 		$.ajax( {
-			url: url,
-			type: type,
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
@@ -46,7 +48,8 @@ $( document ).ready( function () {
 			},
 			data: {
 				email: $( "#email" ).val(),
-				rd: $( "#rd" ).val()
+				rd: $( "#rd" ).val(),
+				verify: false
 			},
 			dataType: "json",
 			success: function success( res ) {

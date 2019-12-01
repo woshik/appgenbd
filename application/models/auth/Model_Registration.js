@@ -14,8 +14,15 @@ exports.registration = userInfo => {
 		db.createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
-						email: userInfo.email,
-						mobile: userInfo.mobile_number
+						$or: [
+							{
+								email: userInfo.email
+							},
+							{
+								mobile: userInfo.mobile_number
+
+							}
+						]
 					}, {
 						projection: {
 							_id: 1
