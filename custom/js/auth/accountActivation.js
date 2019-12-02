@@ -48,8 +48,7 @@ $( document ).ready( function () {
 			},
 			data: {
 				email: $( "#email" ).val(),
-				rd: $( "#rd" ).val(),
-				verify: false
+				rd: $( "#rd" ).val()
 			},
 			dataType: "json",
 			success: function success( res ) {

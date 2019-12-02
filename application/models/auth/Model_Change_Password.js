@@ -76,7 +76,7 @@ exports.changePassword = ( email, rd, password ) => {
 						} else if ( checkForgetPasswordTime( user.forget_password ) ) {
 							hashPassword( password )
 								.then( passwordHashed => {
-									user.updateOne( {
+									userCollection.updateOne( {
 											_id: user._id
 										}, {
 											$set: {
@@ -85,15 +85,13 @@ exports.changePassword = ( email, rd, password ) => {
 												userRDId: null
 											}
 										} )
-										.then( result => {
-											return resolve( {
-												success: true,
-												info: 'Password successfully changed.'
-											} )
-										} )
-										.catch( err => next( err ) )
+										.then( result => resolve( {
+											success: true,
+											info: 'Password successfully changed.'
+										} ) )
+										.catch( err => reject( err ) )
 								} )
-								.catch( err => next( err ) )
+								.catch( err => reject( err ) )
 						} else {
 							return resolve( {
 								success: false,

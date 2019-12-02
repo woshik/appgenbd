@@ -5,7 +5,7 @@ const web = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	checkUser,
 	changePassword
-} = require( join( MODEL_DIR, 'auth/Model_Account_Activation' ) )
+} = require( join( MODEL_DIR, 'auth/Model_Change_Password' ) )
 const {
 	companyInfo,
 	fromErrorMessage
@@ -14,7 +14,7 @@ const {
 exports.changePasswordView = ( req, res, next ) => {
 
 	// TODO: here we can check email & rd parameter using joi but I that not needed.
-	if ( ( !req.query.email && !req.query.rd ) ) {
+	if ( ( !req.query.email || !req.query.rd ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
@@ -46,7 +46,7 @@ exports.changePasswordView = ( req, res, next ) => {
 exports.changePassword = ( req, res, next ) => {
 
 	// TODO: here we can check email & rd parameter using joi but I that not needed.
-	if ( ( !req.body.email && !req.body.rd ) ) {
+	if ( ( !req.body.email || !req.body.rd ) ) {
 		return res.json( {
 			success: false,
 			message: 'Invalid request.'
@@ -79,7 +79,7 @@ exports.changePassword = ( req, res, next ) => {
 				req.flash( 'userLoginPageMessage', info )
 				return res.json( {
 					success: true,
-					message: web.userLogin.url
+					url: web.userLogin.url
 				} )
 			} else {
 				return res.json( {

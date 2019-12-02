@@ -9,6 +9,9 @@ const {
 const {
 	accountActivation
 } = require( join( BASE_DIR, 'urlconf/webRule' ) )
+const {
+	ObjectId
+} = require( 'mongodb' )
 const dateTime = require( 'date-and-time' )
 
 exports.user = ( email, password ) => {
@@ -45,11 +48,14 @@ exports.user = ( email, password ) => {
 										} else {
 											return resolve( {
 												success: true,
-												info: user._id
+												info: {
+													id: user._id,
+													role: 'user'
+												}
 											} )
 										}
 									} else {
-										if ( user.userRDId && checkRDParam( user.userRDId ) ) {
+										if ( !!user.userRDId && checkRDParam( user.userRDId ) ) {
 											return resolve( {
 												success: false,
 												info: `Your account not active. To active your account <a href="${accountActivation.url}?email=${encodeURIComponent(email)}&rd=${user.userRDId}">click here</a>`
@@ -97,7 +103,10 @@ exports.admin = ( email, password ) => {
 								if ( isMatch ) {
 									return resolve( {
 										successs: true,
-										info: admin._id
+										info: {
+											id: user._id,
+											role: 'admin'
+										}
 									} )
 								} else {
 									return resolve( {
@@ -114,15 +123,40 @@ exports.admin = ( email, password ) => {
 	} )
 }
 
-function checkRDParam( rd, forgotRd = null ) {
-	let now = dateTime.addHours( new Date(), 6 )
-	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}`
+exports.login = ( {
+	id,
+	role
+} ) => {
+	return new Promise( ( resolve, reject ) ) => {
+		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
+		db.createCollection( role === "user" ? "users" : "admin" )
+			.then( collection => {
+				collection.findOne( {
+						_id: id
+					}, {
+						name: 1,
+						number: 1,
+						email: 1,
+						account_activation_end: 1,
+						max_app_can_install: 1,
+						app_installed: 1,
+						super_user: 1
+					} )
+					.then()
+					.catch( err => reject( err ) )
+			} )
+	}
 }
 
-function updateRDParam( userCollection, id, forgotRd = null ) {
+function checkRDParam( rd ) {
+	let now = dateTime.addHours( new Date(), 6 )
+	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}`
+}
+
+function updateRDParam( userCollection, id ) {
 	return new Promise( ( resolve, reject ) => {
 		let now = dateTime.addHours( new Date(), 6 ),
-			rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 30 )}`
+			rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}ace${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 30 )}`
 
 		userCollection.updateOne( {
 				_id: id

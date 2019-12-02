@@ -32,13 +32,13 @@ exports.checkEmail = email => {
 								info: 'Account not found.'
 							} )
 						} else if ( !user.account_active ) {
-							if ( checkRDParam( user.userRDId ) ) {
+							if ( !!user.userRDId && checkRDParam( user.userRDId, false ) ) {
 								return resolve( {
 									success: false,
 									info: `Your account not active. To active your account <a href="${accountActivation.url}?email=${encodeURIComponent(email)}&rd=${user.userRDId}">click here</a>`
 								} )
 							} else {
-								updateRDParam( userCollection, user._id )
+								updateRDParam( userCollection, user._id, false )
 									.then( rd => {
 										return resolve( {
 											success: false,
@@ -48,7 +48,7 @@ exports.checkEmail = email => {
 									.catch( err => reject( err ) )
 							}
 						} else {
-							if ( user.userRDId && checkRDParam( user.userRDId, true ) ) {
+							if ( !!user.userRDId && checkRDParam( user.userRDId, true ) ) {
 								return resolve( {
 									success: true,
 									info: {
@@ -63,7 +63,7 @@ exports.checkEmail = email => {
 											success: true,
 											info: {
 												email: email,
-												rd: user.userRDId
+												rd: rd
 											}
 										} )
 									} )
@@ -77,12 +77,12 @@ exports.checkEmail = email => {
 	} )
 }
 
-function checkRDParam( rd, forgotRd = null ) {
+function checkRDParam( rd, forgotRd ) {
 	let now = dateTime.addHours( new Date(), 6 )
 	return rd.slice( 15 ) > now.getTime() && rd.slice( 8, 15 ) === `${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}`
 }
 
-function updateRDParam( userCollection, id, forgotRd = null ) {
+function updateRDParam( userCollection, id, forgotRd ) {
 	return new Promise( ( resolve, reject ) => {
 		let now = dateTime.addHours( new Date(), 6 ),
 			rd = `${randomBytes( 4 ).toString( 'hex' )}${dateTime.format(now, 'DD')}${forgotRd ? 'abd' : 'ace'}${dateTime.format(now, 'MM')}${now.setMinutes( now.getMinutes() + 30 )}`

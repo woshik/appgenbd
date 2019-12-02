@@ -48,7 +48,7 @@ $( document ).ready( function () {
 			data: {
 				email: $( "#email" ).val(),
 				rd: $( "#rd" ).val(),
-				verify: true
+				verify: "verify"
 			},
 			dataType: "json",
 			success: function success( res ) {

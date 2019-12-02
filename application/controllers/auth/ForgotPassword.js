@@ -7,8 +7,7 @@ const {
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core/util' ) )
 const {
-	checkEmail,
-	checkUser
+	checkEmail
 } = require( join( MODEL_DIR, 'auth/Model_Forgot_Password' ) )
 
 exports.forgotPasswordView = ( req, res ) => {
@@ -44,8 +43,6 @@ exports.forgotPassword = ( req, res, next ) => {
 			info
 		} ) => {
 			if ( success ) {
-				req.flash( 'accountVerificationPageMessage', 'Please, check your email account.' )
-
 				return res.json( {
 					success: true,
 					url: `${web.accountVerification.url}?email=${encodeURIComponent(info.email)}&rd=${info.rd}`

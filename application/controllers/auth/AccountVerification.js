@@ -14,7 +14,7 @@ const {
 
 exports.accountVerificationView = ( req, res, next ) => {
 	// TODO: here we can check email & rd parameter using joi but I that not needed.
-	if ( ( !req.query.email && !req.query.rd ) || !checkRDParam( req.query.rd ) ) {
+	if ( !req.query.email || !( req.query.rd && checkRDParam( req.query.rd ) ) ) {
 		req.flash( 'userLoginPageMessage', 'Invalid request.' )
 		return res.redirect( web.userLogin.url )
 	}
@@ -33,8 +33,7 @@ exports.accountVerificationView = ( req, res, next ) => {
 					csrfToken: req.csrfToken(),
 					verificationFormURL: web.accountVerification.url,
 					sendCodeAgainURL: web.sendCodeAgain.url,
-					loginPageURL: web.userLogin.url,
-					flashMessage: req.flash( 'accountVerificationPageMessage' ) || sendCode,
+					flashMessage: sendCode,
 					email: req.query.email,
 					rd: req.query.rd,
 				} )
@@ -50,7 +49,7 @@ exports.accountVerificationView = ( req, res, next ) => {
 exports.accountVerification = ( req, res, next ) => {
 
 	// TODO: here we can check email & rd parameter using joi but I that not needed.
-	if ( ( !req.body.email && !req.body.rd ) || !checkRDParam( req.body.rd ) ) {
+	if ( !req.body.email || !( req.body.rd && checkRDParam( req.body.rd ) ) ) {
 		return res.json( {
 			success: false,
 			message: 'Invalid request.'
@@ -80,7 +79,7 @@ exports.accountVerification = ( req, res, next ) => {
 			if ( success ) {
 				return res.json( {
 					success: success,
-					url: `${web.changePassword.url}?email=${encodeURIComponent(validateResult.value.email)}&rd=${info.userRDId}`
+					url: `${web.changePassword.url}?email=${encodeURIComponent(info.email)}&rd=${info.rd}`
 				} )
 			} else {
 				return res.json( {

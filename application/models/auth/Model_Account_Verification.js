@@ -33,7 +33,7 @@ exports.checkUser = ( email, rd ) => {
 								success: false,
 								info: 'Your account not active.'
 							} )
-						} else if ( !user.token_refresh && !checkTokenTime( user.token_refresh ) ) {
+						} else if ( !checkTokenTime( user.token_refresh ) ) {
 							generateNewCode( userCollection, user._id )
 								.then( token => {
 									sendMail( email, "Varification Code", token ).catch( err => console.log( err ) )
@@ -89,7 +89,10 @@ exports.checkCode = ( email, rd, code ) => {
 									.then( rd => {
 										return resolve( {
 											success: true,
-											info: rd
+											info: {
+												email: email,
+												rd: rd
+											}
 										} )
 									} )
 									.catch( err => reject( err ) )
@@ -151,6 +154,8 @@ function updateRDAndForgetParam( userCollection, id ) {
 				$set: {
 					forget_password: forgetPasswordTime,
 					userRDId: rd,
+					token: null,
+					token_refresh: null
 				}
 			} )
 			.then( updateInfo => resolve( rd ) )
