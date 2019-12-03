@@ -2,9 +2,9 @@
 
 const {
 	isUserAuthenticated,
-	isUserCanSee,
-	canAccess,
-	isSuperUser
+	isAdminAuthenticated,
+	canUserSee,
+	isUserCanAccess
 } = require( join( BASE_DIR, "core", "middlewares" ) )
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
 			userLoginView: 'get',
 			userLogin: 'post'
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -26,7 +26,7 @@ module.exports = {
 			registrationView: 'get',
 			registration: 'post'
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -37,7 +37,7 @@ module.exports = {
 			accountActivationView: 'get',
 			accountActivation: 'post',
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -48,7 +48,7 @@ module.exports = {
 			forgotPasswordView: 'get',
 			forgotPassword: 'post',
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -59,7 +59,7 @@ module.exports = {
 			accountVerificationView: 'get',
 			accountVerification: 'post',
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -70,7 +70,7 @@ module.exports = {
 			changePasswordView: 'get',
 			changePassword: 'post',
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -80,7 +80,7 @@ module.exports = {
 		methods: {
 			sendCodeAgain: 'post',
 		},
-		middleware: [ isUserCanSee ],
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -127,7 +127,7 @@ module.exports = {
 			appInstallView: 'get',
 			appInstall: 'post',
 		},
-		middleware: [ isUserAuthenticated, canAccess ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 
@@ -137,7 +137,7 @@ module.exports = {
 		methods: {
 			appName: 'post',
 		},
-		middleware: [ isUserAuthenticated, canAccess ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 
@@ -213,7 +213,7 @@ module.exports = {
 			applicationGeneratorView: 'get',
 			applicationGenerator: 'post'
 		},
-		middleware: [ isUserAuthenticated, canAccess ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 
@@ -223,7 +223,7 @@ module.exports = {
 		methods: {
 			download: 'get',
 		},
-		middleware: [ isUserAuthenticated, canAccess ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 
@@ -243,6 +243,7 @@ module.exports = {
 			adminLoginView: 'get',
 			adminLogin: 'post'
 		},
+		middleware: [ canUserSee ],
 		path: 'auth'
 	},
 
@@ -252,7 +253,7 @@ module.exports = {
 		methods: {
 			dashboardView: 'get',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -262,7 +263,7 @@ module.exports = {
 		methods: {
 			adminLogout: 'get',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -272,7 +273,7 @@ module.exports = {
 		methods: {
 			appSetting: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -282,7 +283,7 @@ module.exports = {
 		methods: {
 			profileSetting: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -292,7 +293,7 @@ module.exports = {
 		methods: {
 			userList: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -302,7 +303,7 @@ module.exports = {
 		methods: {
 			userMaxAppInstall: 'get',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -312,7 +313,7 @@ module.exports = {
 		methods: {
 			payment: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -322,7 +323,7 @@ module.exports = {
 		methods: {
 			accountStatusChange: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -332,7 +333,7 @@ module.exports = {
 		methods: {
 			accountDelete: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 
@@ -342,7 +343,7 @@ module.exports = {
 		methods: {
 			accountDetails: 'post',
 		},
-		middleware: [ isSuperUser ],
+		middleware: [ isAdminAuthenticated ],
 		path: 'admin'
 	},
 }

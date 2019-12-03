@@ -2,33 +2,33 @@
 
 exports.isUserAuthenticated = ( req, res, next ) => {
 	if ( req.isAuthenticated() && req.user.role === "user" ) {
-		next()
+		return next()
 	} else {
-		res.redirect( '/login/user' )
+		return res.redirect( '/login/user' )
 	}
 }
 
-exports.isUserCanSee = ( req, res, next ) => {
+exports.canUserSee = ( req, res, next ) => {
 	if ( req.isAuthenticated() ) {
-		res.redirect( '/user/dashboard' )
+		return res.redirect( `/${req.user.role}/dashboard` )
 	} else {
-		next()
+		return next()
 	}
 }
 
 exports.isUserCanAccess = ( req, res, next ) => {
 	if ( req.user.is_account_limit_available ) {
-		next()
+		return next()
 	} else {
-		res.redirect( '/user/dashboard' )
+		return res.redirect( '/user/dashboard' )
 	}
 }
 
 exports.isAdminAuthenticated = ( req, res, next ) => {
 	if ( req.isAuthenticated() && req.user.role === "admin" ) {
-		next()
+		return next()
 	} else {
-		res.redirect( '/login/admin' )
+		return res.redirect( '/login/admin' )
 	}
 }
 

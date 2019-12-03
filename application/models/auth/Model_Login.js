@@ -129,22 +129,24 @@ exports.login = ( {
 	id,
 	role
 } ) => {
-	return new Promise( ( resolve, reject ) ) => {
+	return new Promise( ( resolve, reject ) => {
 		getDB().createCollection( role === "user" ? "users" : "admin" )
 			.then( collection => {
 				collection.findOne( {
-						_id: id
+						_id: ObjectId( id )
 					}, {
-						name: 1,
-						number: 1,
-						email: 1,
-						account_activation_end_date: 1,
-						max_app_can_install: 1,
-						app_installed: 1,
+						projection: {
+							name: 1,
+							number: 1,
+							email: 1,
+							account_activation_end_date: 1,
+							max_app_can_install: 1,
+							app_installed: 1,
+						}
 					} )
 					.then( data => {
 						if ( !data ) {
-							return done( null, false )
+							return resolve( null, false )
 						} else if ( role === "user" ) {
 							data.is_account_limit_available = dateTime.subtract( new Date( data.account_activation_end_date ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0
 						} else if ( role === "admin" ) {
@@ -158,14 +160,15 @@ exports.login = ( {
 								} )
 								.catch( err => reject( err ) )
 						}
-
-						return resolve( data.role = role )
+						data.role = role
+						return resolve( data )
 					} )
 					.catch( err => reject( err ) )
 			} )
 			.catch( err => reject( err ) )
-	}
+	} )
 }
+
 
 function checkRDParam( rd ) {
 	let now = dateTime.addHours( new Date(), 6 )
