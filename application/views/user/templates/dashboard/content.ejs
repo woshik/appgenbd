@@ -1,30 +1,27 @@
-<%- include('base/base_header.ejs') %>
 <div class="container-fluid">
-    <%if(!active){%>
-    <div class="alert alert-danger" role="alert">
-        Your account is expired, please pay your monthly bill. For any help contant 01947738405.
-    </div>
+    <%if(!isAccountLimitAvailable){%>
+    <div class="alert alert-danger" role="alert"> Your account is expired, please pay your monthly bill. For any help contant 01947738405. </div>
     <%}%>
     <div class="row">
         <div class="outer-w3-agile col-xl">
             <h4 class="tittle-w3-agileits mb-2">Server Overview</h4>
             <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-1">
                 <div class="s-l">
-                    <h5>Account Active</h5>
+                    <h5>Account Active Date</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=accountActiveDate%>
+                        <%=accountActivationStartDate%>
                     </h6>
                 </div>
             </div>
             <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-2">
                 <div class="s-l">
-                    <h5>Account Expire</h5>
+                    <h5>Account Expire Date</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=accountExpireDate%>
+                        <%=accountActivationEndDate%>
                     </h6>
                 </div>
             </div>
@@ -50,22 +47,18 @@
             </div>
             <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-6">
                 <div class="s-l">
-                    <h5>Total Subscriber</h5>
+                    <h5>Total Subscribers</h5>
                 </div>
                 <div class="s-r">
                     <h6>
-                        <%=totalSubscriber%>
+                        <%=totalSubscribers%>
                     </h6>
                 </div>
             </div>
         </div>
-        <!-- Calender -->
         <div class="outer-w3-agile col-xl ml-xl-3 mt-xl-0 mt-3">
             <h4 class="tittle-w3-agileits mb-2">Calender</h4>
             <div class="calender"></div>
         </div>
-        <!--// Calender -->
     </div>
 </div>
-<%- include('base/base_footer.ejs') %>
-<%- include('base/close_footer.ejs') %>

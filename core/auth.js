@@ -53,13 +53,7 @@ module.exports = ( app ) => {
 
 	passport.serializeUser( ( info, done ) => done( null, info ) )
 
-	passport.deserializeUser( ( info, done ) => {
-
-		login( info ).then( data => {
-			console.log( data )
-			done( null, data )
-		} ).catch( err => done( err ) )
-	} )
+	passport.deserializeUser( ( info, done ) => login( info ).then( data => done( null, data ) ).catch( err => done( err ) ) )
 
 	app.use( passport.initialize() )
 	app.use( passport.session() )

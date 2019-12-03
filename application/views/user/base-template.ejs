@@ -1,22 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <%- include('snippets/header') %>
-    <%- include('templates'+layout+'style') %>
-</head>
+    <head>
+        <title><%=title%> || <%=info.appName%></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="<%=csrfToken%>">
 
-<body>
-    <div class="wrapper">
-        <%- include('snippets/side-bar.ejs') %>
-        <div id="content">
-            <%- include('snippets/top-bar.ejs') %>
-            <%- include('templates'+layout+'content') %>
-            <%- include('snippets/copy-right.ejs') %>
+        <link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/dashboard/css/fontawesome-all.css">
+        <link rel="stylesheet" type="text/css" href="/dashboard/css/style.css">
+        <link rel="stylesheet" type="text/css" href="/dashboard/css/style4.css">
+        <link rel="stylesheet" type="text/css" href="/dashboard/DataTables/datatables.min.css">
+        <link rel="stylesheet" type="text/css" href="/dashboard/css/bootstrap-datetimepicker.css">
+        <link rel="stylesheet" type="text/css" href="/css/custom.css">
+        <%- include('templates/'+layout+'/style') %>
+    </head>
+
+    <body>
+        <div class="wrapper">
+            <nav id="sidebar">
+                <ul class="list-unstyled components">
+                    <% Object.entries(sidebar).forEach(([manuName, manu]) => { %>
+                    <li class="<% if(path === manu.url) { %>active<% } %>">
+                        <a href="<%=manu.url%>"><%- manu.icon %><%= manu.title %></a>
+                    </li>
+                    <% }) %>
+                </ul>
+            </nav>
+            <div id="content">
+                <nav class="navbar navbar-default mb-xl-5 mb-4">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                        </div>
+                        <ul class="top-icons-agileits-w3layouts float-right">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="far fa-user"></i>
+                                </a>
+                                <div class="profile-dropdown-menu dropdown-menu drop-3" style="margin: 0; padding: 0">
+                                    <div style="margin: 1em">
+                                        <div class="profile d-flex mr-o">
+                                            <div class="profile-r align-self-center" style="width: 100%;">
+                                                <h3 class="sub-title-w3-agileits" style="text-transform: capitalize;text-align: center;">
+                                                    <%=userName%>
+                                                </h3>
+                                                <div class="text-center">
+                                                    <%=email%>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="javascript:void(0)" class="dropdown-item mt-3" data-toggle="modal" data-target="#userProfileSetting" onclick="" data-backdrop="static">
+                                            <h4>
+                                                <i class="far fa-user mr-3"></i>My Setting
+                                            </h4>
+                                        </a>
+                                        <div class="dropdown-divider"></div>
+                                        <a href="/user/logout" class="dropdown-item btn">Logout</a>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <%- include('templates/'+layout+'/content') %>
+
+                <div class="copyright-w3layouts py-xl-3 py-2 mt-xl-5 mt-4 text-center">
+                    <p>
+                        Copyright &copy; 2019 <a href="<%=info.website%>" target="_blank">Hyper Queue</a>. All Rights Reserved
+                    </p>
+                </div>
+            </div>
         </div>
-    </div>
-    <%- include('snippets/footer') %>
-    <%- include('templates'+layout+'script') %>
-</body>
+
+        <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="userSettingModalLabel" aria-hidden="true" id="userProfileSetting">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="userSettingModalLabel">User Profile Setting</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="user-profile-setting-error-message"></div>
+                        <div class="form-group row">
+                            <label for="userProfileSettingName" class="col-sm-3 col-form-label">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="<%=userName%>" id="userProfileSettingName" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="userProfileSettingCurrentPass" class="col-sm-3 col-form-label">Current Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" id="userProfileSettingCurrentPass" placeholder="Current Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="userProfileSettingPass" class="col-sm-3 col-form-label">New Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" id="userProfileSettingPass" placeholder="New Password">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="userProfileSettingConfirmPass" class="col-sm-3 col-form-label">Confirm Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" id="userProfileSettingConfirmPass" placeholder="Confirm password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" id="userProfileSettingBtn">Change</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="/common/js/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="/common/js/popper.js"></script>
+        <script type="text/javascript" src="/common/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/dashboard/js/modernizr.js"></script>
+        <script type="text/javascript" src="/dashboard/js/script.js"></script>
+
+        <%- include('templates/'+layout+'/script') %>
+    </body>
 
 </html>

@@ -85,7 +85,7 @@ app.use( flash )
 app.use( "/", require( join( BASE_DIR, "routes", "web" ) ) )
 
 // 404 page not found
-app.use( ( req, res ) => res.render( "error/page", {
+app.use( ( req, res ) => res.status( 404 ).render( "error/page", {
 	status: 404,
 	appName: config.get( "app_name" )
 } ) )
@@ -94,7 +94,7 @@ app.use( ( req, res ) => res.render( "error/page", {
 app.use( ( err, req, res, next ) => {
 	console.log( err )
 	logger.error( err )
-	return res.render( "error/page", {
+	return res.status( 500 ).render( "error/page", {
 		status: 500,
 		appName: config.get( "app_name" )
 	} );

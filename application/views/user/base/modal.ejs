@@ -1,114 +1,72 @@
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="userSettingModalLabel" aria-hidden="true" id="userProfileSetting">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="userSettingModalLabel">User Profile Setting</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="user-profile-setting-error-message"></div>
-                <div class="form-group row">
-                    <label for="userProfileSettingName" class="col-sm-3 col-form-label">Name</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" value="<%=userName%>" id="userProfileSettingName" placeholder="Name">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="userProfileSettingCurrentPass" class="col-sm-3 col-form-label">Current Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="userProfileSettingCurrentPass" placeholder="Current Password">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="userProfileSettingPass" class="col-sm-3 col-form-label">Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="userProfileSettingPass" placeholder="Password">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="userProfileSettingConfirmPass" class="col-sm-3 col-form-label">Confirm Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="userProfileSettingConfirmPass" placeholder="Confirm password">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="userProfileSettingBtn">Change</button>
-            </div>
-        </div>
-    </div>
-</div>
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppInfoModalLabel" aria-hidden="true" id="updateAppInfo">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="update-app-info-message"></div>
-                <div class="form-group row">
-                    <label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
-                    <div class="col-sm-9">
-                        <input type="text" name="updateAppInfoId" class="form-control" id="updateAppInfoId" placeholder="App Id" autocomplete="off">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
-                    <div class="col-sm-9">
-                        <input type="text" name="updateAppInfoPassword" class="form-control" id="updateAppInfoPassword" placeholder="App Password" autocomplete="off">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="update-app-info-message"></div>
+				<div class="form-group row">
+					<label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
+					<div class="col-sm-9">
+						<input type="text" name="updateAppInfoId" class="form-control" id="updateAppInfoId" placeholder="App Id" autocomplete="off">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
+					<div class="col-sm-9">
+						<input type="text" name="updateAppInfoPassword" class="form-control" id="updateAppInfoPassword" placeholder="App Password" autocomplete="off">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appStatusChangeModalLabel" aria-hidden="true" id="appStatusChange">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="appStatusChangeModalLabel"></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="appStatusChangeModalBody"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="appStatusChangeButton"></button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="appStatusChangeModalLabel"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="appStatusChangeModalBody"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary" id="appStatusChangeButton"></button>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppMessageModalLabel" aria-hidden="true" id="updateAppMessage">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="updateAppMessageModalLabel">Update App Message</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="update-app-message-content"></div>
-                <div class="form-group row">
-                    <div class="form-group col-md-12">
-                        <label for="updateAppMessageContent">Message</label>
-                        <textarea class="form-control" name="updateAppMessageContent" id="updateAppMessageContent" rows="3"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="updateAppMessageBtn">Change</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="updateAppMessageModalLabel">Update App Message</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="update-app-message-content"></div>
+				<div class="form-group row">
+					<div class="form-group col-md-12">
+						<label for="updateAppMessageContent">Message</label>
+						<textarea class="form-control" name="updateAppMessageContent" id="updateAppMessageContent" rows="3"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="updateAppMessageBtn">Change</button>
+			</div>
+		</div>
+	</div>
 </div>

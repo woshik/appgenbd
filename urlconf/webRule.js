@@ -111,7 +111,7 @@ module.exports = {
 	},
 
 	userProfileSetting: {
-		url: '/user/userprofilesetting',
+		url: '/user/profilesetting',
 		controller: 'Dashboard',
 		methods: {
 			userProfileSetting: 'post',
@@ -124,8 +124,8 @@ module.exports = {
 		url: '/user/installapp',
 		controller: 'InstallApp',
 		methods: {
-			appInstallView: 'get',
-			appInstall: 'post',
+			installAppView: 'get',
+			installApp: 'post',
 		},
 		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
@@ -191,7 +191,7 @@ module.exports = {
 			contentUploadView: 'get',
 			contentUpload: 'post'
 		},
-		middleware: [ isUserAuthenticated ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 
@@ -202,7 +202,7 @@ module.exports = {
 			getContent: "get",
 			updateContent: "post"
 		},
-		middleware: [ isUserAuthenticated ],
+		middleware: [ isUserAuthenticated, isUserCanAccess ],
 		path: 'user'
 	},
 

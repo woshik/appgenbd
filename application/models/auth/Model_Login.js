@@ -139,13 +139,18 @@ exports.login = ( {
 							name: 1,
 							number: 1,
 							email: 1,
+							account_activation_start_date: 1,
 							account_activation_end_date: 1,
 							max_app_can_install: 1,
 							app_installed: 1,
+							total_subscribers: 1,
+							account_disable: 1
 						}
 					} )
 					.then( data => {
 						if ( !data ) {
+							return resolve( null, false )
+						} else if ( !!data.account_disable ) {
 							return resolve( null, false )
 						} else if ( role === "user" ) {
 							data.is_account_limit_available = dateTime.subtract( new Date( data.account_activation_end_date ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0

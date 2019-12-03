@@ -1,106 +1,67 @@
-const sidebar = require(join(BASE_DIR, 'urlconf', 'sideBar'))
-const { hashPassword } = require(join(BASE_DIR, 'core', 'util'))
-const bcrypt = require('bcryptjs')
+const Joi = require( '@hapi/joi' )
+const {
+	format
+} = require( 'date-and-time' )
+const {
+	userLogin
+} = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const {
+	user
+} = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	passwordChange
+} = require( join( MODEL_DIR, 'user/Model_Dashboard' ) )
 
-exports.dashboardView = (req, res, next) => {
-    let user = new model('users')
-
-    user.findOne({ _id: req.user._id })
-        .then(userData => {
-            let dashboardData = {
-                info: commonInfo,
-                title: 'Dashboard',
-                userName: req.user.name,
-                email: req.user.email,
-                active: req.user.active,
-                sidebar: sidebar,
-                csrfToken: req.csrfToken(),
-                path: req.path,
-                accountActiveDate: dateTime.format(new Date(userData.account_active_date), 'DD-MM-YYYY'),
-                accountExpireDate: dateTime.format(new Date(userData.account_activation_end), 'DD-MM-YYYY'),
-                maxAppCanInstall: userData.max_app_install,
-                appInstalled: userData.app_install,
-                totalSubscriber: userData.total_subscribe,
-            }
-
-            res.render("user/dashboard", dashboardData)
-        })
-        .catch(err => next(err))
+exports.dashboardView = ( req, res, next ) => {
+	res.render( "user/base-template", {
+		layout: 'dashboard',
+		info: companyInfo,
+		title: 'Dashboard',
+		path: req.path,
+		sidebar: user,
+		csrfToken: req.csrfToken(),
+		userName: req.user.name,
+		email: req.user.email,
+		isAccountLimitAvailable: req.user.is_account_limit_available,
+		accountActivationStartDate: format( new Date( req.user.account_activation_start_date ), 'DD-MM-YYYY' ),
+		accountActivationEndDate: format( new Date( req.user.account_activation_end_date ), 'DD-MM-YYYY' ),
+		maxAppCanInstall: req.user.max_app_can_install || 0,
+		appInstalled: req.user.app_installed || 0,
+		totalSubscribers: req.user.total_subscribers || 0,
+	} )
 }
 
-exports.userLogout = (req, res) => {
-    req.flash('userLoginScreenSuccessMessage', 'Successfully Logout')
-    req.logout()
-    res.redirect(web.userLogin.url)
+exports.userLogout = ( req, res ) => {
+	req.logout()
+	req.flash( 'userLoginPageMessage', 'Successfully Logout' )
+	res.redirect( userLogin.url )
 }
 
-exports.userProfileSetting = (req, res, next) => {
-    const schema = Joi.object({
-        name: Joi.string().trim().required().label("Name"),
-        current_password: Joi.string().trim().min(5).max(50).required().label("Current Password"),
-        password: Joi.string().trim().min(5).max(50).required().label("Password"),
-        confirm_password: Joi.ref("password")
-    })
+exports.userProfileSetting = ( req, res, next ) => {
+	const schema = Joi.object( {
+		name: Joi.string().trim().pattern( /^[a-zA-Z\s]+$/ ).required().label( "Name" ),
+		current_password: Joi.string().trim().min( 5 ).max( 50 ).required().label( "Current password" ),
+		new_password: Joi.string().trim().min( 5 ).max( 50 ).required().label( "New password" ),
+		confirm_password: Joi.ref( "new_password" )
+	} )
 
-    const validateResult = schema.validate({
-        name: req.body.name,
-        current_password: req.body.current_password,
-        password: req.body.password,
-        confirm_password: req.body.confirm_password
-    })
+	const validateResult = schema.validate( {
+		name: req.body.name,
+		current_password: req.body.current_password,
+		new_password: req.body.new_password,
+		confirm_password: req.body.confirm_password
+	} )
 
-    if (validateResult.error) {
-        return res.status(200).json({
-            success: false,
-            message: fromErrorMessage(validateResult.error.details[0])
-        })
-    }
-
-    let user = new model('users')
-    user.findOne({ _id: req.user._id })
-        .then(userData => {
-            if (!userData) {
-                return res.status(200).json({
-                    success: false,
-                    message: 'User not found.'
-                })
-            }
-
-            bcrypt.compare(validateResult.value.current_password, userData.password)
-                .then(isMatch => {
-                    if (isMatch) {
-                        hashPassword(validateResult.value.password)
-                            .then(passwordHashed => {
-                                let userInfo = {
-                                    'name': validateResult.value.name,
-                                    'password': passwordHashed,
-                                }
-
-                                user.updateOne({ _id: req.user._id }, userInfo)
-                                    .then(userUpdateValue => {
-                                        if (!userUpdateValue.result.nModified) {
-                                            return res.status(200).json({
-                                                success: false,
-                                                message: 'Server Error. Please try again later.'
-                                            })
-                                        }
-
-                                        return res.status(200).json({
-                                            success: true,
-                                            message: 'Successfully infomations updated.'
-                                        })
-                                    })
-                                    .catch(err => next(err))
-                            })
-                            .catch(err => next(err))
-                    } else {
-                        return res.status(200).json({
-                            success: false,
-                            message: 'Current password is wrong.'
-                        })
-                    }
-                })
-                .catch(err => next(err))
-        })
-        .catch(err => next(err))
+	if ( validateResult.error ) {
+		return res.json( {
+			success: false,
+			message: fromErrorMessage( validateResult.error.details[ 0 ] )
+		} )
+	}
+	console.log( 'ok' )
+	passwordChange( validateResult.value, req.user._id ).then( data => res.json( data ) ).catch( err => next( err ) )
 }
