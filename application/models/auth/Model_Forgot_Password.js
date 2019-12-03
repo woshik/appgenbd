@@ -1,20 +1,19 @@
 "use strict";
 
+const dateTime = require( 'date-and-time' )
 const {
 	accountActivation
 } = require( join( BASE_DIR, 'urlconf/webRule' ) )
 const {
 	randomBytes
 } = require( 'crypto' )
-const dateTime = require( 'date-and-time' )
 const {
-	sendMail
-} = require( join( BASE_DIR, 'core/util' ) )
+	getDB
+} = require( join( BASE_DIR, 'db', 'database' ) )
 
 exports.checkEmail = email => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB();
-		db.createCollection( 'users' )
+		getDB().createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
 						email: email

@@ -4,11 +4,13 @@ const dateTime = require( 'date-and-time' )
 const {
 	hashPassword
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	getDB
+} = require( join( BASE_DIR, 'db', 'database' ) )
 
 exports.checkUser = ( email, rd ) => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
-		db.createCollection( 'users' )
+		getDB().createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
 						email: email,
@@ -50,8 +52,7 @@ exports.checkUser = ( email, rd ) => {
 
 exports.changePassword = ( email, rd, password ) => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
-		db.createCollection( 'users' )
+		getDB().createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
 						email: email,

@@ -91,7 +91,7 @@ module.exports = {
 
 
 	userDashboard: {
-		url: '/',
+		url: '/user/dashboard',
 		controller: 'Dashboard',
 		methods: {
 			dashboardView: 'get',
@@ -101,7 +101,7 @@ module.exports = {
 	},
 
 	userLogout: {
-		url: '/logout/user',
+		url: '/user/logout',
 		controller: 'Dashboard',
 		methods: {
 			userLogout: 'get',
@@ -111,7 +111,7 @@ module.exports = {
 	},
 
 	userProfileSetting: {
-		url: '/userprofilesetting',
+		url: '/user/userprofilesetting',
 		controller: 'Dashboard',
 		methods: {
 			userProfileSetting: 'post',
@@ -121,7 +121,7 @@ module.exports = {
 	},
 
 	appInstall: {
-		url: '/installapp',
+		url: '/user/installapp',
 		controller: 'InstallApp',
 		methods: {
 			appInstallView: 'get',
@@ -132,7 +132,7 @@ module.exports = {
 	},
 
 	appName: {
-		url: '/appname',
+		url: '/user/appname',
 		controller: 'InstallApp',
 		methods: {
 			appName: 'post',
@@ -142,7 +142,7 @@ module.exports = {
 	},
 
 	appList: {
-		url: '/applist',
+		url: '/user/applist',
 		controller: 'AppList',
 		methods: {
 			appListView: 'get',
@@ -153,7 +153,7 @@ module.exports = {
 	},
 
 	appdetails: {
-		url: '/appdetails/:appName',
+		url: '/user/appdetails/:appName',
 		controller: 'AppDetails',
 		methods: {
 			appDetailsView: 'get',
@@ -164,7 +164,7 @@ module.exports = {
 	},
 
 	appdInfoUpdate: {
-		url: '/appupdate',
+		url: '/user/appupdate',
 		controller: 'AppList',
 		methods: {
 			appUpdate: 'post'
@@ -174,7 +174,7 @@ module.exports = {
 	},
 
 	appStatusChange: {
-		url: '/appstatuschange',
+		url: '/user/appstatuschange',
 		controller: 'AppList',
 		methods: {
 			getAppStatus: 'get',
@@ -185,7 +185,7 @@ module.exports = {
 	},
 
 	contentUpload: {
-		url: '/contentupload/:appName',
+		url: '/user/contentupload/:appName',
 		controller: 'ContentUpload',
 		methods: {
 			contentUploadView: 'get',
@@ -196,7 +196,7 @@ module.exports = {
 	},
 
 	updateContentUpload: {
-		url: '/editcontent',
+		url: '/user/editcontent',
 		controller: 'AppDetails',
 		methods: {
 			getContent: "get",
@@ -207,7 +207,7 @@ module.exports = {
 	},
 
 	applicationGenerator: {
-		url: '/applicationgenerator',
+		url: '/user/applicationgenerator',
 		controller: 'ApplicationGenerator',
 		methods: {
 			applicationGeneratorView: 'get',
@@ -218,7 +218,7 @@ module.exports = {
 	},
 
 	download: {
-		url: '/applicationgenerator/download/:fileName',
+		url: '/user/applicationgenerator/download/:fileName',
 		controller: 'ApplicationGenerator',
 		methods: {
 			download: 'get',
@@ -247,7 +247,7 @@ module.exports = {
 	},
 
 	adminDashboard: {
-		url: '/admin',
+		url: '/admin/dashboard',
 		controller: 'Dashboard',
 		methods: {
 			dashboardView: 'get',

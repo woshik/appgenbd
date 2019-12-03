@@ -4,11 +4,12 @@ const passport = require( 'passport' )
 const localStrategy = require( 'passport-local' ).Strategy
 const {
 	user,
-	admin
+	admin,
+	login
 } = require( join( MODEL_DIR, 'auth/Model_Login' ) );
 
 module.exports = ( app ) => {
-	passport.use( 'users',
+	passport.use( 'user',
 		new localStrategy( {
 			usernameField: 'email'
 		}, ( email, password, done ) => {
@@ -52,40 +53,7 @@ module.exports = ( app ) => {
 
 	passport.serializeUser( ( info, done ) => done( null, info ) )
 
-	passport.deserializeUser( ( data, done ) => {
-		console.log( data )
-		// let user = new model( key.model )
-		// user.findOne( {
-		// 		_id: ObjectId( key.id )
-		// 	}, {
-		// 		_id: 1,
-		// 		name: 1,
-		// 		number: 1,
-		// 		email: 1,
-		// 		account_activation_end: 1,
-		// 		max_app_install: 1,
-		// 		app_install: 1,
-		// 		super_user: 1
-		// 	} )
-		// 	.then( async userData => {
-		// 		if ( !userData ) {
-		// 			return done( null, false )
-		// 		}
-		//
-		// 		if ( key.model === 'users' ) {
-		// 			userData.active = dateTime.subtract( new Date( userData.account_activation_end ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0
-		// 		} else {
-		// 			let setting = new model( 'setting' )
-		// 			await setting.find( {} )
-		// 				.then( data => {
-		// 					( data && data.length === 1 ) ? ( userData.setting = data[ 0 ] ) : ( userData.setting = null )
-		// 				} )
-		// 				.catch( err => next( err ) )
-		// 		}
-		// 		done( null, userData )
-		// 	} )
-		// 	.catch( err => done( err ) )
-	} )
+	passport.deserializeUser( ( info, done ) => login( info ).then( data => done( null, data ) ).catch( err => done( err ) ) )
 
 	app.use( passport.initialize() )
 	app.use( passport.session() )

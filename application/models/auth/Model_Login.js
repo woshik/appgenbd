@@ -1,5 +1,6 @@
 "use strict";
 
+const dateTime = require( 'date-and-time' )
 const {
 	randomBytes
 } = require( 'crypto' )
@@ -12,12 +13,14 @@ const {
 const {
 	ObjectId
 } = require( 'mongodb' )
-const dateTime = require( 'date-and-time' )
+const {
+	getDB
+} = require( join( BASE_DIR, 'db', 'database' ) )
+
 
 exports.user = ( email, password ) => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
-		db.createCollection( 'users' )
+		getDB().createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
 						email: email
@@ -40,10 +43,10 @@ exports.user = ( email, password ) => {
 							.then( isMatch => {
 								if ( isMatch ) {
 									if ( !!user.account_active ) {
-										if ( user.account_delete ) {
+										if ( !!user.account_disable ) {
 											return resolve( {
 												success: false,
-												info: 'Your account is deactivated. Please contact with admin.'
+												info: 'Your account is disabled. Please contact with admin.'
 											} )
 										} else {
 											return resolve( {
@@ -88,8 +91,7 @@ exports.user = ( email, password ) => {
 
 exports.admin = ( email, password ) => {
 	return new Promise( ( resolve, reject ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
-		db.createCollection( 'admin' )
+		getDB().createCollection( 'admin' )
 			.then( adminCollection => {
 				adminCollection.findOne( {
 						email: email
@@ -128,8 +130,7 @@ exports.login = ( {
 	role
 } ) => {
 	return new Promise( ( resolve, reject ) ) => {
-		let db = require( join( BASE_DIR, 'db', 'database' ) ).getDB()
-		db.createCollection( role === "user" ? "users" : "admin" )
+		getDB().createCollection( role === "user" ? "users" : "admin" )
 			.then( collection => {
 				collection.findOne( {
 						_id: id
@@ -137,14 +138,32 @@ exports.login = ( {
 						name: 1,
 						number: 1,
 						email: 1,
-						account_activation_end: 1,
+						account_activation_end_date: 1,
 						max_app_can_install: 1,
 						app_installed: 1,
-						super_user: 1
 					} )
-					.then()
+					.then( data => {
+						if ( !data ) {
+							return done( null, false )
+						} else if ( role === "user" ) {
+							data.is_account_limit_available = dateTime.subtract( new Date( data.account_activation_end_date ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0
+						} else if ( role === "admin" ) {
+							getDB().createCollection( "setting" )
+								.then( settingCollection => {
+									settingCollection.find()
+										.then( settingData => {
+											data.setting = ( !!settingData && settingData.length === 1 ) ? settingData[ 0 ] : null;
+										} )
+										.catch( err => reject( err ) )
+								} )
+								.catch( err => reject( err ) )
+						}
+
+						resolve( data )
+					} )
 					.catch( err => reject( err ) )
 			} )
+			.catch( err => reject( err ) )
 	}
 }
 

@@ -39,7 +39,7 @@ exports.userLogin = ( req, res, next ) => {
 		} )
 	}
 
-	passport.authenticate( 'users', function ( err, user, info ) {
+	passport.authenticate( 'user', function ( err, user, info ) {
 		if ( err ) {
 			return next( err )
 		} else if ( !user ) {
