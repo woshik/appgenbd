@@ -159,7 +159,7 @@ exports.login = ( {
 								.catch( err => reject( err ) )
 						}
 
-						resolve( data )
+						return resolve( data.role = role )
 					} )
 					.catch( err => reject( err ) )
 			} )

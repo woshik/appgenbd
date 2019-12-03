@@ -1,12 +1,8 @@
 "use strict";
 
 exports.isUserAuthenticated = ( req, res, next ) => {
-	if ( req.isAuthenticated() ) {
-		if ( !!req.user.super_user ) {
-			res.redirect( '/admin' )
-		} else {
-			next()
-		}
+	if ( req.isAuthenticated() && req.user.role === "user" ) {
+		next()
 	} else {
 		res.redirect( '/login/user' )
 	}
@@ -14,22 +10,22 @@ exports.isUserAuthenticated = ( req, res, next ) => {
 
 exports.isUserCanSee = ( req, res, next ) => {
 	if ( req.isAuthenticated() ) {
-		res.redirect( '/' )
+		res.redirect( '/user/dashboard' )
 	} else {
 		next()
 	}
 }
 
-exports.canAccess = ( req, res, next ) => {
-	if ( req.isAuthenticated() && req.user.active ) {
+exports.isUserCanAccess = ( req, res, next ) => {
+	if ( req.user.is_account_limit_available ) {
 		next()
 	} else {
-		res.redirect( '/' )
+		res.redirect( '/user/dashboard' )
 	}
 }
 
-exports.isSuperUser = ( req, res, next ) => {
-	if ( req.isAuthenticated() && req.user.super_user ) {
+exports.isAdminAuthenticated = ( req, res, next ) => {
+	if ( req.isAuthenticated() && req.user.role === "admin" ) {
 		next()
 	} else {
 		res.redirect( '/login/admin' )
