@@ -17,7 +17,7 @@ exports.canUserSee = ( req, res, next ) => {
 }
 
 exports.isUserCanAccess = ( req, res, next ) => {
-	if ( req.user.is_account_limit_available ) {
+	if ( req.user.is_account_limit_available || !!req.user.trial ) {
 		return next()
 	} else {
 		return res.redirect( '/user/dashboard' )

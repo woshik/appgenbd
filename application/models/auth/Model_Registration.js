@@ -16,15 +16,11 @@ exports.registration = userInfo => {
 		getDB().createCollection( 'users' )
 			.then( userCollection => {
 				userCollection.findOne( {
-						$or: [
-							{
-								email: userInfo.email
-							},
-							{
-								mobile: userInfo.mobile_number
-
-							}
-						]
+						$or: [ {
+							email: userInfo.email
+							}, {
+							mobile: userInfo.mobile_number
+						} ]
 					}, {
 						projection: {
 							_id: 1
@@ -55,6 +51,7 @@ exports.registration = userInfo => {
 											account_activation_start_date: bdNowWithDate,
 											account_activation_end_date: bdNowWithDate,
 											account_create: dateTime.format( now, "YYYY-MM-DD hh:mm:ss A" ),
+											trial: true
 										} )
 										.then( result => resolve( {
 											success: true,

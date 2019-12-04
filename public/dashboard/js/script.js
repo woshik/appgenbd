@@ -26,37 +26,35 @@ $( document ).ready( function () {
 		button = $( "#userProfileSettingBtn" ),
 		btnText = button.text().trim();
 
-	button.unbind( "click" ).bind( "click", function () {
-		$( "#user-profile-setting-error-message" ).fadeOut( 0 );
+	$( "#user-profile-setting-message" ).fadeOut( 0 );
+
+	$( 'userProfileSetting' ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
 		$.ajax( {
-			url: "/user/profilesetting",
-			type: "POST",
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
-			data: {
-				'name': $( "#userProfileSettingName" ).val(),
-				'current_password': $( '#userProfileSettingCurrentPass' ).val(),
-				'new_password': $( "#userProfileSettingPass" ).val(),
-				'confirm_password': $( "#userProfileSettingConfirmPass" ).val()
-			},
+			data: form.serialize(),
 			dataType: "json",
 			beforeSend: function beforeSend() {
 				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
 			},
 			success: function success( res ) {
 				if ( res.success === true ) {
-					$( "#user-profile-setting-error-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
+					$( "#user-profile-setting-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
 					$( "#userProfileSettingCurrentPass" ).val( '' );
 					$( "#userProfileSettingPass" ).val( '' );
 					$( "#userProfileSettingConfirmPass" ).val( '' );
 				} else {
-					$( "#user-profile-setting-error-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
+					$( "#user-profile-setting-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
 				}
 
 				clearTimeout( timeOut );
 				timeOut = setTimeout( function () {
-					$( "#user-profile-setting-error-message" ).fadeOut( 1000 );
+					$( "#user-profile-setting-message" ).fadeOut( 1000 );
 				}, 5000 );
 			},
 			complete: function complete( jqXHR, textStatus ) {
@@ -66,5 +64,4 @@ $( document ).ready( function () {
 			}
 		} );
 	} );
-
 } );

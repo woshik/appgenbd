@@ -81,7 +81,9 @@ exports.changePassword = ( email, rd, password ) => {
 											_id: user._id
 										}, {
 											$set: {
-												password: passwordHashed,
+												password: passwordHashed
+											},
+											$unset: {
 												forget_password: null,
 												userRDId: null
 											}

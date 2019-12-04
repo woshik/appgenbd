@@ -1,10 +1,8 @@
 const Joi = require( '@hapi/joi' )
+const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
 	format
 } = require( 'date-and-time' )
-const {
-	userLogin
-} = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
 	user
 } = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
@@ -27,18 +25,20 @@ exports.dashboardView = ( req, res, next ) => {
 		userName: req.user.name,
 		email: req.user.email,
 		isAccountLimitAvailable: req.user.is_account_limit_available,
+		trialVersion: req.user.trial,
 		accountActivationStartDate: format( new Date( req.user.account_activation_start_date ), 'DD-MM-YYYY' ),
 		accountActivationEndDate: format( new Date( req.user.account_activation_end_date ), 'DD-MM-YYYY' ),
 		maxAppCanInstall: req.user.max_app_can_install || 0,
 		appInstalled: req.user.app_installed || 0,
 		totalSubscribers: req.user.total_subscribers || 0,
+		userProfileSettingURL: web.userProfileSetting.url
 	} )
 }
 
 exports.userLogout = ( req, res ) => {
 	req.logout()
 	req.flash( 'userLoginPageMessage', 'Successfully Logout' )
-	res.redirect( userLogin.url )
+	res.redirect( web.userLogin.url )
 }
 
 exports.userProfileSetting = ( req, res, next ) => {
@@ -50,7 +50,7 @@ exports.userProfileSetting = ( req, res, next ) => {
 	} )
 
 	const validateResult = schema.validate( {
-		name: req.body.name,
+		name: req.body.username,
 		current_password: req.body.current_password,
 		new_password: req.body.new_password,
 		confirm_password: req.body.confirm_password
@@ -62,6 +62,6 @@ exports.userProfileSetting = ( req, res, next ) => {
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
-	console.log( 'ok' )
+
 	passwordChange( validateResult.value, req.user._id ).then( data => res.json( data ) ).catch( err => next( err ) )
 }

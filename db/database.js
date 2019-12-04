@@ -17,9 +17,7 @@ exports.mongoClient = new Promise( ( resolve, reject ) => {
 			_db = db.db( 'appgenbd' );
 			resolve()
 		} )
-		.catch( err => {
-			reject( err )
-		} )
+		.catch( err => reject( err ) )
 } )
 
 

@@ -154,9 +154,11 @@ function updateRDAndForgetParam( userCollection, id ) {
 			}, {
 				$set: {
 					forget_password: forgetPasswordTime,
-					userRDId: rd,
-					token: null,
-					token_refresh: null
+					userRDId: rd
+				},
+				$unset: {
+					token: 1,
+					token_refresh: 1
 				}
 			} )
 			.then( updateInfo => resolve( rd ) )

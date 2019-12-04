@@ -91,9 +91,11 @@ exports.checkCode = ( email, rd, code ) => {
 									}, {
 										$set: {
 											account_active: true,
-											userRDId: null,
-											token: null,
-											token_refresh: null
+										},
+										$unset: {
+											userRDId: 1,
+											token: 1,
+											token_refresh: 1
 										}
 									} )
 									.then( updateInfo => resolve( {

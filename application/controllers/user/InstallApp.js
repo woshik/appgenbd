@@ -1,14 +1,14 @@
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
-	randomBytes
-} = require( 'crypto' )
-const {
 	user
 } = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
 const {
 	companyInfo,
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	appName
+} = require( join( MODEL_DIR, 'user/Model_Install_App' ) )
 const networkInterfaces = require( 'os' ).networkInterfaces()
 
 exports.installAppView = ( req, res, next ) => {
@@ -39,75 +39,18 @@ exports.appName = ( req, res, next ) => {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
-	} else if ( !!req.user.max_app_can_install ) {
+	} else if ( !!req.user.trial ) {
 		return res.json( {
 			success: false,
-			message: 'Please, first pay your bill. Your are now using trial version.'
+			message: 'Please, active your account. Your are now using trial version.'
 		} )
-	} else if ( req.user.max_app_install === req.user.app_install ) {
+	} else if ( req.user.max_app_can_install === req.user.app_installed ) {
 		return res.json( {
 			success: false,
-			message: `Your already installed ${req.user.app_install} app.`
+			message: `Your already installed ${req.user.app_installed} app.`
 		} )
 	}
 
-	const app = new model( "app" )
-
-	app.findOne( {
-			app_name: validateResult.value.appName
-		} )
-		.then( userData => {
-			if ( userData ) {
-				return res.status( 200 ).json( {
-					success: false,
-					message: `This app name already exist.`
-				} )
-			}
-
-			let randomSerial = randomBytes( 20 ).toString( 'hex' )
-
-			app.save( {
-					user_id: req.user._id,
-					app_name: validateResult.value.appName,
-					subscribe: 0,
-					dial: 0,
-					randomSerial: randomSerial,
-					create_date: dateTime.addHours( new Date(), 6 ),
-					app_active: false,
-					content: []
-				} )
-				.then( dataInsectionResult => {
-					const user = new model( "users" )
-
-					user.customUpdateOne( {
-							_id: req.user._id
-						}, {
-							"$inc": {
-								"app_install": 1
-							}
-						} )
-						.then( userData => {
-							if ( !userData.result.nModified ) {
-								return res.json( {
-									success: false,
-									message: 'Server error. Try again later.'
-								} )
-							}
-
-							return res.json( {
-								success: true,
-								message: {
-									'ussd': `http://${networkInterfaces.eth0[0].address}/api/${randomSerial}/${validateResult.value.appName}/ussd`,
-									'sms': `http://${networkInterfaces.eth0[0].address}/api/${randomSerial}/${validateResult.value.appName}/sms`,
-									'url': web.appInstall.url,
-								}
-							} )
-						} )
-						.catch( err => next( err ) )
-				} )
-				.catch( err => next( err ) )
-		} )
-		.catch( err => next( err ) )
 };
 
 exports.installApp = ( req, res, next ) => {

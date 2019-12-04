@@ -80,42 +80,44 @@
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="userSettingModalLabel" aria-hidden="true" id="userProfileSetting">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title" id="userSettingModalLabel">User Profile Setting</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div id="user-profile-setting-error-message"></div>
-                        <div class="form-group row">
-                            <label for="userProfileSettingName" class="col-sm-3 col-form-label">Name</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" value="<%=userName%>" id="userProfileSettingName" placeholder="Name">
+                  <form action="<%=userProfileSettingURL%>" method="post" id="userProfileSetting">
+                        <div class="modal-header">
+                            <h4 class="modal-title" id="userSettingModalLabel">User Profile Setting</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="user-profile-setting-message"></div>
+                            <div class="form-group row">
+                                <label for="userProfileSettingName" class="col-sm-3 col-form-label">Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" value="<%=userName%>" name="username" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="userProfileSettingCurrentPass" class="col-sm-3 col-form-label">Current Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" name="current_password" placeholder="Current Password">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="userProfileSettingPass" class="col-sm-3 col-form-label">New Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" name="new_password" placeholder="New Password">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="userProfileSettingConfirmPass" class="col-sm-3 col-form-label">Confirm Password</label>
+                                <div class="col-sm-9">
+                                    <input type="password" class="form-control" name="confirm_password" placeholder="Confirm password">
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="userProfileSettingCurrentPass" class="col-sm-3 col-form-label">Current Password</label>
-                            <div class="col-sm-9">
-                                <input type="password" class="form-control" id="userProfileSettingCurrentPass" placeholder="Current Password">
-                            </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success" id="userProfileSettingBtn">Change</button>
                         </div>
-                        <div class="form-group row">
-                            <label for="userProfileSettingPass" class="col-sm-3 col-form-label">New Password</label>
-                            <div class="col-sm-9">
-                                <input type="password" class="form-control" id="userProfileSettingPass" placeholder="New Password">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="userProfileSettingConfirmPass" class="col-sm-3 col-form-label">Confirm Password</label>
-                            <div class="col-sm-9">
-                                <input type="password" class="form-control" id="userProfileSettingConfirmPass" placeholder="Confirm password">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-success" id="userProfileSettingBtn">Change</button>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>

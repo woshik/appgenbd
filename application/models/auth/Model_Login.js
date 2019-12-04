@@ -144,7 +144,8 @@ exports.login = ( {
 							max_app_can_install: 1,
 							app_installed: 1,
 							total_subscribers: 1,
-							account_disable: 1
+							account_disable: 1,
+							trial: 1
 						}
 					} )
 					.then( data => {
@@ -152,7 +153,7 @@ exports.login = ( {
 							return resolve( null, false )
 						} else if ( !!data.account_disable ) {
 							return resolve( null, false )
-						} else if ( role === "user" ) {
+						} else if ( role === "user" && !data.trial ) {
 							data.is_account_limit_available = dateTime.subtract( new Date( data.account_activation_end_date ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0
 						} else if ( role === "admin" ) {
 							getDB().createCollection( "setting" )
