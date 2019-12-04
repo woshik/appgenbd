@@ -8,7 +8,7 @@ exports.user = {
 	},
 	appInstall: {
 		title: 'Install App',
-		url: web.appInstall.url,
+		url: web.installApp.url,
 		icon: '<i class="fas fa-arrow-alt-circle-down"></i>'
 	},
 	appList: {

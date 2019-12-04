@@ -120,7 +120,7 @@ module.exports = {
 		path: 'user'
 	},
 
-	appInstall: {
+	installApp: {
 		url: '/user/installapp',
 		controller: 'InstallApp',
 		methods: {

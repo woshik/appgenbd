@@ -11,10 +11,9 @@
         <link rel="stylesheet" type="text/css" href="/dashboard/css/fontawesome-all.css">
         <link rel="stylesheet" type="text/css" href="/dashboard/css/style.css">
         <link rel="stylesheet" type="text/css" href="/dashboard/css/style4.css">
-        <link rel="stylesheet" type="text/css" href="/dashboard/DataTables/datatables.min.css">
         <link rel="stylesheet" type="text/css" href="/dashboard/css/bootstrap-datetimepicker.css">
-        <link rel="stylesheet" type="text/css" href="/css/custom.css">
         <%- include('templates/'+layout+'/style') %>
+        <link rel="stylesheet" type="text/css" href="/css/custom.css">
     </head>
 
     <body>
@@ -80,7 +79,7 @@
         <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="userSettingModalLabel" aria-hidden="true" id="userProfileSetting">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                  <form action="<%=userProfileSettingURL%>" method="post" id="userProfileSetting">
+                    <form action="<%=userProfileSettingURL%>" method="post" id="userProfileSettingForm">
                         <div class="modal-header">
                             <h4 class="modal-title" id="userSettingModalLabel">User Profile Setting</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -123,7 +122,7 @@
         </div>
 
         <script type="text/javascript" src="/common/js/jquery-3.4.1.min.js"></script>
-        <script type="text/javascript" src="/common/js/popper.js"></script>
+        <script type="text/javascript" src="/common/js/popper.min.js"></script>
         <script type="text/javascript" src="/common/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="/dashboard/js/modernizr.js"></script>
         <script type="text/javascript" src="/dashboard/js/script.js"></script>

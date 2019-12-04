@@ -24,18 +24,18 @@ $( document ).ready( function () {
 			success: function success( res ) {
 				if ( res.success === true ) {
 					if ( check === 1 ) {
-						$( '#smsUrl' ).val( res.message.sms );
-						$( '#ussdUrl' ).val( res.message.ussd );
+						$( '#smsUrl' ).val( res.info.sms );
+						$( '#ussdUrl' ).val( res.info.ussd );
 						$( '#sectionHidden' ).slideDown();
-						$( "#installAppForm" ).attr( "action", res.message.url );
+						$( "#installAppForm" ).attr( "action", res.info.url );
 						$( "#appName" ).attr( 'readonly', 'readonly' );
 						check++;
 					} else {
 						$( '#sectionHidden' ).slideUp();
 						$( "#installAppForm" )[ 0 ].reset();
 						$( "#appName" ).removeAttr( 'readonly', 'readonly' );
-						$( "#installAppForm" ).attr( "action", res.message.url );
-						$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message.msg + '</div>' ).fadeIn( 1000 );
+						$( "#installAppForm" ).attr( "action", res.info.url );
+						$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.info.message + '</div>' ).fadeIn( 1000 );
 						check = 1;
 					}
 				} else {

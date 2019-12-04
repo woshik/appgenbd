@@ -28,7 +28,7 @@ $( document ).ready( function () {
 
 	$( "#user-profile-setting-message" ).fadeOut( 0 );
 
-	$( 'userProfileSetting' ).unbind( "submit" ).bind( "submit", function ( e ) {
+	$( '#userProfileSettingForm' ).unbind( "submit" ).bind( "submit", function ( e ) {
 		e.preventDefault();
 		var form = $( this );
 		$.ajax( {

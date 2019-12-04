@@ -8,7 +8,6 @@ global.join = require( "path" ).join;
 global.BASE_DIR = __dirname;
 
 require( join( BASE_DIR, 'bootstrap', 'app' ) )
-
 // if ( cluster.isMaster ) {
 // 	let numCPUs = require( 'os' ).cpus().length
 // 	for ( let i = 0; i < numCPUs; i++ ) {
@@ -30,10 +29,14 @@ require( join( BASE_DIR, 'bootstrap', 'app' ) )
 // 		} )
 // 	}
 // } else if ( parseInt( cluster.worker.process.env.worker_id ) === 1 ) {
-// 	process.send( {
-// 		type: "cron",
-// 		id: cluster.worker.id
-// 	} )
+//
+// 	if ( process.env.NODE_ENV === "production" ) {
+// 		process.send( {
+// 			type: "cron",
+// 			id: cluster.worker.id
+// 		} )
+// 	}
+//
 // 	// application cron job
 // 	require( join( BASE_DIR, 'cron', 'serverCronJob' ) )
 // } else {
