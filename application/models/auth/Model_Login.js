@@ -155,17 +155,8 @@ exports.login = ( {
 							return resolve( null, false )
 						} else if ( role === "user" && !data.trial ) {
 							data.is_account_limit_available = dateTime.subtract( new Date( data.account_activation_end_date ), dateTime.addHours( new Date(), 6 ) ).toDays() >= 0
-						} else if ( role === "admin" ) {
-							getDB().createCollection( "setting" )
-								.then( settingCollection => {
-									settingCollection.find()
-										.then( settingData => {
-											data.setting = ( !!settingData && settingData.length === 1 ) ? settingData[ 0 ] : null;
-										} )
-										.catch( err => reject( err ) )
-								} )
-								.catch( err => reject( err ) )
 						}
+
 						data.role = role
 						return resolve( data )
 					} )

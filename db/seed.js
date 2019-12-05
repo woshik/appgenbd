@@ -1,40 +1,26 @@
 const MongoClient = require( 'mongodb' ).MongoClient;
-const bcrypt = require( 'bcryptjs' )
-const crypto = require( 'crypto' )
 const {
-	join
-} = require( 'path' )
+	hash,
+	genSalt
+} = require( 'bcryptjs' )
 
-MongoClient.connect( 'mongodb://localhost:27017/appgenbd', {
+MongoClient.connect( 'mongodb://localhost:27017/', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	} )
-	.then( client => {
-		let username = crypto.randomBytes( 5 ).toString( 'hex' ) + '@yourmail.com'
-		let password = crypto.randomBytes( 8 ).toString( 'hex' )
-
-		bcrypt.genSalt( 10 )
-			.then( getSalt => {
-				bcrypt.hash( password, getSalt )
-					.then( hashPassword => {
-						client.db( 'appgenbd' ).createCollection( 'admin' )
-							.then( result => {
-								result.insertOne( {
-										email: username,
-										password: hashPassword,
-										super_user: true
-									} )
-									.then( result => {
-										console.log( `username: ${username}` )
-										console.log( `password: ${password}` )
-										process.exit( 1 )
-									} )
-									.catch( err => console.log( err.message ) )
-							} )
-							.catch( err => console.log( err.message ) )
-					} )
-					.catch( err => console.log( err.message ) )
+	.then( async client => {
+		try {
+			await client.db( 'appgenbd' ).collection( 'admin' ).insertOne( {
+				email: 'admin@mail.com',
+				password: await hash( '123456', await genSalt( 10 ) ),
 			} )
-			.catch( err => console.log( err.message ) )
+
+			console.log( 'username: admin@mail.com' )
+			console.log( 'password: 123456' )
+
+			client.close()
+		} catch ( e ) {
+			console.log( e.message )
+		}
 	} )
 	.catch( err => console.log( err.message ) )

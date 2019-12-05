@@ -1,0 +1,9 @@
+<nav id="sidebar">
+	<ul class="list-unstyled components">
+		<% Object.entries(sidebar).forEach(([manuName, manu]) => { %>
+		<li class="<% if(path === manu.url) { %>active<% } %>">
+			<a href="<%=manu.url%>"><%- manu.icon %><%= manu.title %></a>
+		</li>
+		<% }) %>
+	</ul>
+</nav>

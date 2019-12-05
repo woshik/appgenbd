@@ -22,46 +22,4 @@ $( document ).ready( function () {
 		$( this ).toggleClass( 'open' );
 	} );
 
-	var timeOut,
-		button = $( "#userProfileSettingBtn" ),
-		btnText = button.text().trim();
-
-	$( "#user-profile-setting-message" ).fadeOut( 0 );
-
-	$( '#userProfileSettingForm' ).unbind( "submit" ).bind( "submit", function ( e ) {
-		e.preventDefault();
-		var form = $( this );
-		$.ajax( {
-			url: form.attr( "action" ),
-			type: form.attr( "method" ),
-			headers: {
-				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-			},
-			data: form.serialize(),
-			dataType: "json",
-			beforeSend: function beforeSend() {
-				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
-			},
-			success: function success( res ) {
-				if ( res.success === true ) {
-					$( "#user-profile-setting-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
-					$( "#userProfileSettingCurrentPass" ).val( '' );
-					$( "#userProfileSettingPass" ).val( '' );
-					$( "#userProfileSettingConfirmPass" ).val( '' );
-				} else {
-					$( "#user-profile-setting-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
-				}
-
-				clearTimeout( timeOut );
-				timeOut = setTimeout( function () {
-					$( "#user-profile-setting-message" ).fadeOut( 1000 );
-				}, 5000 );
-			},
-			complete: function complete( jqXHR, textStatus ) {
-				if ( textStatus === "success" ) {
-					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
-				}
-			}
-		} );
-	} );
 } );

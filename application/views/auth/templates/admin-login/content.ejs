@@ -1,14 +1,13 @@
-<form action="<%=loginForm%>" method="POST" class="login100-form validate-form" id="loginForm">
+<form action="<%=loginFormURL%>" method="POST" class="login100-form validate-form" id="loginForm">
 	<span class="login100-form-title p-b-14">
 		Welcome
 	</span>
 	<span class="login100-form-title p-b-34">
 		<%=title%>
 	</span>
-
-	<% if (successMessage) { %>
+	<% if (flashMessage) { %>
 	<div class="alert alert-success alert-dismissible" role="alert" style="width: 100%;">
-		<%=successMessage%>
+		<%=flashMessage%>
 	</div>
 	<% } %>
 	<div id="message" style="width: 100%"></div>
