@@ -267,8 +267,8 @@ module.exports = {
 		path: 'admin'
 	},
 
-	appSetting: {
-		url: '/server-setting',
+	applicationSetting: {
+		url: '/application-setting',
 		controller: 'AppSetting',
 		methods: {
 			appSetting: 'post',

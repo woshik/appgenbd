@@ -1,134 +1,67 @@
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true" id="clientPayment">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="paymentModalLabel">Payment</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="paymentError"></div>
-                <div class="form-group row">
-                    <label for="userMaxApp" class="col-sm-2 col-form-label">Max App</label>
-                    <div class="col-sm-10">
-                        <input type="number" class="form-control" id="userMaxApp" placeholder="Max App">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="ammount" class="col-sm-2 col-form-label">Ammount</label>
-                    <div class="col-sm-10">
-                        <input type="number" class="form-control" id="ammount" placeholder="Ammount">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="paymentButton">Pay</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="paymentModalLabel">Payment</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="paymentError"></div>
+				<div class="form-group row">
+					<label for="userMaxApp" class="col-sm-2 col-form-label">Max App</label>
+					<div class="col-sm-10">
+						<input type="number" class="form-control" id="userMaxApp" placeholder="Max App">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="ammount" class="col-sm-2 col-form-label">Ammount</label>
+					<div class="col-sm-10">
+						<input type="number" class="form-control" id="ammount" placeholder="Ammount">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="paymentButton">Pay</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="accountStatusChangeModalLabel" aria-hidden="true" id="accountStatusChange">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="accountStatusChangeModalLabel"></h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="accountStatusChangeModalBody"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="accountStatusChangeButton"></button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="accountStatusChangeModalLabel"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="accountStatusChangeModalBody"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary" id="accountStatusChangeButton"></button>
+			</div>
+		</div>
+	</div>
 </div>
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="accountDeleteModalLabel" aria-hidden="true" id="accountDelete">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="accountDeleteModalLabel">Account Delete</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div>Do you want to really delete this account ?</div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-danger" id="accountDeleteButton">Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="profileSettingModalLabel" aria-hidden="true" id="profileSetting">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="profileSettingModalLabel">Profile Setting</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="profile-setting-error-message"></div>
-                <div class="form-group row">
-                    <label for="adminEmail" class="col-sm-3 col-form-label">Email</label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="adminEmail" value="<%=email%>" placeholder="Email Address">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="adminPassword" class="col-sm-3 col-form-label">Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="adminPassword" placeholder="Password">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="adminConfirmPassword" class="col-sm-3 col-form-label">Confirm Password</label>
-                    <div class="col-sm-9">
-                        <input type="password" class="form-control" id="adminConfirmPassword" placeholder="Confirm Password">
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="profileSettingButton">Change</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appSettingModalLabel" aria-hidden="true" id="appSetting">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title" id="appSettingModalLabel">App Setting</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div id="app-setting-error-message"></div>
-                <div class="form-group row">
-                    <label for="maxAppInstall" class="col-sm-3 col-form-label">Default Max App</label>
-                    <div class="col-sm-9">
-                        <input type="number" value="<%=maxAppCanInstall%>" class="form-control" id="maxAppInstall" placeholder="Default Max App">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="costPerMonth" class="col-sm-3 col-form-label">Cost Per Month</label>
-                    <div class="col-sm-9">
-                        <input type="number" value="<%=costPerMonth%>" class="form-control" id="costPerMonth" placeholder="Cost Per Month">
-                    </div>
-                </div>
-                <input type="hidden" id="appSettingId" value="<%=appSettingId%>">
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-success" id="appSettingButton">Change</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="accountDeleteModalLabel">Account Delete</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div>Do you want to really delete this account ?</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-danger" id="accountDeleteButton">Delete</button>
+			</div>
+		</div>
+	</div>
 </div>

@@ -14,7 +14,8 @@ exports.adminLoginView = ( req, res ) => {
 		info: companyInfo,
 		title: "Admin Login",
 		csrfToken: req.csrfToken(),
-		flashMessage: req.flash( 'adminLoginPageMessage' )
+		flashMessage: req.flash( 'adminLoginPageMessage' ),
+		loginFormURL: web.adminLogin.url
 	} )
 }
 
@@ -47,9 +48,9 @@ exports.adminLogin = ( req, res, next ) => {
 		} else {
 			req.login( user, ( err ) => {
 				if ( !!err ) {
-					return ext( err )
+					return next( err )
 				} else {
-					return res.status( 200 ).json( {
+					return res.json( {
 						success: true,
 						message: web.adminDashboard.url
 					} )

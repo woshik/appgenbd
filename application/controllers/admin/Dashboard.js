@@ -9,30 +9,15 @@ const {
 
 exports.dashboardView = ( req, res, next ) => {
 
-	let dashboardData = {
+	res.render( "admin/base-template", {
+		layout: 'dashboard',
 		info: companyInfo,
 		title: 'Admin',
 		email: req.user.email,
-		maxAppCanInstall: '',
-		costPerMonth: '',
-		appSettingId: '',
 		csrfToken: req.csrfToken(),
-		userList: web.userList.url,
-		userPayment: web.payment.url,
-		userAccountStatusChange: web.accountStatusChange.url,
-		userAccountDelete: web.accountDelete.url,
-		appSetting: web.appSetting.url,
+		applicationSetting: web.appSetting.url,
 		profileSetting: web.profileSetting.url,
-		maxAppInstallUrl: web.userMaxAppInstall.url,
-	}
-
-	if ( req.user.setting ) {
-		dashboardData.appSettingId = req.user.setting._id
-		dashboardData.maxAppCanInstall = req.user.setting.max_app
-		dashboardData.costPerMonth = req.user.setting.cost_per_month
-	}
-
-	res.render( "admin/dashboard", dashboardData )
+	} )
 }
 
 exports.adminLogout = ( req, res ) => {

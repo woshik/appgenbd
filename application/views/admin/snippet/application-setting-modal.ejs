@@ -1,0 +1,31 @@
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appSettingModalLabel" aria-hidden="true" id="appSetting">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="appSettingModalLabel">App Setting</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="app-setting-error-message"></div>
+				<div class="form-group row">
+					<label for="maxAppInstall" class="col-sm-3 col-form-label">Default Max App</label>
+					<div class="col-sm-9">
+						<input type="number" value="<%=maxAppCanInstall%>" class="form-control" id="maxAppInstall" placeholder="Default Max App">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="costPerMonth" class="col-sm-3 col-form-label">Cost Per Month</label>
+					<div class="col-sm-9">
+						<input type="number" value="<%=costPerMonth%>" class="form-control" id="costPerMonth" placeholder="Cost Per Month">
+					</div>
+				</div>
+				<input type="hidden" id="appSettingId" value="<%=appSettingId%>">
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="appSettingButton">Change</button>
+			</div>
+		</div>
+	</div>
+</div>
