@@ -19,7 +19,7 @@ exports.appListView = ( req, res, next ) => {
 		csrfToken: req.csrfToken(),
 		userName: req.user.name,
 		email: req.user.email,
-		flashMessage: req.flash( 'app-list-message' ),
+		flashMessage: req.flash( 'appListPageMessage' ),
 		appListUrl: web.appList.url,
 		appInfoUpdateUrl: web.appdInfoUpdate.url,
 		appStatusChangeUrl: web.appStatusChange.url,
@@ -40,7 +40,7 @@ exports.appList = ( req, res, next ) => {
 
 	app.dataTable( {
 			user_id: req.user._id,
-			'$or': [
+			$or: [
 				{
 					app_name: RegExp( `.*${req.body.search.value}.*`, 'i' )
 				},

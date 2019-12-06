@@ -1,24 +1,32 @@
 <section class="tables-section">
-	<div class="outer-w3-agile mt-3">
-		<h4 class="tittle-w3-agileits mb-4"> <%=title%> </h4> <%if(flashMessage){%> <div id="flashMessage">
-			<div class="alert alert-info alert-dismissible" role="alert">
-				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> <%=flashMessage%> </div>
-		</div> <%}%>
+    <div class="outer-w3-agile mt-3">
+        <h4 class="tittle-w3-agileits mb-4">
+            <%=title%>
+        </h4>
+        <%if(flashMessage){%>
+        <div id="flashMessage">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <%=flashMessage%>
+            </div>
+        </div>
+        <%}%>
         <div id="app-list-message"></div>
         <div class="table-responsive">
-            <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
-                <thead>
-                    <tr>
-                        <th scope="col">App Name</th>
-                        <th scope="col">APP ID</th>
-                        <th scope="col">Subscribe</th>
-                        <th scope="col">Dial</th>
-                        <th scope="col">Creation Date</th>
-                        <th scope="col">App Active</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-            </table>
+            <form action="<%=appListUrl%>" method="post" id="appListForm">
+                <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th scope="col">App Name</th>
+                            <th scope="col">APP ID</th>
+                            <th scope="col">Subscribe</th>
+                            <th scope="col">Dial</th>
+                            <th scope="col">Creation Date</th>
+                            <th scope="col">App Active</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </form>
         </div>
     </div>
 </section>

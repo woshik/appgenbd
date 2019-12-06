@@ -42,7 +42,7 @@ module.exports = {
 	},
 
 	forgotPassword: {
-		url: '/forgotpassword',
+		url: '/forgot-password',
 		controller: 'ForgotPassword',
 		methods: {
 			forgotPasswordView: 'get',
@@ -64,7 +64,7 @@ module.exports = {
 	},
 
 	changePassword: {
-		url: '/account/changepassword',
+		url: '/account/change-password',
 		controller: 'ChangePassword',
 		methods: {
 			changePasswordView: 'get',
@@ -75,7 +75,7 @@ module.exports = {
 	},
 
 	sendCodeAgain: {
-		url: '/sendcode',
+		url: '/send-code',
 		controller: 'SendCodeAgain',
 		methods: {
 			sendCodeAgain: 'post',
@@ -111,7 +111,7 @@ module.exports = {
 	},
 
 	userProfileSetting: {
-		url: '/user/profilesetting',
+		url: '/user/profile-setting',
 		controller: 'Dashboard',
 		methods: {
 			userProfileSetting: 'post',
@@ -121,7 +121,7 @@ module.exports = {
 	},
 
 	installApp: {
-		url: '/user/installapp',
+		url: '/user/install-app',
 		controller: 'InstallApp',
 		methods: {
 			installAppView: 'get',
@@ -132,7 +132,7 @@ module.exports = {
 	},
 
 	appName: {
-		url: '/user/appname',
+		url: '/user/app-name',
 		controller: 'InstallApp',
 		methods: {
 			appName: 'post',
@@ -142,7 +142,7 @@ module.exports = {
 	},
 
 	appList: {
-		url: '/user/applist',
+		url: '/user/app-list',
 		controller: 'AppList',
 		methods: {
 			appListView: 'get',
@@ -153,7 +153,7 @@ module.exports = {
 	},
 
 	appdetails: {
-		url: '/user/appdetails/:appName',
+		url: '/user/app-details/:appName',
 		controller: 'AppDetails',
 		methods: {
 			appDetailsView: 'get',
@@ -164,7 +164,7 @@ module.exports = {
 	},
 
 	appdInfoUpdate: {
-		url: '/user/appupdate',
+		url: '/user/app-update',
 		controller: 'AppList',
 		methods: {
 			appUpdate: 'post'
@@ -174,7 +174,7 @@ module.exports = {
 	},
 
 	appStatusChange: {
-		url: '/user/appstatuschange',
+		url: '/user/app-status-change',
 		controller: 'AppList',
 		methods: {
 			getAppStatus: 'get',
@@ -185,7 +185,7 @@ module.exports = {
 	},
 
 	contentUpload: {
-		url: '/user/contentupload/:appName',
+		url: '/user/content-upload/:appName',
 		controller: 'ContentUpload',
 		methods: {
 			contentUploadView: 'get',
@@ -196,7 +196,7 @@ module.exports = {
 	},
 
 	updateContentUpload: {
-		url: '/user/editcontent',
+		url: '/user/edit-content',
 		controller: 'AppDetails',
 		methods: {
 			getContent: "get",
@@ -207,7 +207,7 @@ module.exports = {
 	},
 
 	applicationGenerator: {
-		url: '/user/applicationgenerator',
+		url: '/user/application-generator',
 		controller: 'ApplicationGenerator',
 		methods: {
 			applicationGeneratorView: 'get',
@@ -218,7 +218,7 @@ module.exports = {
 	},
 
 	download: {
-		url: '/user/applicationgenerator/download/:fileName',
+		url: '/user/application-generator/download/:fileName',
 		controller: 'ApplicationGenerator',
 		methods: {
 			download: 'get',
@@ -258,7 +258,7 @@ module.exports = {
 	},
 
 	adminLogout: {
-		url: '/logout/admin',
+		url: '/admin/logout',
 		controller: 'Dashboard',
 		methods: {
 			adminLogout: 'get',
@@ -268,7 +268,7 @@ module.exports = {
 	},
 
 	appSetting: {
-		url: '/appsetting',
+		url: '/server-setting',
 		controller: 'AppSetting',
 		methods: {
 			appSetting: 'post',
@@ -278,7 +278,7 @@ module.exports = {
 	},
 
 	profileSetting: {
-		url: '/profilesetting',
+		url: '/profile-setting',
 		controller: 'Dashboard',
 		methods: {
 			profileSetting: 'post',
@@ -288,7 +288,7 @@ module.exports = {
 	},
 
 	userList: {
-		url: '/userlist',
+		url: '/user-list',
 		controller: 'UserList',
 		methods: {
 			userList: 'post',
