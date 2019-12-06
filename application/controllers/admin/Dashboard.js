@@ -8,14 +8,13 @@ const {
 } = require( join( BASE_DIR, 'core', 'util' ) )
 
 exports.dashboardView = ( req, res, next ) => {
-
 	res.render( "admin/base-template", {
 		layout: 'dashboard',
 		info: companyInfo,
 		title: 'Admin',
 		email: req.user.email,
 		csrfToken: req.csrfToken(),
-		applicationSetting: web.appSetting.url,
+		applicationSetting: web.applicationSetting.url,
 		profileSetting: web.profileSetting.url,
 	} )
 }
