@@ -271,6 +271,7 @@ module.exports = {
 		url: '/application-setting',
 		controller: 'AppSetting',
 		methods: {
+			getApplicationSettingData: 'get',
 			appSetting: 'post',
 		},
 		middleware: [ isAdminAuthenticated ],
@@ -278,7 +279,7 @@ module.exports = {
 	},
 
 	profileSetting: {
-		url: '/profile-setting',
+		url: '/admin/profile-setting',
 		controller: 'Dashboard',
 		methods: {
 			profileSetting: 'post',
@@ -291,6 +292,7 @@ module.exports = {
 		url: '/user-list',
 		controller: 'UserList',
 		methods: {
+			userListView: 'get',
 			userList: 'post',
 		},
 		middleware: [ isAdminAuthenticated ],

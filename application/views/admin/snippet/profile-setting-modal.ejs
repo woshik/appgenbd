@@ -1,38 +1,44 @@
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="profileSettingModalLabel" aria-hidden="true" id="profileSetting">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <form class="<%=profileSetting=%>" action="index.html" method="post">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="profileSettingModalLabel">Profile Setting</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div id="profile-setting-message"></div>
-                    <div class="form-group row">
-                        <label for="adminEmail" class="col-sm-3 col-form-label">Email</label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="adminEmail" value="<%=email%>" placeholder="Email Address">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="adminPassword" class="col-sm-3 col-form-label">Password</label>
-                        <div class="col-sm-9">
-                            <input type="password" class="form-control" id="adminPassword" placeholder="Password">
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="adminConfirmPassword" class="col-sm-3 col-form-label">Confirm Password</label>
-                        <div class="col-sm-9">
-                            <input type="password" class="form-control" id="adminConfirmPassword" placeholder="Confirm Password">
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success" id="profileSettingButton">Change</button>
-                </div>
-            </form>
-        </div>
-    </div>
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form action="/admin/profile-setting" method="post" id="profileSettingForm">
+				<div class="modal-header">
+					<h4 class="modal-title" id="profileSettingModalLabel">Profile Setting</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="profile-setting-message"></div>
+					<div class="form-group row">
+						<label for="adminEmail" class="col-sm-4 col-form-label">Email</label>
+						<div class="col-sm-8">
+							<input type="text" class="form-control" name="adminEmail" value="<%=email%>" autocomplete="off">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="adminPassword" class="col-sm-4 col-form-label">Current Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="adminPassword" id="adminPassword" placeholder="Current Password" autocomplete="off">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="adminPassword" class="col-sm-4 col-form-label">New Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="adminNewPassword" id="adminNewPassword" placeholder="Password" autocomplete="off">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="adminConfirmPassword" class="col-sm-4 col-form-label">Confirm Password</label>
+						<div class="col-sm-8">
+							<input type="password" class="form-control" name="adminConfirmPassword" id="adminConfirmPassword" placeholder="Confirm Password" autocomplete="off">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" id="profileSettingBtn">Change</button>
+				</div>
+			</form>
+		</div>
+	</div>
 </div>

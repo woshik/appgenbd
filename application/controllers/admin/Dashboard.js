@@ -1,21 +1,26 @@
-const {
-	hashPassword
-} = require( join( BASE_DIR, 'core', 'util' ) )
+const Joi = require( '@hapi/joi' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
 	companyInfo,
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	admin
+} = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const {
+	profileSetting
+} = require( join( MODEL_DIR, 'admin/Model_Dashboard' ) )
+
 
 exports.dashboardView = ( req, res, next ) => {
 	res.render( "admin/base-template", {
 		layout: 'dashboard',
 		info: companyInfo,
 		title: 'Admin',
+		path: req.path,
+		sidebar: admin,
 		email: req.user.email,
 		csrfToken: req.csrfToken(),
-		applicationSetting: web.applicationSetting.url,
-		profileSetting: web.profileSetting.url,
 	} )
 }
 
@@ -28,48 +33,32 @@ exports.adminLogout = ( req, res ) => {
 exports.profileSetting = ( req, res, next ) => {
 	const schema = Joi.object( {
 		email: Joi.string().trim().email().required().label( "Email address" ),
-		password: Joi.string().trim().min( 5 ).max( 50 ).required().label( "Password" ),
-		confirm_password: Joi.ref( "password" )
+		current_password: Joi.string().trim().min( 5 ).max( 50 ).required().label( "Current password" ),
+		new_password: Joi.string().trim().min( 5 ).max( 50 ).required().label( "Password" ),
+		confirm_password: Joi.ref( "new_password" )
 	} )
 
 	const validateResult = schema.validate( {
-		email: req.body.email,
-		password: req.body.password,
-		confirm_password: req.body.confirm_password
+		email: req.body.adminEmail,
+		current_password: req.body.adminPassword,
+		new_password: req.body.adminNewPassword,
+		confirm_password: req.body.adminConfirmPassword
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
 
-	hashPassword( validateResult.value.password )
-		.then( passwordHashed => {
-			let adminInfo = {
-				'email': validateResult.value.email,
-				'password': passwordHashed,
-			}
-
-			let admin = new model( 'admin' )
-			admin.updateOne( {
-					_id: req.user._id
-				}, adminInfo )
-				.then( adminUpdateValue => {
-					if ( !adminUpdateValue.result.nModified ) {
-						return res.status( 200 ).json( {
-							success: false,
-							message: 'Server Error. Please try again later.'
-						} )
-					}
-
-					return res.status( 200 ).json( {
-						success: true,
-						message: 'Successfully updated infomations.'
-					} )
-				} )
-				.catch( err => next( err ) )
-		} )
+	profileSetting( validateResult.value, req.user._id )
+		.then( ( {
+			success,
+			message
+		} ) => res.json( {
+			success: success,
+			message: message
+		} ) )
 		.catch( err => next( err ) )
 }

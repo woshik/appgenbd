@@ -1,66 +1,40 @@
-const { ObjectId } = require('mongodb')
+const Joi = require( '@hapi/joi' )
+const {
+	getSettingData,
+	appSetting
+} = require( join( MODEL_DIR, 'admin/Model_Application_Setting' ) )
+const {
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
 
-exports.appSetting = (req, res, next) => {
-    const schema = Joi.object({
-        maxAppInstall: Joi.number().min(15).required().label("Max app"),
-        costPerMonth: Joi.number().min(350).required().label("Cost per month")
-    })
+exports.getApplicationSettingData = ( req, res, next ) => getSettingData().then( data => res.json( data ) ).catch( err => next( err ) )
 
-    const validateResult = schema.validate({
-        maxAppInstall: req.body.maxAppInstall,
-        costPerMonth: req.body.costPerMonth,
-    })
+exports.appSetting = ( req, res, next ) => {
 
-    if (validateResult.error) {
-        return res.status(200).json({
-            success: false,
-            message: fromErrorMessage(validateResult.error.details[0])
-        })
-    }
+	const schema = Joi.object( {
+		maxAppCanInstall: Joi.number().min( 15 ).required().label( "Max app" ),
+		costPerMonth: Joi.number().min( 350 ).required().label( "Cost per month" )
+	} )
 
-    let setting = new model('setting')
+	const validateResult = schema.validate( {
+		maxAppCanInstall: req.body.maxAppCanInstall,
+		costPerMonth: req.body.costPerMonth,
+	} )
 
-    if (req.body.id) {
+	if ( validateResult.error ) {
+		return res.json( {
+			success: false,
+			message: fromErrorMessage( validateResult.error.details[ 0 ] )
+		} )
+	}
 
-        try {
-            var id = ObjectId(req.body.id)
-        } catch {
-            return res.status(200).json({
-                success: false,
-                message: 'Please, don\'t violate the process.'
-            })
-        }
-
-        setting.updateOne({ _id: id }, {
-                "max_app": validateResult.value.maxAppInstall,
-                "cost_per_month": validateResult.value.costPerMonth
-            })
-            .then(response => {
-                if (!response.result.nModified) {
-                    return res.status(200).json({
-                        success: false,
-                        message: 'Server Error. Please try again later.'
-                    })
-                }
-
-                return res.status(200).json({
-                    success: true,
-                    message: 'Successfully app setting updated'
-                })
-            })
-            .catch(err => next(err))
-
-    } else {
-        setting.save({
-                max_app: validateResult.value.maxAppInstall,
-                cost_per_month: validateResult.value.costPerMonth
-            })
-            .then(response => {
-                return res.status(200).json({
-                    success: true,
-                    message: 'Successfully app setting updated'
-                })
-            })
-            .catch(err => next(err))
-    }
+	appSetting( validateResult.value )
+		.then( ( {
+			success,
+			info
+		} ) => res.json( {
+			success: true,
+			message: "Application setting successfully updated."
+		} ) )
+		.catch( err => next( err ) )
 }

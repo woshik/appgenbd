@@ -1,73 +1,92 @@
-var timeOut, userList
-$( "#message" ).fadeOut( 0 )
+"use strict";
 
-function applicationSetting() {
-	$( "#appSettingButton" ).unbind( "click" ).bind( "click", function () {
-		$( "#app-setting-error-message" ).fadeOut( 0 )
+var timeOut;
+$( document ).ready( function () {
+	$( "#profile-setting-message" ).fadeOut( 0 );
+	$( "#application-setting-message" ).fadeOut( 0 );
+	$.ajax( {
+		url: "/application-setting",
+		type: "GET",
+		dataType: "json",
+		success: function success( res ) {
+			$( "#maxAppCanInstall" ).val( res.maxApp );
+			$( "#costPerMonth" ).val( res.costPerMonth );
+		}
+	} );
+
+	$( "#applicationSettingForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
+		var button = $( "#applicationSettingBtn" ),
+			btnText = button.text().trim();
 		$.ajax( {
-			url: "<%=appSetting%>",
-			type: "POST",
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
-			data: {
-				'id': $( '#appSettingId' ).val(),
-				'maxAppInstall': $( "#maxAppInstall" ).val(),
-				'costPerMonth': $( "#costPerMonth" ).val(),
+			data: form.serialize(),
+			beforeSend: function beforeSend() {
+				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
 			},
 			dataType: "json",
-			success: function ( res ) {
-				if ( res.success === true ) {
-					$( "#app-setting-error-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-						res.message + '</div>' ).fadeIn( 1000 )
+			success: function success( res ) {
+				if ( res.success ) {
+					$( "#application-setting-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
 				} else {
-					$( "#app-setting-error-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 )
+					$( "#application-setting-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
 				}
 
-				clearMessage( "app-setting-error-message" )
+				clearMessage( "application-setting-message" );
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
+				}
 			}
-		} )
-	} )
-}
+		} );
+	} );
 
-function profileSetting() {
-	$( "#profileSettingButton" ).unbind( "click" ).bind( "click", function () {
-		$( "#profile-setting-error-message" ).fadeOut( 0 )
+	$( "#profileSettingForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
+		var button = $( "#profileSettingBtn" ),
+			btnText = button.text().trim();
 		$.ajax( {
-			url: "<%=profileSetting%>",
-			type: "POST",
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
-			data: {
-				'email': $( "#adminEmail" ).val(),
-				'password': $( "#adminPassword" ).val(),
-				'confirm_password': $( "#adminConfirmPassword" ).val()
-			},
+			data: form.serialize(),
 			dataType: "json",
-			success: function ( res ) {
-				if ( res.success === true ) {
-					$( "#profile-setting-error-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-						res.message + '</div>' ).fadeIn( 1000 )
-					$( "#adminPassword" ).val( '' )
-					$( "#adminConfirmPassword" ).val( '' )
+			beforeSend: function beforeSend() {
+				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
+			},
+			success: function success( res ) {
+				if ( res.success ) {
+					$( "#profile-setting-message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
+					$( "#adminPassword" ).val( '' );
+					$( "#adminNewPassword" ).val( '' );
+					$( "#adminConfirmPassword" ).val( '' );
 				} else {
-					$( "#profile-setting-error-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 )
+					$( "#profile-setting-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + res.message + '</div>' ).fadeIn( 1000 );
 				}
 
-				clearMessage( "profile-setting-error-message" )
+				clearMessage( "profile-setting-message" );
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
+				}
 			}
-		} )
-	} )
-}
+		} );
+	} );
+} );
 
-function clearMessage( idName ) {
-	clearTimeout( timeOut )
+function clearMessage( id ) {
+	clearTimeout( timeOut );
 	timeOut = setTimeout( function () {
-		$( "#" + idName ).fadeOut( 1000 )
-	}, 5000 )
+		$( "#" + id ).fadeOut( 1000 );
+	}, 5000 );
 }

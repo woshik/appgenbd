@@ -39,7 +39,9 @@ module.exports = ( app ) => {
 					success,
 					info
 				} ) => {
+					console.log( success, info )
 					if ( success ) {
+						console.log( info )
 						return done( null, info )
 					} else {
 						return done( null, false, {

@@ -1,44 +1,42 @@
-"use strict";
-
 const {
 	compare
 } = require( 'bcryptjs' )
 const {
-	getDB
-} = require( join( BASE_DIR, 'db', 'database' ) )
-const {
 	hashPassword
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	getDB
+} = require( join( BASE_DIR, 'db', 'database' ) )
 
-exports.passwordChange = ( newInfo, id ) => {
+exports.profileSetting = ( newInfo, id ) => {
 	return new Promise( ( resolve, reject ) => {
-		getDB().createCollection( 'users' )
-			.then( userCollection => {
-				userCollection.findOne( {
+		getDB().createCollection( 'admin' )
+			.then( adminCollection => {
+				adminCollection.findOne( {
 						_id: id
 					}, {
 						projection: {
 							password: 1
 						}
 					} )
-					.then( user => {
-						if ( !user ) {
+					.then( admin => {
+						if ( !admin ) {
 							return resolve( {
 								success: false,
 								info: 'User not found.'
 							} );
 						}
 
-						compare( newInfo.current_password, user.password )
+						compare( newInfo.current_password, admin.password )
 							.then( isMatch => {
 								if ( isMatch ) {
 									hashPassword( newInfo.new_password )
 										.then( passwordHashed => {
-											userCollection.updateOne( {
+											adminCollection.updateOne( {
 													_id: id
 												}, {
 													$set: {
-														name: newInfo.name,
+														email: newInfo.email,
 														password: passwordHashed,
 													}
 												} )
@@ -52,6 +50,7 @@ exports.passwordChange = ( newInfo, id ) => {
 										} )
 										.catch( err => reject( err ) )
 								} else {
+									console.log( 'ok' )
 									return resolve( {
 										success: false,
 										message: 'Current password is wrong.'

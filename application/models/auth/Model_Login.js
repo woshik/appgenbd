@@ -96,23 +96,23 @@ exports.admin = ( email, password ) => {
 				adminCollection.findOne( {
 						email: email
 					} )
-					.then( admin => {
-						if ( !userData ) return done( null, false, {
+					.then( adminData => {
+						if ( !adminData ) return done( null, false, {
 							message: "Email address not register"
 						} )
-						bcrypt.compare( password, userData.password )
+						compare( password, adminData.password )
 							.then( isMatch => {
 								if ( isMatch ) {
 									return resolve( {
-										successs: true,
+										success: true,
 										info: {
-											id: user._id,
+											id: adminData._id,
 											role: 'admin'
 										}
 									} )
 								} else {
 									return resolve( {
-										successs: false,
+										success: false,
 										info: "Password doesn't match"
 									} )
 								}

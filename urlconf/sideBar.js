@@ -23,4 +23,15 @@ exports.user = {
 	}
 }
 
-exports.admin = null
+exports.admin = {
+	dashboard: {
+		title: 'Dashboard',
+		url: web.adminDashboard.url,
+		icon: '<i class="fas fa-th-large"></i>'
+	},
+	userList: {
+		title: 'User List',
+		url: web.userList.url,
+		icon: '<i class="fas fa-list-ul"></i>'
+	},
+}
