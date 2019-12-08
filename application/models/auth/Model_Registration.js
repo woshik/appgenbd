@@ -50,7 +50,7 @@ exports.registration = userInfo => {
 											token_refresh: timeStamp,
 											account_activation_start_date: bdNowWithDate,
 											account_activation_end_date: bdNowWithDate,
-											account_create: dateTime.format( now, "YYYY-MM-DD hh:mm:ss A" ),
+											account_create_date: dateTime.format( now, "DD-MM-YYYY hh:mm:ss A" ),
 											trial: true
 										} )
 										.then( result => resolve( {

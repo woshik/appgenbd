@@ -1,3 +1,5 @@
+"use strict";
+
 const Joi = require( '@hapi/joi' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
@@ -26,7 +28,7 @@ exports.dashboardView = ( req, res, next ) => {
 
 exports.adminLogout = ( req, res ) => {
 	req.logout()
-	req.flash( 'adminLoginScreenSuccessMessage', 'Successfully Logout' )
+	req.flash( 'adminLoginPageMessage', 'Successfully Logout' )
 	res.redirect( web.adminLogin.url )
 }
 

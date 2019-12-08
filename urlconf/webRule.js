@@ -320,7 +320,7 @@ module.exports = {
 	},
 
 	accountStatusChange: {
-		url: '/accountstatuschange',
+		url: '/account-status-change',
 		controller: 'UserAction',
 		methods: {
 			accountStatusChange: 'post',
@@ -330,7 +330,7 @@ module.exports = {
 	},
 
 	accountDelete: {
-		url: '/accountdelete',
+		url: '/account-delete',
 		controller: 'UserAction',
 		methods: {
 			accountDelete: 'post',
@@ -340,7 +340,7 @@ module.exports = {
 	},
 
 	accountDetails: {
-		url: '/accountdetails',
+		url: '/account-details',
 		controller: 'AccountDetails',
 		methods: {
 			accountDetails: 'post',

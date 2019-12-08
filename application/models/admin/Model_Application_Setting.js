@@ -1,18 +1,16 @@
+"use strict";
+
 const {
 	getDB
 } = require( join( BASE_DIR, 'db', 'database' ) )
 
 exports.getSettingData = () => {
 	return new Promise( ( resolve, reject ) => {
-		getDB().createCollection( 'setting' )
-			.then( settingCollection => {
-				settingCollection.findOne( {} )
-					.then( data => resolve( {
-						maxApp: data.max_app_can_install,
-						costPerMonth: data.cost_par_month
-					} ) )
-					.catch( err => reject( err ) )
-			} )
+		getDB().collection( 'setting' ).findOne( {} )
+			.then( data => resolve( {
+				maxApp: data.max_app_can_install,
+				costPerMonth: data.cost_par_month
+			} ) )
 			.catch( err => reject( err ) )
 	} )
 }

@@ -10,15 +10,96 @@
 						<th scope="col">Number</th>
 						<th scope="col">Email</th>
 						<th scope="col">Account Create</th>
-						<th scope="col">Email Active</th>
-						<th scope="col">User Active</th>
-						<th scope="col">Account Expire</th>
-						<th scope="col">Total Pay</th>
+						<th scope="col">Account Active</th>
+						<th scope="col">Account Disable</th>
 						<th scope="col">Account Delete</th>
-						<th scope="col">Action</th>
+						<th scope="col">Account Expire</th>
+						<th scope="col">Trial</th>
+						<th scope="col">Option</th>
 					</tr>
 				</thead>
 			</table>
 		</div>
 	</div>
 </section>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true" id="paymentModal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form action="<%=paymentURL%>" method="post" id="paymentForm">
+				<div class="modal-header">
+					<h4 class="modal-title" id="paymentModalLabel">Payment</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="payment-message"></div>
+					<div class="form-group row">
+						<label for="userMaxApp" class="col-sm-4 col-form-label">Max App Can Install</label>
+						<div class="col-sm-8">
+							<input type="number" class="form-control" name="userMaxAppCanInstall" placeholder="Max App">
+						</div>
+					</div>
+					<div class="form-group row">
+						<label for="ammount" class="col-sm-4 col-form-label">Ammount</label>
+						<div class="col-sm-8">
+							<input type="number" class="form-control" name="ammount" placeholder="Ammount">
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-success" id="paymentBtn">Pay</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="accountStatusChangeModalLabel" aria-hidden="true" id="accountStatusChangeModal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form action="<%=accountStatusChangeURL%>" method="post" id="accountStatusChangeForm">
+				<div class="modal-header">
+					<h4 class="modal-title" id="accountStatusChangeModalLabel">Account Status Change</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="status-change-message"></div>
+					<div class="col-sm-12">
+						<p>Do you want to really change this account status?</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-primary" id="accountStatusChangeBtn">Change</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="accountDeleteModalLabel" aria-hidden="true" id="accountDeleteModal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form action="<%=accountDeleteURL%>" method="post" id="accountDeleteForm">
+				<div class="modal-header">
+					<h4 class="modal-title" id="accountDeleteModalLabel">Account Delete</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div id="account-delete-message"></div>
+					<div class="col-sm-12">
+						<p>Do you want to really delete this account?</p>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="submit" class="btn btn-danger" id="accountDeleteBtn">Delete</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

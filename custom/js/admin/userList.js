@@ -1,10 +1,13 @@
+"use strict";
+
+var userList, timeOut;
 $( document ).ready( function () {
 	userList = $( '#userList' ).DataTable( {
 		"processing": true,
 		"serverSide": true,
 		"order": [],
 		"ajax": {
-			url: "<%=userList%>",
+			url: "/user-list",
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
@@ -13,146 +16,131 @@ $( document ).ready( function () {
 		"columnDefs": [ {
 			"targets": [ 0, 1, 2, 3, 4 ],
 			"orderable": false
-        } ],
-		"lengthMenu": [
-            [ 5, 10, 25, 50, 75, 100, -1 ],
-            [ 5, 10, 25, 50, 75, 100, "All" ]
-        ],
-	} )
-} )
-
+    	} ],
+		"lengthMenu": [ [ 5, 10, 25, 50, 75, 100, -1 ],
+						[ 5, 10, 25, 50, 75, 100, "All" ] ]
+	} );
+	$( "#message" ).fadeOut( 0 );
+	$( "#payment-message" ).fadeOut( 0 );
+	$( "#status-change-message" ).fadeOut( 0 );
+	$( "account-delete-message" ).fadeOut( 0 );
+} );
 
 function payment( id ) {
-	if ( id ) {
-		$( "#userMaxApp" ).val( '' )
-		$( "#ammount" ).val( '' )
+	$( "#paymentForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
+		var button = $( "#paymentBtn" ),
+			btnText = button.text().trim();
 		$.ajax( {
-			url: "<%=maxAppInstallUrl%>",
-			type: "GET",
-			data: {
-				'id': id,
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
+			headers: {
+				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
+			},
+			data: form.serialize() + '&id=' + id,
+			beforeSend: function beforeSend() {
+				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
 			},
 			dataType: "json",
-			success: function ( res ) {
-				$( "#paymentError" ).fadeOut( 0 )
+			success: function success( res ) {
 				if ( res.success ) {
-					$( "#userMaxApp" ).val( res.maxApp )
-					$( "#paymentButton" ).unbind( "click" ).bind( "click", function () {
-						$( "#paymentError" ).fadeOut( 0 )
-						$.ajax( {
-							url: "<%=userPayment%>",
-							type: "POST",
-							headers: {
-								'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-							},
-							data: {
-								'id': id,
-								'userMaxApp': $( "#userMaxApp" ).val(),
-								'ammount': $( "#ammount" ).val(),
-							},
-							dataType: "json",
-							success: function ( res ) {
-								if ( res.success ) {
-									$( "#paymentError" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' +
-										'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-										res.message +
-										'</div>' ).fadeIn( 1000 )
-									userList.ajax.reload( null, false );
-								} else {
-									$( "#paymentError" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-										'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-										res.message +
-										'</div>' ).fadeIn( 1000 )
-								}
-
-								clearMessage( "paymentError" )
-							}
-						} )
-					} )
+					userList.ajax.reload( null, false );
+					$( '#paymentModal' ).modal( 'hide' );
+					$( "#message" ).html( '<div class="alert alert-success" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
 				} else {
-					$( "#paymentError" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-						res.message + '</div>' ).fadeIn( 1000 )
+					$( "#payment-message" ).html( '<div class="alert alert-warning" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
+					clearMessage( "payment-message" );
 				}
-
-				clearMessage( "paymentError" )
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
+				}
 			}
-		} )
-	}
+		} );
+	} );
 }
 
-function accountStatusChange( id, accountStatus ) {
-	var accountStatusChangeText = accountStatus === 'true' ? "Deactive" : "Active"
-	document.getElementById( "accountStatusChangeModalLabel" ).innerHTML = "Account " + accountStatusChangeText
-	document.getElementById( "accountStatusChangeButton" ).innerHTML = accountStatusChangeText
-	document.getElementById( "accountStatusChangeModalBody" ).innerHTML = "Do you want to really " + accountStatusChangeText.toLowerCase() + " this account ?"
-	if ( id && accountStatus ) {
-		$( "#accountStatusChangeButton" ).unbind( "click" ).bind( "click", function () {
-			$.ajax( {
-				url: "<%=userAccountStatusChange%>",
-				type: "POST",
-				headers: {
-					'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-				},
-				data: {
-					'id': id,
-				},
-				dataType: "json",
-				success: function ( res ) {
-					if ( res.success === true ) {
-						$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-							res.message +
-							'</div>' ).fadeIn( 1000 )
-						userList.ajax.reload( null, false );
-					} else {
-						$( "#message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-							res.message +
-							'</div>' ).fadeIn( 1000 )
-					}
-
-					$( '#accountStatusChange' ).modal( 'hide' );
-					clearMessage()
+function accountStatusChange( id ) {
+	$( "#accountStatusChangeForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
+		var button = $( "#accountStatusChangeBtn" ),
+			btnText = button.text().trim();
+		$.ajax( {
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
+			headers: {
+				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
+			},
+			data: {
+				id: id
+			},
+			dataType: "json",
+			beforeSend: function beforeSend() {
+				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
+			},
+			success: function success( res ) {
+				if ( res.success ) {
+					userList.ajax.reload( null, false );
+					$( '#accountStatusChangeModal' ).modal( 'hide' );
+					$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
+				} else {
+					$( "#status-change-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
+					clearMessage( "status-change-message" );
 				}
-			} )
-		} )
-	}
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
+				}
+			}
+		} );
+	} );
 }
-
 
 function accountDelete( id ) {
-	if ( id ) {
-		$( "#accountDeleteButton" ).unbind( "click" ).bind( "click", function () {
-			$.ajax( {
-				url: "<%=userAccountDelete%>",
-				type: "POST",
-				headers: {
-					'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-				},
-				data: {
-					'id': id,
-				},
-				dataType: "json",
-				success: function ( res ) {
-					if ( res.success === true ) {
-						$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-							res.message +
-							'</div>' ).fadeIn( 1000 )
-						userList.ajax.reload( null, false )
-
-					} else {
-						$( "#message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
-							res.message +
-							'</div>' ).fadeIn( 1000 )
-					}
-
-					$( '#accountDelete' ).modal( 'hide' )
-					clearMessage()
+	$( "#accountDeleteForm" ).unbind( "submit" ).bind( "submit", function ( e ) {
+		e.preventDefault();
+		var form = $( this );
+		var button = $( "#accountDeleteBtn" ),
+			btnText = button.text().trim();
+		$.ajax( {
+			url: form.attr( "action" ),
+			type: form.attr( "method" ),
+			headers: {
+				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
+			},
+			data: {
+				id: id
+			},
+			dataType: "json",
+			beforeSend: function beforeSend() {
+				button.text( btnText + "..." ).append( '<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">' ).attr( "disabled", "disabled" ).css( "cursor", "no-drop" );
+			},
+			success: function success( res ) {
+				if ( res.success ) {
+					userList.ajax.reload( null, false );
+					$( "#accountDeleteModal" ).modal( 'hide' );
+					$( "#message" ).html( '<div class="alert alert-success alert-dismissible" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
+				} else {
+					$( "#account-delete-message" ).html( '<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + '</div>' ).fadeIn( 1000 );
+					clearMessage( "account-delete-message" );
 				}
-			} )
-		} )
-	}
+			},
+			complete: function complete( jqXHR, textStatus ) {
+				if ( textStatus === "success" ) {
+					button.removeAttr( "disabled" ).css( "cursor", "" ).text( btnText ).children().remove();
+				}
+			}
+		} );
+	} );
+}
+
+function clearMessage( id ) {
+	clearTimeout( timeOut );
+	timeOut = setTimeout( function () {
+		$( "#" + id ).fadeOut( 1000 );
+	}, 5000 );
 }

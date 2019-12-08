@@ -4,15 +4,15 @@ $( document ).ready( function () {
 
 	$.easing.def = "easeOutBounce";
 	$( 'li.button a' ).click( function ( e ) {
+		e.preventDefault();
 		var dropDown = $( this ).parent().next();
 		$( '.dropdown' ).not( dropDown ).slideUp( 'slow' );
 		dropDown.slideToggle( 'slow' );
-		e.preventDefault();
 	} );
 
-	$( '#sidebarCollapse' ).on( 'click', function () {
-		$( '#sidebar' ).toggleClass( 'active' );
-	} );
+	// $( '#sidebarCollapse' ).on( 'click', function () {
+	// 	$( '#sidebar' ).toggleClass( 'active' );
+	// } );
 
 	$( ".dropdown" ).hover( function () {
 		$( '.profile-dropdown-menu', this ).stop( true, true ).slideDown( "fast" );
