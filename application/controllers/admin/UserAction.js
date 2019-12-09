@@ -1,16 +1,14 @@
 "use strict";
 
 const Joi = require( '@hapi/joi' )
+const {
+	ObjectId
+} = require( 'mongodb' )
+const {
+	payment
+} = require( join( MODEL_DIR, 'admin/Model_User_Action' ) )
 
 exports.payment = ( req, res, next ) => {
-
-	if ( !req.body.id ) {
-		return res.json( {
-			success: false,
-			message: 'Id missing'
-		} )
-	}
-
 	const schema = Joi.object( {
 		userMaxAppCanInstall: Joi.number().required().label( "Max App" ),
 		ammount: Joi.number().required().label( "Ammount" ),
@@ -21,7 +19,24 @@ exports.payment = ( req, res, next ) => {
 		ammount: req.body.ammount
 	} )
 
+	try {
+		var id = ObjectId( req.body.id )
+	} catch ( e ) {
+		return res.json( {
+			success: false,
+			message: 'Please, don\'t violate the process.'
+		} )
+	}
 
+	payment( validateResult.value, id )
+		.then( ( {
+			success,
+			info
+		} ) => res.json( {
+			success: success,
+			message: info
+		} ) )
+		.catch( err => next( err ) )
 }
 
 exports.accountStatusChange = ( req, res, next ) => {

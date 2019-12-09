@@ -153,7 +153,7 @@ module.exports = {
 	},
 
 	appdetails: {
-		url: '/user/app-details/:appName',
+		url: '/user/app-details',
 		controller: 'AppDetails',
 		methods: {
 			appDetailsView: 'get',
@@ -185,7 +185,7 @@ module.exports = {
 	},
 
 	contentUpload: {
-		url: '/user/content-upload/:appName',
+		url: '/user/content-upload',
 		controller: 'ContentUpload',
 		methods: {
 			contentUploadView: 'get',
@@ -218,7 +218,7 @@ module.exports = {
 	},
 
 	download: {
-		url: '/user/application-generator/download/:fileName',
+		url: '/user/application-generator/download',
 		controller: 'ApplicationGenerator',
 		methods: {
 			download: 'get',

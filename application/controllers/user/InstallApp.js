@@ -1,3 +1,5 @@
+"use strict";
+
 const Joi = require( '@hapi/joi' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
@@ -32,7 +34,7 @@ exports.installAppView = ( req, res, next ) => {
 
 exports.appName = ( req, res, next ) => {
 	const schema = Joi.object( {
-		appName: Joi.string().trim().uppercase().pattern( /^[a-zA-Z0-9_-\s]+$/ ).required().label( "App Name" ),
+		appName: Joi.string().trim().pattern( /^[a-zA-Z0-9_-\s]+$/ ).required().label( "App Name" ),
 	} )
 
 	const validateResult = schema.validate( {
@@ -62,11 +64,12 @@ exports.appName = ( req, res, next ) => {
 			info
 		} ) => {
 			if ( success ) {
+				console.log( info );
 				return res.json( {
 					success: success,
 					info: {
-						ussd: `https://${1}/api/${info}/${validateResult.value.appName}/ussd`,
-						sms: `https://${1}/api/${info}/${validateResult.value.appName}/sms`,
+						ussd: `${req.protocol}://${req.hostname}/api/${info.serial}/${info.name}/ussd`,
+						sms: `${req.protocol}://${req.hostname}/api/${info.serial}/${info.name}/sms`,
 						url: web.installApp.url,
 					}
 				} )

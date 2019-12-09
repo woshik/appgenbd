@@ -1,3 +1,5 @@
+"use strict";
+
 const Joi = require( '@hapi/joi' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {

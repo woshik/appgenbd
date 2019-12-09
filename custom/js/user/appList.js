@@ -1,27 +1,28 @@
 var timeOut, appList;
 $( document ).ready( function () {
 	$( "app-list-message" ).fadeOut( 0 )
-	var form = $( "#appListForm" )
+
 	appList = $( '#appList' ).DataTable( {
 		"processing": true,
 		"serverSide": true,
 		"order": [],
 		"ajax": {
-			url: form.attr( "action" ),
+			url: '/user/app-list',
 			headers: {
 				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
 			},
-			type: form.attr( "method" )
+			type: 'post'
 		},
 		"columnDefs": [ {
 			"targets": [ 6 ],
 			"orderable": false
     } ],
 		"lengthMenu": [
-        [ 5, 10, 25, 50, 75, 100, 200 ],
-        [ 5, 10, 25, 50, 75, 100, 200 ]
-    ],
+        	[ 5, 10, 25, 50, 75, 100, 200 ],
+        	[ 5, 10, 25, 50, 75, 100, 200 ]
+    	],
 	} )
+
 	setTimeout( function () {
 		$( "#flashMessage" ).fadeOut( 1000 )
 	}, 5000 )

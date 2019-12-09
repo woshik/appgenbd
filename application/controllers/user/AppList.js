@@ -1,4 +1,9 @@
+"use strict";
+
 const Joi = require( '@hapi/joi' )
+const {
+	format
+} = require( 'date-and-time' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
 const {
 	user
@@ -7,6 +12,9 @@ const {
 	companyInfo,
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	getAppList
+} = require( join( MODEL_DIR, 'user/Model_App_List' ) )
 
 exports.appListView = ( req, res, next ) => {
 
@@ -20,7 +28,6 @@ exports.appListView = ( req, res, next ) => {
 		userName: req.user.name,
 		email: req.user.email,
 		flashMessage: req.flash( 'appListPageMessage' ),
-		appListUrl: web.appList.url,
 		appInfoUpdateUrl: web.appdInfoUpdate.url,
 		appStatusChangeUrl: web.appStatusChange.url,
 		userProfileSettingURL: web.userProfileSetting.url,
@@ -28,76 +35,53 @@ exports.appListView = ( req, res, next ) => {
 }
 
 exports.appList = ( req, res, next ) => {
-	const app = new model( "app" )
-	let order = [ 'app_name', 'app_id', 'subscribe', 'dial', 'create_date', 'app_active' ]
-	let sort = {}
 
-	if ( req.body.order ) {
-		sort[ order[ parseInt( req.body.order[ 0 ].column ) ] ] = req.body.order[ 0 ].dir === 'asc' ? 1 : -1
-	} else {
-		sort[ order[ 0 ] ] = 1
-	}
-
-	app.dataTable( {
-			user_id: req.user._id,
-			$or: [
-				{
-					app_name: RegExp( `.*${req.body.search.value}.*`, 'i' )
-				},
-				{
-					app_id: RegExp( `.*${req.body.search.value}.*`, 'i' )
-				},
-            ]
-		}, {
-			_id: 0,
-			user_id: 0,
-			randomSerial: 0,
-		}, parseInt( req.body.start ), parseInt( req.body.length ), sort )
-		.then( result => {
+	getAppList( req.body, req.user._id )
+		.then( appList => {
 			let response = []
-			result.data.map( ( appData ) => {
+			appList.list.map( ( appData ) => {
 
 				let actionBtn = ( !!appData.app_id && !!appData.password ) ? appData.app_active ? `
-                <a href="${web.appdetails.url.replace(':appName', appData.app_name)}" title="Details" class="btn btn-primary btn-icon" >
-                    <i class="fas fa-eye"></i>
-                </a>
-                <a href="${web.contentUpload.url.replace(':appName', appData.app_name)}" title="Message upload" class="btn btn-primary btn-icon">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                </a>
-                ` : '' : `
-                <a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfo" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
-                    <i class="fas fa-file-invoice"></i>
-                </a>`
+						<a href="${web.appdetails.url}?appname=${appData.app_name}" title="Details" class="btn btn-primary btn-icon" >
+							<i class="fas fa-eye"></i>
+						</a>
+						<a href="${web.contentUpload.url}?appname=${appData.app_name}" title="Message upload" class="btn btn-primary btn-icon">
+							<i class="fas fa-cloud-upload-alt"></i>
+						</a>
+						` : '' : `
+						<a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfo" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
+							<i class="fas fa-file-invoice"></i>
+						</a>`
 
 				actionBtn += ( !!appData.app_id && !!appData.password ) ? appData.app_active ? `
-                            <a href="javascript:void(0)" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Deactivate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
-                                <i class="fas fa-toggle-off"></i>
-                            </a>
-                            ` : `
-                            <a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Activate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
-                                <i class="fas fa-toggle-on"></i>
-                            </a>` :
+									<a href="javascript:void(0)" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Deactivate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
+										<i class="fas fa-toggle-off"></i>
+									</a>
+									` : `
+									<a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Activate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
+										<i class="fas fa-toggle-on"></i>
+									</a>` :
 					'';
 
 				response.push( [
-                    appData.app_name,
-                    appData.app_id,
-                    appData.subscribe,
-                    appData.dial,
-                    dateTime.format( appData.create_date, "DD-MM-YYYY hh:mm:ss A" ),
-                    appData.app_active ? '<i class="far fa-check-circle correct"></i>' : '<i class="far fa-times-circle wrong"></i>',
-                    actionBtn
-                ] )
+					appData.app_name,
+					appData.app_id,
+					appData.subscribe || 0,
+					appData.dial || 0,
+					format( appData.create_date_time, "DD-MM-YYYY hh:mm:ss A" ),
+					appData.app_active ? '<i class="far fa-check-circle correct"></i>' : '<i class="far fa-times-circle wrong"></i>',
+					actionBtn
+				] )
 			} )
 
-			return res.status( 200 ).json( {
+			return res.json( {
 				data: response,
-				recordsTotal: result.recordsTotal,
-				recordsFiltered: result.recordsFiltered,
-				draw: parseInt( req.body.draw ),
+				recordsTotal: appList.recordsTotal,
+				recordsFiltered: appList.recordsFiltered
 			} )
 		} )
 		.catch( err => next( err ) )
+
 }
 
 exports.appUpdate = ( req, res, next ) => {

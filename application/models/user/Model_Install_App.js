@@ -46,7 +46,10 @@ exports.insertAppName = ( appName, userID ) => {
 											} )
 											.then( userData => resolve( {
 												success: true,
-												info: appData.ops.app_serial
+												info: {
+													serial: appData.ops[ 0 ].app_serial,
+													name: appName
+												}
 											} ) )
 											.catch( err => reject( err ) );
 									} )

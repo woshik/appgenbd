@@ -1,32 +1,105 @@
 <section class="tables-section">
-    <div class="outer-w3-agile mt-3">
-        <h4 class="tittle-w3-agileits mb-4">
-            <%=title%>
-        </h4>
-        <%if(flashMessage){%>
-        <div id="flashMessage">
-            <div class="alert alert-info alert-dismissible" role="alert">
-                <%=flashMessage%>
-            </div>
-        </div>
-        <%}%>
+	<div class="outer-w3-agile mt-3">
+		<h4 class="tittle-w3-agileits mb-4">
+			<%=title%>
+		</h4>
+		<%if(flashMessage){%>
+		<div id="flashMessage">
+			<div class="alert alert-info alert-dismissible" role="alert">
+				<%=flashMessage%>
+			</div>
+		</div>
+		<%}%>
         <div id="app-list-message"></div>
         <div class="table-responsive">
-            <form action="<%=appListUrl%>" method="post" id="appListForm">
-                <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
-                    <thead>
-                        <tr>
-                            <th scope="col">App Name</th>
-                            <th scope="col">APP ID</th>
-                            <th scope="col">Subscribe</th>
-                            <th scope="col">Dial</th>
-                            <th scope="col">Creation Date</th>
-                            <th scope="col">App Active</th>
-                            <th scope="col">Action</th>
-                        </tr>
-                    </thead>
-                </table>
-            </form>
+            <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
+                <thead>
+                    <tr>
+                        <th scope="col">App Name</th>
+                        <th scope="col">APP ID</th>
+                        <th scope="col">Subscribe</th>
+                        <th scope="col">Dial</th>
+                        <th scope="col">Creation Date</th>
+                        <th scope="col">App Active</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+            </table>
         </div>
     </div>
 </section>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppInfoModalLabel" aria-hidden="true" id="updateAppInfo">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="update-app-info-message"></div>
+				<div class="form-group row">
+					<label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
+					<div class="col-sm-9">
+						<input type="text" name="updateAppInfoId" class="form-control" id="updateAppInfoId" placeholder="App Id" autocomplete="off">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
+					<div class="col-sm-9">
+						<input type="text" name="updateAppInfoPassword" class="form-control" id="updateAppInfoPassword" placeholder="App Password" autocomplete="off">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appStatusChangeModalLabel" aria-hidden="true" id="appStatusChange">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="appStatusChangeModalLabel"></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="appStatusChangeModalBody"></div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-primary" id="appStatusChangeButton"></button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppMessageModalLabel" aria-hidden="true" id="updateAppMessage">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title" id="updateAppMessageModalLabel">Update App Message</h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">×</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div id="update-app-message-content"></div>
+				<div class="form-group row">
+					<div class="form-group col-md-12">
+						<label for="updateAppMessageContent">Message</label>
+						<textarea class="form-control" name="updateAppMessageContent" id="updateAppMessageContent" rows="3"></textarea>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="submit" class="btn btn-success" id="updateAppMessageBtn">Change</button>
+			</div>
+		</div>
+	</div>
+</div>
