@@ -11,7 +11,6 @@ exports.payment = ( paymentInfo, id ) => {
 			.then( async userCollection => {
 				try {
 					let settingData = await getDB().collection( 'setting' ).findOne( {} )
-					console.log( settingData )
 					if ( paymentInfo.userMaxAppCanInstall % settingData.max_app_can_install !== 0 ) {
 						return resolve( {
 							success: false,

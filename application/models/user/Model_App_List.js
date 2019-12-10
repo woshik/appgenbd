@@ -50,3 +50,57 @@ exports.getAppList = ( query, id ) => {
 		}
 	} )
 }
+
+exports.updateAppInfo = ( appInfo, id ) => {
+	return new Promise( async ( resolve, reject ) => {
+		try {
+			let appCollection = await getDB().createCollection( 'app' )
+
+			await appCollection.updateOne( {
+				user_id: id,
+				app_name: appInfo.appName
+			}, {
+				$set: {
+					app_id: appInfo.appId,
+					password: appInfo.appPassword,
+					app_active: true
+				}
+			} )
+
+			return resolve( {
+				success: true,
+				message: 'Your app is successfully updated'
+			} )
+
+		} catch ( err ) {
+			return reject( err )
+		}
+	} )
+}
+
+exports.updateAppStatus = ( appInfo, id ) => {
+	return new Promise( async ( resolve, reject ) => {
+		try {
+			let appCollection = await getDB().createCollection( 'app' )
+
+
+
+			await appCollection.updateOne( {
+				user_id: id,
+				app_name: appInfo.appName
+			}, {
+				$set: {
+					app_active: false
+				}
+			} )
+
+			return resolve( {
+				success: true,
+				message: 'Your app is successfully updated'
+			} )
+
+		} catch ( err ) {
+			return reject( err )
+		}
+	} )
+}

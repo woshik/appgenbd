@@ -1,6 +1,7 @@
 "use strict";
 
 const Joi = require( '@hapi/joi' )
+const entities = new( require( 'html-entities' ).AllHtmlEntities )();
 const {
 	format
 } = require( 'date-and-time' )
@@ -13,7 +14,8 @@ const {
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core', 'util' ) )
 const {
-	getAppList
+	getAppList,
+	updateAppInfo
 } = require( join( MODEL_DIR, 'user/Model_App_List' ) )
 
 exports.appListView = ( req, res, next ) => {
@@ -49,19 +51,18 @@ exports.appList = ( req, res, next ) => {
 							<i class="fas fa-cloud-upload-alt"></i>
 						</a>
 						` : '' : `
-						<a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfo" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
+						<a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfoModal" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
 							<i class="fas fa-file-invoice"></i>
 						</a>`
 
 				actionBtn += ( !!appData.app_id && !!appData.password ) ? appData.app_active ? `
-									<a href="javascript:void(0)" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Deactivate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
+									<a href="javascript:void(0)" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Deactivate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
 										<i class="fas fa-toggle-off"></i>
 									</a>
 									` : `
-									<a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChange" title="Activate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
+									<a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Activate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
 										<i class="fas fa-toggle-on"></i>
-									</a>` :
-					'';
+									</a>` : '';
 
 				response.push( [
 					appData.app_name,
@@ -86,84 +87,25 @@ exports.appList = ( req, res, next ) => {
 
 exports.appUpdate = ( req, res, next ) => {
 	const schema = Joi.object( {
-		appId: Joi.string().trim().label( "App Id" ),
-		password: Joi.string().trim().label( "Password" ),
+		appId: Joi.string().trim().required().label( "App Id" ),
+		appPassword: Joi.string().trim().required().label( "Password" ),
+		appName: Joi.string().trim().pattern( /^[a-zA-Z0-9_-\s]+$/ ).required().label( "App Name" ),
 	} )
 
 	const validateResult = schema.validate( {
-		appId: req.body.appId,
-		password: req.body.password
+		appId: entities.encode( req.body.appId ),
+		appPassword: entities.encode( req.body.appPassword ),
+		appName: req.body.appName
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
 	}
 
-	const app = new model( "app" )
-	app.findOne( {
-			app_id: validateResult.value.appId
-		}, {
-			_id: 1
-		} )
-		.then( appInfo => {
-			if ( appInfo ) {
-				return res.status( 200 ).json( {
-					success: false,
-					message: 'This app id already exist.'
-				} )
-			}
-			app.updateOne( {
-					user_id: req.user._id,
-					app_name: req.body.appName,
-					app_active: false
-				}, {
-					'app_id': validateResult.value.appId,
-					'password': validateResult.value.password,
-					'app_active': true,
-				} )
-				.then( updateData => {
-					if ( !updateData.result.nModified ) {
-						return res.status( 200 ).json( {
-							success: false,
-							message: 'Your app not found.'
-						} )
-					}
-					return res.status( 200 ).json( {
-						success: true,
-						message: 'Your app is successfully updated'
-					} )
-				} )
-				.catch( err => next( err ) )
-		} )
-		.catch( err => next( err ) )
-}
-
-exports.getAppStatus = ( req, res, next ) => {
-	let app = new model( 'app' )
-	app.findOne( {
-			user_id: req.user._id,
-			app_name: req.query.appName
-		}, {
-			app_active: 1,
-			_id: 0
-		} )
-		.then( appInfo => {
-			if ( !appInfo ) {
-				return res.json( {
-					success: false,
-					message: 'Your app not found.'
-				} )
-			}
-
-			return res.json( {
-				success: true,
-				appActive: appInfo.app_active
-			} )
-		} )
-		.catch( err => next( err ) )
+	updateAppInfo( validateResult.value, req.user._id ).then( result => res.json( result ) ).catch( err => next( err ) )
 }
 
 exports.appStatusChange = ( req, res, next ) => {

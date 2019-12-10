@@ -17,7 +17,6 @@ const {
 } = require( join( MODEL_DIR, 'user/Model_Dashboard' ) )
 
 exports.dashboardView = ( req, res, next ) => {
-	console.log( req.user );
 	res.render( "user/base-template", {
 		layout: 'dashboard',
 		info: companyInfo,

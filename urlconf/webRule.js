@@ -177,7 +177,6 @@ module.exports = {
 		url: '/user/app-status-change',
 		controller: 'AppList',
 		methods: {
-			getAppStatus: 'get',
 			appStatusChange: 'post',
 		},
 		middleware: [ isUserAuthenticated ],
