@@ -1,10 +1,19 @@
 "use strict";
 
-const sidebar = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const Joi = require( '@hapi/joi' )
 const PDFDocument = require( 'pdfkit' )
-const fs = require( 'fs' )
+const entities = new( require( 'html-entities' ).AllHtmlEntities )();
+const dateTime = require( 'date-and-time' )
+const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const {
+	user
+} = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
 
-const applicationGeneratorView = ( req, res, next ) => {
+exports.applicationGeneratorView = ( req, res, next ) => {
 	let app = new model( "app" );
 	app.find( {
 			user_id: req.user._id
@@ -14,7 +23,7 @@ const applicationGeneratorView = ( req, res, next ) => {
 		} )
 		.then( result => {
 			let applicationGeneratorData = {
-				info: commonInfo,
+				info: companyInfo,
 				title: 'Application Generator',
 				userName: req.user.name,
 				email: req.user.email,
@@ -30,7 +39,7 @@ const applicationGeneratorView = ( req, res, next ) => {
 		.catch( err => next( err ) )
 }
 
-const applicationGenerator = ( req, res, next ) => {
+exports.applicationGenerator = ( req, res, next ) => {
 	const schema = Joi.object( {
 		appName: Joi.string().trim().required().label( "App name" ),
 		smsKeyword: Joi.string().trim().required().label( "SMS keyword" ),
@@ -132,7 +141,7 @@ const applicationGenerator = ( req, res, next ) => {
 	} )
 }
 
-var download = ( req, res, next ) => {
+exports.download = ( req, res, next ) => {
 	res.download( join( BASE_DIR, 'pdf', `${req.params.fileName}.pdf` ), `${req.params.fileName}.pdf`, err => {
 		if ( err ) {
 			next( err )
@@ -142,10 +151,4 @@ var download = ( req, res, next ) => {
 			} )
 		}
 	} )
-}
-
-module.exports = {
-	applicationGeneratorView,
-	applicationGenerator,
-	download
 }

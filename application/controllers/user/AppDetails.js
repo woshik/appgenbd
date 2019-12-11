@@ -1,38 +1,47 @@
 "use strict";
 
-const sidebar = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const Joi = require( '@hapi/joi' )
+const entities = new( require( 'html-entities' ).AllHtmlEntities )();
+const dateTime = require( 'date-and-time' )
+const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const {
+	user
+} = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	checkAppIsActive
+} = require( join( MODEL_DIR, 'user/Model_App_Details' ) )
 
 exports.appDetailsView = ( req, res, next ) => {
-	let app = new model( 'app' )
-	app.findOne( {
-			user_id: req.user._id,
-			app_name: req.params.appName,
-			app_active: true
-		}, {
-			randomSerial: 1,
-			_id: 0
-		} )
-		.then( appData => {
-			if ( !appData ) {
-				req.flash( 'app-list-message', 'App not found.' )
+	checkAppIsActive( req.query.appname, req.user._id )
+		.then( ( {
+			success,
+			info
+		} ) => {
+			if ( success ) {
+				return res.render( "user/base-template", {
+					layout: 'app-details',
+					info: companyInfo,
+					title: `App Details - ${req.query.appname}`,
+					userName: req.user.name,
+					email: req.user.email,
+					sidebar: user,
+					path: '/user/app-list',
+					csrfToken: req.csrfToken(),
+					appName: req.query.appname,
+					appDetailUrl: req.path,
+					updateContentUrl: web.updateContentUpload.url,
+					userProfileSettingURL: web.userProfileSetting.url,
+					ussd: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${req.query.appname}/ussd`,
+					sms: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${req.query.appname}/sms`,
+				} );
+			} else {
+				req.flash( 'appListPageMessage', 'App not found.' )
 				return res.redirect( web.appList.url )
 			}
-
-			let appDetailsData = {
-				info: commonInfo,
-				title: `App Details - ${req.params.appName}`,
-				userName: req.user.name,
-				email: req.user.email,
-				sidebar: sidebar,
-				path: req.path,
-				csrfToken: req.csrfToken(),
-				appDetailUrl: req.path,
-				ussd: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/ussd`,
-				sms: `${req.protocol}://${req.hostname}/api/${appData.randomSerial}/${req.params.appName}/sms`,
-				updateContentUrl: web.updateContentUpload.url
-			}
-
-			return res.render( "user/appDetails", appDetailsData )
 		} )
 		.catch( err => next( err ) )
 }
