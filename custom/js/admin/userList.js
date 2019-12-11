@@ -8,17 +8,16 @@ $( document ).ready( function () {
 		"order": [],
 		"ajax": {
 			url: "/user-list",
-			headers: {
-				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-			},
-			type: "POST"
+			type: "GET"
 		},
 		"columnDefs": [ {
 			"targets": [ 0, 1, 2, 3, 4 ],
 			"orderable": false
     	} ],
-		"lengthMenu": [ [ 5, 10, 25, 50, 75, 100, -1 ],
-						[ 5, 10, 25, 50, 75, 100, "All" ] ]
+		"lengthMenu": [
+			[ 5, 10, 25, 50, 75, 100, -1 ],
+			[ 5, 10, 25, 50, 75, 100, "All" ]
+		]
 	} );
 	$( "#message" ).fadeOut( 0 );
 	$( "#payment-message" ).fadeOut( 0 );

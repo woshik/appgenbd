@@ -52,3 +52,7 @@ td {
 .wrong {
     color: #c0392b;
 }
+
+#formField .form-row .form-group .dateTimepicker {
+    background-color: #fff !important;
+}

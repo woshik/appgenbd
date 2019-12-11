@@ -1,34 +1,45 @@
 "use strict";
 
-const sidebar = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const Joi = require( '@hapi/joi' )
+const entities = new( require( 'html-entities' ).AllHtmlEntities )();
+const dateTime = require( 'date-and-time' )
+const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const {
+	user
+} = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
+const {
+	companyInfo,
+	fromErrorMessage
+} = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	checkAppIsActive,
+	contentUpload
+} = require( join( MODEL_DIR, 'user/Model_Content_Upload' ) )
+const {
+	getDB
+} = require( join( BASE_DIR, 'db', 'database' ) )
 
 exports.contentUploadView = ( req, res, next ) => {
-	let app = new model( "app" )
-	app.findOne( {
-			user_id: req.user._id,
-			app_name: req.params.appName,
-			app_active: true
-		}, {
-			_id: 1
-		} )
-		.then( result => {
-			if ( !result ) {
-				req.flash( 'app-list-message', 'App not found.' )
+	checkAppIsActive( req.query.appname, req.user._id )
+		.then( success => {
+			if ( success ) {
+				return res.render( "user/base-template", {
+					layout: 'content-upload',
+					info: companyInfo,
+					title: 'Content Upload',
+					path: '/user/app-list',
+					sidebar: user,
+					csrfToken: req.csrfToken(),
+					userName: req.user.name,
+					email: req.user.email,
+					appName: req.query.appname,
+					contentUploadFormURL: web.contentUpload.url,
+					userProfileSettingURL: web.userProfileSetting.url,
+				} );
+			} else {
+				req.flash( 'appListPageMessage', 'App not found.' )
 				return res.redirect( web.appList.url )
 			}
-
-			let contentUpdateData = {
-				info: commonInfo,
-				title: 'Content Upload',
-				userName: req.user.name,
-				email: req.user.email,
-				sidebar: sidebar,
-				current: req.path,
-				path: req.path,
-				csrfToken: req.csrfToken(),
-				uploadContentForm: web.contentUpload.url.replace( ':appName', req.params.appName ),
-			}
-			return res.render( "user/contentUpload", contentUpdateData );
 		} )
 		.catch( err => next( err ) )
 };
@@ -55,18 +66,19 @@ exports.contentUpload = async ( req, res, next ) => {
 		let length = message.length
 
 		var clientResponse = []
+		var appCollection = await getDB().createCollection( 'app' )
 
 		for ( let i = 0; i < length; i++ ) {
 
 			let result = new Promise( ( response, reject ) => {
 				const schema = Joi.object( {
-					messageDateTime: Joi.string().trim().required().pattern( /^20[0-9]{2}-[0-1][0-9]-[0-3][0-9] [0-1][0-9]:00 (am|pm)$/ ).label( "Message receiving date time" ),
+					messageDateTime: Joi.string().trim().required().pattern( /^[0-3][0-9]-[0-1][0-9]-20[0-9]{2} [0-1][0-9]:00 (am|pm)$/ ).label( "Message receiving date time" ),
 					content: Joi.string().trim().required().label( "Message content" )
 				} )
 
 				const validateResult = schema.validate( {
 					messageDateTime: messageDateTime[ i ],
-					content: message[ i ]
+					content: entities.encode( message[ i ] )
 				} )
 
 				if ( validateResult.error ) {
@@ -77,7 +89,10 @@ exports.contentUpload = async ( req, res, next ) => {
 					} )
 				}
 
-				if ( dateTime.subtract( new Date( messageDateTime[ i ] ), dateTime.addHours( new Date(), 6 ) ).toDays() <= 0 ) {
+				let splitDateTime = messageDateTime[ i ].split( " " )
+				let splitDate = splitDateTime[ 0 ].split( "-" )
+
+				if ( dateTime.subtract( new Date( `${splitDate[2]}-${splitDate[1]}-${splitDate[0]} ${splitDateTime[1]}` ), dateTime.addHours( new Date(), 6 ) ).toDays() <= 0 ) {
 					return response( {
 						success: false,
 						position: parseInt( position[ i ] ),
@@ -85,52 +100,53 @@ exports.contentUpload = async ( req, res, next ) => {
 					} )
 				}
 
-				let splitDateTime = messageDateTime[ i ].split( " " )
-				let app = new model( 'app' )
-
-				app.aggregate( {
-						user_id: req.user._id,
-						app_name: req.params.appName,
+				appCollection.aggregate( [ {
+						$match: {
+							user_id: req.user._id,
+							app_name: req.body.appname,
+						}
 					}, {
-						_id: 0,
-						content: {
-							$filter: {
-								input: "$content",
-								as: "content",
-								cond: {
-									$eq: [ "$$content.date", splitDateTime[ 0 ] ]
+						$project: {
+							_id: 0,
+							content: {
+								$filter: {
+									input: "$content",
+									as: "content",
+									cond: {
+										$eq: [ "$$content.date", splitDateTime[ 0 ] ]
+									}
 								}
-							}
-						},
-					} )
+							},
+						}
+					} ] ).toArray()
 					.then( content => {
+						if ( content === [] ) {
+							return response( {
+								success: false,
+								position: parseInt( position[ i ] ),
+								message: "Please don't edit anything yourself, you will be back listed"
+							} )
+						}
+
 						content = content[ 0 ].content
-						if ( content && content.length === 12 ) {
+						if ( content && content.length === 1 ) {
 							return response( {
 								success: false,
 								position: parseInt( position[ i ] ),
-								message: `Already you uploaded 12 message for ${splitDateTime[0]}`
+								message: `Already you uploaded a message for ${splitDateTime[0]}`
 							} )
 						}
 
-						if ( content && content.some( item => `${splitDateTime[1]} ${splitDateTime[2]}` === item.time ) ) {
-							return response( {
-								success: false,
-								position: parseInt( position[ i ] ),
-								message: `Already you uploaded a content on ${splitDateTime[0]} at ${splitDateTime[1]} ${splitDateTime[2]}`
-							} )
-						}
-
-						app.customUpdateOne( {
+						appCollection.updateOne( {
 								user_id: req.user._id,
-								app_name: req.params.appName
+								app_name: req.body.appname,
 							}, {
 								$push: {
 									content: {
 										$each: [ {
 											date: splitDateTime[ 0 ],
 											time: `${splitDateTime[1]} ${splitDateTime[2]}`,
-											message: message[ i ]
+											message: validateResult.value.content
 										} ],
 										$sort: {
 											date: 1,

@@ -15,7 +15,8 @@ const {
 } = require( join( BASE_DIR, 'core', 'util' ) )
 const {
 	getAppList,
-	updateAppInfo
+	updateAppInfo,
+	updateAppStatus
 } = require( join( MODEL_DIR, 'user/Model_App_List' ) )
 
 exports.appListView = ( req, res, next ) => {
@@ -37,8 +38,7 @@ exports.appListView = ( req, res, next ) => {
 }
 
 exports.appList = ( req, res, next ) => {
-
-	getAppList( req.body, req.user._id )
+	getAppList( req.query, req.user._id )
 		.then( appList => {
 			let response = []
 			appList.list.map( ( appData ) => {
@@ -82,7 +82,6 @@ exports.appList = ( req, res, next ) => {
 			} )
 		} )
 		.catch( err => next( err ) )
-
 }
 
 exports.appUpdate = ( req, res, next ) => {
@@ -109,44 +108,5 @@ exports.appUpdate = ( req, res, next ) => {
 }
 
 exports.appStatusChange = ( req, res, next ) => {
-	let app = new model( 'app' )
-	app.findOne( {
-			user_id: req.user._id,
-			app_name: req.body.appName
-		}, {
-			app_active: 1,
-			app_id: 1,
-			password: 1,
-			_id: 0
-		} )
-		.then( appInfo => {
-			if ( !appInfo || !appInfo.app_id || !appInfo.password ) {
-				return res.json( {
-					success: false,
-					message: 'Your app not found.'
-				} )
-			}
-
-			app.updateOne( {
-					user_id: req.user._id,
-					app_id: appInfo.app_id
-				}, {
-					'app_active': !appInfo.app_active
-				} )
-				.then( updateData => {
-					if ( !updateData.result.nModified ) {
-						return res.status( 200 ).json( {
-							success: false,
-							message: 'Your app not found.'
-						} )
-					}
-					return res.status( 200 ).json( {
-						success: true,
-						message: `Your app is successfully ${appInfo.app_active?'deactivated':'activated'}.`
-					} )
-				} )
-				.catch( err => next( err ) )
-
-		} )
-		.catch( err => next( err ) )
+	updateAppStatus( req.body.appName, req.user._id ).then( result => res.json( result ) ).catch( err => next( err ) )
 }

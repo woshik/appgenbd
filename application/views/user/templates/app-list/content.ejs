@@ -1,15 +1,15 @@
 <section class="tables-section">
-	<div class="outer-w3-agile mt-3">
-		<h4 class="tittle-w3-agileits mb-4">
-			<%=title%>
-		</h4>
-		<%if(flashMessage){%>
-		<div id="flashMessage">
-			<div class="alert alert-info alert-dismissible" role="alert">
-				<%=flashMessage%>
-			</div>
-		</div>
-		<%}%>
+    <div class="outer-w3-agile mt-3">
+        <h4 class="tittle-w3-agileits mb-4">
+            <%=title%>
+        </h4>
+        <%if(flashMessage){%>
+        <div id="flashMessage">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <%=flashMessage%>
+            </div>
+        </div>
+        <%}%>
         <div id="app-list-message"></div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover table-striped" id="appList" style="width:100%;">
@@ -28,63 +28,60 @@
         </div>
     </div>
 </section>
-
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppInfoModalLabel" aria-hidden="true" id="updateAppInfoModal">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
-			<form action="<%=appInfoUpdateUrl%>" method="post" id="appInfoUpdateForm">
-		<div class="modal-header">
-			<h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
-			<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">×</span>
-			</button>
-		</div>
-		<div class="modal-body">
-			<div id="update-app-info-message"></div>
-			<div class="form-group row">
-				<label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
-				<div class="col-sm-9">
-					<input type="text" name="appId" class="form-control" placeholder="App Id" autocomplete="off">
-				</div>
-			</div>
-			<div class="form-group row">
-				<label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
-				<div class="col-sm-9">
-					<input type="text" name="appPassword" class="form-control" placeholder="App Password" autocomplete="off">
-				</div>
-			</div>
-		</div>
-		<div class="modal-footer">
-			<button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
-		</div>
-		</form>
-	</div>
-	</div>
-	</div>
-
-	<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appStatusChangeModalLabel" aria-hidden="true" id="appStatusChangeModal">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<form action="<%=appStatusChangeUrl%>" method="post" id="appStatusChangeForm">
-					<div class="modal-header">
-						<h4 class="modal-title" id="appStatusChangeModalLabel">App Status Change</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">×</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div id="app-status-change-message"></div>
-						<p>Are you really want to change app status</p>
-					</div>
-					<div class="modal-footer">
-						<button type="submit" class="btn btn-primary" id="appStatusChangeButton">Change</button>
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<!-- <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppMessageModalLabel" aria-hidden="true" id="updateAppMessage">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="<%=appInfoUpdateUrl%>" method="post" id="appInfoUpdateForm">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="updateAppInfoModalLabel">Update App Information</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="update-app-info-message"></div>
+                    <div class="form-group row">
+                        <label for="updateAppInfoId" class="col-sm-3 col-form-label">App Id</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="appId" class="form-control" placeholder="App Id" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="updateAppInfoPassword" class="col-sm-3 col-form-label">App Password</label>
+                        <div class="col-sm-9">
+                            <input type="text" name="appPassword" class="form-control" placeholder="App Password" autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" id="updateAppInfoBtn">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="appStatusChangeModalLabel" aria-hidden="true" id="appStatusChangeModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form action="<%=appStatusChangeUrl%>" method="post" id="appStatusChangeForm">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="appStatusChangeModalLabel">App Status Change</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="app-status-change-message"></div>
+                    <p>Are you really want to change app status?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary" id="appStatusChangeButton">Change</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppMessageModalLabel" aria-hidden="true" id="updateAppMessage">
 		<div class="modal-dialog modal-lg">
 			<div class="modal-content">
 				<form action="" method="post">

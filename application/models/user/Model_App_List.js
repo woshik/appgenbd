@@ -30,7 +30,8 @@ exports.getAppList = ( query, id ) => {
 				projection: {
 					_id: 0,
 					user_id: 0,
-					app_serial: 0
+					app_serial: 0,
+					content: 0
 				},
 				skip: parseInt( query.start ),
 				limit: parseInt( query.length ),
@@ -78,25 +79,31 @@ exports.updateAppInfo = ( appInfo, id ) => {
 	} )
 }
 
-exports.updateAppStatus = ( appInfo, id ) => {
+exports.updateAppStatus = ( appName, id ) => {
 	return new Promise( async ( resolve, reject ) => {
 		try {
 			let appCollection = await getDB().createCollection( 'app' )
 
-
+			let appData = await appCollection.findOne( {
+				user_id: id,
+				app_name: appName
+			}, {
+				projection: {
+					app_active: 1
+				}
+			} )
 
 			await appCollection.updateOne( {
-				user_id: id,
-				app_name: appInfo.appName
+				_id: appData._id
 			}, {
 				$set: {
-					app_active: false
+					app_active: !appData.app_active
 				}
 			} )
 
 			return resolve( {
 				success: true,
-				message: 'Your app is successfully updated'
+				message: 'Your app status is changed'
 			} )
 
 		} catch ( err ) {

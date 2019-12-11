@@ -146,7 +146,17 @@ module.exports = {
 		controller: 'AppList',
 		methods: {
 			appListView: 'get',
-			appList: 'post'
+			appList: 'get'
+		},
+		middleware: [ isUserAuthenticated ],
+		path: 'user'
+	},
+
+	appListGet: {
+		url: '/user/app-list/get',
+		controller: 'AppList',
+		methods: {
+			appList: 'get',
 		},
 		middleware: [ isUserAuthenticated ],
 		path: 'user'
@@ -293,6 +303,16 @@ module.exports = {
 		methods: {
 			userListView: 'get',
 			userList: 'post',
+		},
+		middleware: [ isAdminAuthenticated ],
+		path: 'admin'
+	},
+
+	userList: {
+		url: '/user-list/get',
+		controller: 'UserList',
+		methods: {
+			userList: 'get',
 		},
 		middleware: [ isAdminAuthenticated ],
 		path: 'admin'

@@ -8,11 +8,8 @@ $( document ).ready( function () {
 		"serverSide": true,
 		"order": [],
 		"ajax": {
-			url: '/user/app-list',
-			headers: {
-				'CSRF-Token': document.querySelector( 'meta[name="csrf-token"]' ).getAttribute( 'content' )
-			},
-			type: 'post'
+			url: '/user/app-list/get',
+			type: 'GET'
 		},
 		"columnDefs": [ {
 			"targets": [ 6 ],
