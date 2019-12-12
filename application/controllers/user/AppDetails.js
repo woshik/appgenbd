@@ -47,7 +47,7 @@ exports.appDetailsView = ( req, res, next ) => {
 }
 
 exports.appDetails = ( req, res, next ) => {
-	const app = new model( "app" )
+
 	app.dataTableForArrayElement( {
 			user_id: req.user._id,
 			app_name: req.params.appName,

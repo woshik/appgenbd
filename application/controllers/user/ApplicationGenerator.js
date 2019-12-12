@@ -5,6 +5,10 @@ const PDFDocument = require( 'pdfkit' )
 const entities = new( require( 'html-entities' ).AllHtmlEntities )();
 const dateTime = require( 'date-and-time' )
 const web = require( join( BASE_DIR, 'urlconf', 'webRule' ) )
+const fs = require( 'fs' )
+const {
+	resolve
+} = require( 'path' )
 const {
 	user
 } = require( join( BASE_DIR, 'urlconf', 'sideBar' ) )
@@ -12,31 +16,29 @@ const {
 	companyInfo,
 	fromErrorMessage
 } = require( join( BASE_DIR, 'core', 'util' ) )
+const {
+	getActiveAppName,
+} = require( join( MODEL_DIR, 'user/Model_Application_Generator' ) )
 
 exports.applicationGeneratorView = ( req, res, next ) => {
-	let app = new model( "app" );
-	app.find( {
-			user_id: req.user._id
-		}, {
-			app_name: 1,
-			_id: 0
-		} )
+	getActiveAppName( req.user._id )
 		.then( result => {
-			let applicationGeneratorData = {
+			return res.render( "user/base-template", {
+				layout: 'pdf-generator',
 				info: companyInfo,
 				title: 'Application Generator',
 				userName: req.user.name,
 				email: req.user.email,
-				sidebar: sidebar,
+				sidebar: user,
 				path: req.path,
 				csrfToken: req.csrfToken(),
 				appList: result,
-				applicationGeneratorForm: web.applicationGenerator.url,
-			}
-
-			res.render( "user/applicationGenerator", applicationGeneratorData )
+				applicationGeneratorFormURL: web.applicationGenerator.url,
+				userProfileSettingURL: web.userProfileSetting.url,
+			} )
 		} )
 		.catch( err => next( err ) )
+
 }
 
 exports.applicationGenerator = ( req, res, next ) => {
@@ -44,7 +46,6 @@ exports.applicationGenerator = ( req, res, next ) => {
 		appName: Joi.string().trim().required().label( "App name" ),
 		smsKeyword: Joi.string().trim().required().label( "SMS keyword" ),
 		ussdcode: Joi.string().trim().required().label( "USSD code" ),
-		perDaySms: Joi.number().min( 1 ).required().label( "sms delivery number" ),
 		longDescription: Joi.string().trim().required().label( "Long description" ),
 		shortDescription: Joi.string().trim().required().label( "Short description" ),
 	} )
@@ -53,13 +54,12 @@ exports.applicationGenerator = ( req, res, next ) => {
 		appName: req.body.appName,
 		smsKeyword: req.body.smsKeyword,
 		ussdcode: req.body.ussdcode,
-		perDaySms: req.body.perDaySms,
 		longDescription: req.body.longDescription,
 		shortDescription: req.body.shortDescription
 	} )
 
 	if ( validateResult.error ) {
-		return res.status( 200 ).json( {
+		return res.json( {
 			success: false,
 			message: fromErrorMessage( validateResult.error.details[ 0 ] )
 		} )
@@ -69,7 +69,7 @@ exports.applicationGenerator = ( req, res, next ) => {
 		autoFirstPage: false
 	} )
 
-	doc.pipe( fs.createWriteStream( join( BASE_DIR, 'pdf', `${validateResult.value.appName}.pdf` ) ) )
+	doc.pipe( fs.createWriteStream( resolve( BASE_DIR, 'pdf', `${validateResult.value.appName}.pdf` ) ) )
 
 	doc.addPage( {
 		margins: {
@@ -122,12 +122,12 @@ exports.applicationGenerator = ( req, res, next ) => {
 	doc.fontSize( 12 ).list( [
         [
             `This is a subscription based <Please mention the type> service.`,
-            `Subscription charge will cost ${2 * parseInt(validateResult.value.perDaySms)} + (VAT + SD + SC)/ day SMS wih Auto Renewal`,
+            `Subscription charge will cost 2 + (VAT + SD + SC)/ day SMS wih Auto Renewal`,
         ]
     ] )
 
 	doc.fontSize( 12 ).text( 'Offer details:' )
-	doc.fontSize( 12 ).text( `${validateResult.value.perDaySms} SMS per day` )
+	doc.fontSize( 12 ).text( `1 SMS per day` )
 
 	doc.fontSize( 12 ).text( 'Support contact:' )
 	doc.fontSize( 12 ).text( `${req.user.name}` )
@@ -135,18 +135,18 @@ exports.applicationGenerator = ( req, res, next ) => {
 
 	doc.end()
 
-	return res.status( 200 ).json( {
+	return res.json( {
 		success: true,
-		message: web.download.url.replace( ':fileName', validateResult.value.appName )
+		url: `${web.download.url}?fileName=${validateResult.value.appName}`
 	} )
 }
 
 exports.download = ( req, res, next ) => {
-	res.download( join( BASE_DIR, 'pdf', `${req.params.fileName}.pdf` ), `${req.params.fileName}.pdf`, err => {
+	res.download( join( BASE_DIR, 'pdf', `${req.query.fileName}.pdf` ), `${req.query.fileName}.pdf`, err => {
 		if ( err ) {
 			next( err )
 		} else {
-			fs.unlink( join( BASE_DIR, 'pdf', `${req.params.fileName}.pdf` ), err => {
+			fs.unlink( join( BASE_DIR, 'pdf', `${req.query.fileName}.pdf` ), err => {
 				if ( err ) next( err )
 			} )
 		}
