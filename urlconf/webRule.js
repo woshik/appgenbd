@@ -1,370 +1,367 @@
 "use strict";
 
-const {
-	isUserAuthenticated,
-	isAdminAuthenticated,
-	canUserSee,
-	isUserCanAccess
-} = require( join( BASE_DIR, "core", "middlewares" ) )
+const { isUserAuthenticated, isAdminAuthenticated, canUserSee, isUserCanAccess } = require(join(BASE_DIR, "core", "middlewares"));
 
 module.exports = {
 	userLogin: {
-		url: '/login/user',
-		controller: 'UserLogin',
+		url: "/login/user",
+		controller: "UserLogin",
 		methods: {
-			userLoginView: 'get',
-			userLogin: 'post'
+			userLoginView: "get",
+			userLogin: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	registration: {
-		url: '/registration',
-		controller: 'Registration',
+		url: "/registration",
+		controller: "Registration",
 		methods: {
-			registrationView: 'get',
-			registration: 'post'
+			registrationView: "get",
+			registration: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	accountActivation: {
-		url: '/account/active',
-		controller: 'AccountActivation',
+		url: "/account/active",
+		controller: "AccountActivation",
 		methods: {
-			accountActivationView: 'get',
-			accountActivation: 'post',
+			accountActivationView: "get",
+			accountActivation: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	forgotPassword: {
-		url: '/forgot-password',
-		controller: 'ForgotPassword',
+		url: "/forgot-password",
+		controller: "ForgotPassword",
 		methods: {
-			forgotPasswordView: 'get',
-			forgotPassword: 'post',
+			forgotPasswordView: "get",
+			forgotPassword: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	accountVerification: {
-		url: '/account/verification',
-		controller: 'AccountVerification',
+		url: "/account/verification",
+		controller: "AccountVerification",
 		methods: {
-			accountVerificationView: 'get',
-			accountVerification: 'post',
+			accountVerificationView: "get",
+			accountVerification: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	changePassword: {
-		url: '/account/change-password',
-		controller: 'ChangePassword',
+		url: "/account/change-password",
+		controller: "ChangePassword",
 		methods: {
-			changePasswordView: 'get',
-			changePassword: 'post',
+			changePasswordView: "get",
+			changePassword: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	sendCodeAgain: {
-		url: '/send-code',
-		controller: 'SendCodeAgain',
+		url: "/send-code",
+		controller: "SendCodeAgain",
 		methods: {
-			sendCodeAgain: 'post',
+			sendCodeAgain: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
-
 
 	//=====================================================================================================================================//
 	//=========================================================== user Dashboard =========================================================//
 	//===================================================================================================================================//
 
-
 	userDashboard: {
-		url: '/user/dashboard',
-		controller: 'Dashboard',
+		url: "/user/dashboard",
+		controller: "Dashboard",
 		methods: {
-			dashboardView: 'get',
+			dashboardView: "get"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	userLogout: {
-		url: '/user/logout',
-		controller: 'Dashboard',
+		url: "/user/logout",
+		controller: "Dashboard",
 		methods: {
-			userLogout: 'get',
+			userLogout: "get"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	userProfileSetting: {
-		url: '/user/profile-setting',
-		controller: 'Dashboard',
+		url: "/user/profile-setting",
+		controller: "Dashboard",
 		methods: {
-			userProfileSetting: 'post',
+			userProfileSetting: "post"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	installApp: {
-		url: '/user/install-app',
-		controller: 'InstallApp',
+		url: "/user/install-app",
+		controller: "InstallApp",
 		methods: {
-			installAppView: 'get',
-			installApp: 'post',
+			installAppView: "get",
+			installApp: "post"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
 
 	appName: {
-		url: '/user/app-name',
-		controller: 'InstallApp',
+		url: "/user/app-name",
+		controller: "InstallApp",
 		methods: {
-			appName: 'post',
+			appName: "post"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
 
 	appList: {
-		url: '/user/app-list',
-		controller: 'AppList',
+		url: "/user/app-list",
+		controller: "AppList",
 		methods: {
-			appListView: 'get',
-			appList: 'get'
+			appListView: "get",
+			appList: "get"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	appListGet: {
-		url: '/user/app-list/get',
-		controller: 'AppList',
+		url: "/user/app-list/get",
+		controller: "AppList",
 		methods: {
-			appList: 'get',
+			appList: "get"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	appdetails: {
-		url: '/user/app-details',
-		controller: 'AppDetails',
+		url: "/user/app-details",
+		controller: "AppDetails",
 		methods: {
-			appDetailsView: 'get',
-			appDetails: 'post'
+			appDetailsView: "get"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
+	},
+
+	appMessageContent: {
+		url: "/user/app-message-content",
+		controller: "AppDetails",
+		methods: {
+			getAppMessageContent: "get"
+		},
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	appdInfoUpdate: {
-		url: '/user/app-update',
-		controller: 'AppList',
+		url: "/user/app-update",
+		controller: "AppList",
 		methods: {
-			appUpdate: 'post'
+			appUpdate: "post"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	appStatusChange: {
-		url: '/user/app-status-change',
-		controller: 'AppList',
+		url: "/user/app-status-change",
+		controller: "AppList",
 		methods: {
-			appStatusChange: 'post',
+			appStatusChange: "post"
 		},
-		middleware: [ isUserAuthenticated ],
-		path: 'user'
+		middleware: [isUserAuthenticated],
+		path: "user"
 	},
 
 	contentUpload: {
-		url: '/user/content-upload',
-		controller: 'ContentUpload',
+		url: "/user/content-upload",
+		controller: "ContentUpload",
 		methods: {
-			contentUploadView: 'get',
-			contentUpload: 'post'
+			contentUploadView: "get",
+			contentUpload: "post"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
 
 	updateContentUpload: {
-		url: '/user/edit-content',
-		controller: 'AppDetails',
+		url: "/user/edit-content",
+		controller: "AppDetails",
 		methods: {
 			getContent: "get",
 			updateContent: "post"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
 
 	applicationGenerator: {
-		url: '/user/application-generator',
-		controller: 'ApplicationGenerator',
+		url: "/user/application-generator",
+		controller: "ApplicationGenerator",
 		methods: {
-			applicationGeneratorView: 'get',
-			applicationGenerator: 'post'
+			applicationGeneratorView: "get",
+			applicationGenerator: "post"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
 
 	download: {
-		url: '/user/application-generator/download',
-		controller: 'ApplicationGenerator',
+		url: "/user/application-generator/download",
+		controller: "ApplicationGenerator",
 		methods: {
-			download: 'get',
+			download: "get"
 		},
-		middleware: [ isUserAuthenticated, isUserCanAccess ],
-		path: 'user'
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
 	},
-
-
 
 	//=====================================================================================================================================//
 	//============================================================== Admin URL ===========================================================//
 	//===================================================================================================================================//
 
-
-
-
 	adminLogin: {
-		url: '/login/admin',
-		controller: 'AdminLogin',
+		url: "/login/admin",
+		controller: "AdminLogin",
 		methods: {
-			adminLoginView: 'get',
-			adminLogin: 'post'
+			adminLoginView: "get",
+			adminLogin: "post"
 		},
-		middleware: [ canUserSee ],
-		path: 'auth'
+		middleware: [canUserSee],
+		path: "auth"
 	},
 
 	adminDashboard: {
-		url: '/admin/dashboard',
-		controller: 'Dashboard',
+		url: "/admin/dashboard",
+		controller: "Dashboard",
 		methods: {
-			dashboardView: 'get',
+			dashboardView: "get"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	adminLogout: {
-		url: '/admin/logout',
-		controller: 'Dashboard',
+		url: "/admin/logout",
+		controller: "Dashboard",
 		methods: {
-			adminLogout: 'get',
+			adminLogout: "get"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	applicationSetting: {
-		url: '/application-setting',
-		controller: 'AppSetting',
+		url: "/application-setting",
+		controller: "AppSetting",
 		methods: {
-			getApplicationSettingData: 'get',
-			appSetting: 'post',
+			getApplicationSettingData: "get",
+			appSetting: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	profileSetting: {
-		url: '/admin/profile-setting',
-		controller: 'Dashboard',
+		url: "/admin/profile-setting",
+		controller: "Dashboard",
 		methods: {
-			profileSetting: 'post',
+			profileSetting: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	userList: {
-		url: '/user-list',
-		controller: 'UserList',
+		url: "/user-list",
+		controller: "UserList",
 		methods: {
-			userListView: 'get',
-			userList: 'post',
+			userListView: "get",
+			userList: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	userList: {
-		url: '/user-list/get',
-		controller: 'UserList',
+		url: "/user-list/get",
+		controller: "UserList",
 		methods: {
-			userList: 'get',
+			userList: "get"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	userMaxAppInstall: {
-		url: '/usermaxappinstall',
-		controller: 'UserList',
+		url: "/usermaxappinstall",
+		controller: "UserList",
 		methods: {
-			userMaxAppInstall: 'get',
+			userMaxAppInstall: "get"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	payment: {
-		url: '/payment',
-		controller: 'UserAction',
+		url: "/payment",
+		controller: "UserAction",
 		methods: {
-			payment: 'post',
+			payment: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	accountStatusChange: {
-		url: '/account-status-change',
-		controller: 'UserAction',
+		url: "/account-status-change",
+		controller: "UserAction",
 		methods: {
-			accountStatusChange: 'post',
+			accountStatusChange: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	accountDelete: {
-		url: '/account-delete',
-		controller: 'UserAction',
+		url: "/account-delete",
+		controller: "UserAction",
 		methods: {
-			accountDelete: 'post',
+			accountDelete: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
+		middleware: [isAdminAuthenticated],
+		path: "admin"
 	},
 
 	accountDetails: {
-		url: '/account-details',
-		controller: 'AccountDetails',
+		url: "/account-details",
+		controller: "AccountDetails",
 		methods: {
-			accountDetails: 'post',
+			accountDetails: "post"
 		},
-		middleware: [ isAdminAuthenticated ],
-		path: 'admin'
-	},
-}
+		middleware: [isAdminAuthenticated],
+		path: "admin"
+	}
+};

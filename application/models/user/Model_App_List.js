@@ -1,113 +1,122 @@
 "use strict";
 
-const {
-	getDB
-} = require( join( BASE_DIR, 'db', 'database' ) )
+const { getDB } = require(join(BASE_DIR, "db", "database"));
 
-exports.getAppList = ( query, id ) => {
-	return new Promise( async ( resolve, reject ) => {
+exports.getAppList = (query, id) => {
+	return new Promise(async (resolve, reject) => {
 		try {
-			let order = [ 'app_name', 'app_id', 'subscribe', 'dial', 'create_date', 'app_active' ]
-			let sort = {}
-			let appCollection = await getDB().createCollection( 'app' )
+			let order = ["app_name", "app_id", "subscribe", "dial", "create_date", "app_active"];
+			let sort = {};
+			let appCollection = await getDB().collection("app");
 
-			if ( query.order ) {
-				sort[ order[ parseInt( query.order[ 0 ].column ) ] ] = query.order[ 0 ].dir === 'asc' ? 1 : -1
+			if (query.order) {
+				sort[order[parseInt(query.order[0].column)]] = query.order[0].dir === "asc" ? 1 : -1;
 			} else {
-				sort[ order[ 0 ] ] = 1
+				sort[order[0]] = 1;
 			}
 
 			let where = {
 				user_id: id,
-				$or: [ {
-					app_name: RegExp( `.*${query.search.value}.*`, 'i' )
-					}, {
-					app_id: RegExp( `.*${query.search.value}.*`, 'i' )
-				} ]
-			}
+				$or: [
+					{
+						app_name: RegExp(`.*${query.search.value}.*`, "i")
+					},
+					{
+						app_id: RegExp(`.*${query.search.value}.*`, "i")
+					}
+				]
+			};
 
-			let appData = await appCollection.find( where, {
-				projection: {
-					_id: 0,
-					user_id: 0,
-					app_serial: 0,
-					content: 0
-				},
-				skip: parseInt( query.start ),
-				limit: parseInt( query.length ),
-				sort: sort
-			} ).toArray()
+			let appData = await appCollection
+				.find(where, {
+					projection: {
+						_id: 0,
+						user_id: 0,
+						app_serial: 0,
+						content: 0
+					},
+					skip: parseInt(query.start),
+					limit: parseInt(query.length),
+					sort: sort
+				})
+				.toArray();
 
-			return resolve( {
+			return resolve({
 				list: appData,
-				recordsTotal: await appCollection.countDocuments( {
+				recordsTotal: await appCollection.countDocuments({
 					user_id: id
-				} ),
-				recordsFiltered: await appCollection.countDocuments( where ),
-			} )
-
-		} catch ( err ) {
-			return reject( err )
+				}),
+				recordsFiltered: await appCollection.countDocuments(where)
+			});
+		} catch (err) {
+			return reject(err);
 		}
-	} )
-}
+	});
+};
 
-exports.updateAppInfo = ( appInfo, id ) => {
-	return new Promise( async ( resolve, reject ) => {
+exports.updateAppInfo = (appInfo, id) => {
+	return new Promise(async (resolve, reject) => {
 		try {
-			let appCollection = await getDB().createCollection( 'app' )
+			let appCollection = await getDB().createCollection("app");
 
-			await appCollection.updateOne( {
-				user_id: id,
-				app_name: appInfo.appName
-			}, {
-				$set: {
-					app_id: appInfo.appId,
-					password: appInfo.appPassword,
-					app_active: true
+			await appCollection.updateOne(
+				{
+					user_id: id,
+					app_name: appInfo.appName
+				},
+				{
+					$set: {
+						app_id: appInfo.appId,
+						password: appInfo.appPassword,
+						app_active: true
+					}
 				}
-			} )
+			);
 
-			return resolve( {
+			return resolve({
 				success: true,
-				message: 'Your app is successfully updated'
-			} )
-
-		} catch ( err ) {
-			return reject( err )
+				message: "Your app is successfully updated"
+			});
+		} catch (err) {
+			return reject(err);
 		}
-	} )
-}
+	});
+};
 
-exports.updateAppStatus = ( appName, id ) => {
-	return new Promise( async ( resolve, reject ) => {
+exports.updateAppStatus = (appName, id) => {
+	return new Promise(async (resolve, reject) => {
 		try {
-			let appCollection = await getDB().createCollection( 'app' )
+			let appCollection = await getDB().createCollection("app");
 
-			let appData = await appCollection.findOne( {
-				user_id: id,
-				app_name: appName
-			}, {
-				projection: {
-					app_active: 1
+			let appData = await appCollection.findOne(
+				{
+					user_id: id,
+					app_name: appName
+				},
+				{
+					projection: {
+						app_active: 1
+					}
 				}
-			} )
+			);
 
-			await appCollection.updateOne( {
-				_id: appData._id
-			}, {
-				$set: {
-					app_active: !appData.app_active
+			await appCollection.updateOne(
+				{
+					_id: appData._id
+				},
+				{
+					$set: {
+						app_active: !appData.app_active
+					}
 				}
-			} )
+			);
 
-			return resolve( {
+			return resolve({
 				success: true,
-				message: 'Your app status is changed'
-			} )
-
-		} catch ( err ) {
-			return reject( err )
+				message: "Your app status is changed"
+			});
+		} catch (err) {
+			return reject(err);
 		}
-	} )
-}
+	});
+};

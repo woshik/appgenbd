@@ -1,3 +1,1 @@
-exports.accountDetails = (req, res, next) => {
-	
-}
+exports.accountDetails = (req, res, next) => {};
