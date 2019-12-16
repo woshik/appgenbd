@@ -195,6 +195,16 @@ module.exports = {
 		path: "user"
 	},
 
+	deleteApp: {
+		url: "/user/delete-app",
+		controller: "AppList",
+		methods: {
+			deleteApp: "delete"
+		},
+		middleware: [isUserAuthenticated],
+		path: "user"
+	},
+
 	contentUpload: {
 		url: "/user/content-upload",
 		controller: "ContentUpload",

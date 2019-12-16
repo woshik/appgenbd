@@ -2,11 +2,11 @@
 
 const Joi = require("@hapi/joi");
 const web = require(join(BASE_DIR, "urlconf", "webRule"));
+const networkInterfaces = require("os").networkInterfaces();
 const { user } = require(join(BASE_DIR, "urlconf", "sideBar"));
 const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util"));
 const { insertAppName, installApp } = require(join(MODEL_DIR, "user/Model_Install_App"));
-const entities = new (require("html-entities").AllHtmlEntities)();
-const networkInterfaces = require("os").networkInterfaces();
+const { getDB } = require(join(BASE_DIR, "db", "database"));
 
 exports.installAppView = (req, res, next) => {
 	res.render("user/base-template", {
@@ -18,13 +18,13 @@ exports.installAppView = (req, res, next) => {
 		csrfToken: req.csrfToken(),
 		userName: req.user.name,
 		email: req.user.email,
+		hostAddress: networkInterfaces.eth0 ? networkInterfaces.eth0[0].address : "127.0.0.1",
 		installAppFormURL: web.appName.url,
-		userProfileSettingURL: web.userProfileSetting.url,
-		hostAddress: networkInterfaces.eth0 ? networkInterfaces.eth0[0].address : "127.0.0.1"
+		userProfileSettingURL: web.userProfileSetting.url
 	});
 };
 
-exports.appName = (req, res, next) => {
+exports.appName = async (req, res, next) => {
 	const schema = Joi.object({
 		appName: Joi.string()
 			.trim()
@@ -47,22 +47,33 @@ exports.appName = (req, res, next) => {
 			success: false,
 			message: "Please, active your account. Your are now using trial version."
 		});
-	} else if (!!req.user.max_app_can_install && !!req.user.app_installed && req.user.max_app_can_install === req.user.app_installed) {
-		return res.json({
-			success: false,
-			message: `Your already installed ${req.user.app_installed} app.`
-		});
+	}
+
+	try {
+		if (
+			req.user.max_app_can_install ===
+			(await getDB()
+				.collection("app")
+				.countDocuments({ user_id: req.user._id }))
+		) {
+			return res.json({
+				success: false,
+				message: `Your already installed ${req.user.app_installed} app.`
+			});
+		}
+	} catch (error) {
+		return next(error);
 	}
 
 	insertAppName(validateResult.value.appName, req.user._id)
 		.then(({ success, info }) => {
 			if (success) {
-				console.log(info);
 				return res.json({
 					success: success,
 					info: {
-						ussd: `${req.protocol}://${req.hostname}/api/${info.serial}/${info.name}/ussd`,
-						sms: `${req.protocol}://${req.hostname}/api/${info.serial}/${info.name}/sms`,
+						id: info.id,
+						ussd: `${req.protocol}://${req.hostname}/api/${info.serial}/${validateResult.value.appName}/ussd`,
+						sms: `${req.protocol}://${req.hostname}/api/${info.serial}/${validateResult.value.appName}/sms`,
 						url: web.installApp.url
 					}
 				});
@@ -78,24 +89,21 @@ exports.appName = (req, res, next) => {
 
 exports.installApp = (req, res, next) => {
 	const schema = Joi.object({
-		appName: Joi.string()
-			.trim()
-			.uppercase()
-			.pattern(/^[a-zA-Z0-9_-\s]+$/)
-			.required()
-			.label("App Name"),
 		appId: Joi.string()
+			.required()
 			.trim()
+			.pattern(/^[a-zA-Z0-9_-\s]+$/)
+			.uppercase()
 			.label("App Id"),
 		password: Joi.string()
+			.required()
 			.trim()
 			.label("Password")
 	});
 
 	const validateResult = schema.validate({
-		appName: req.body.appName,
-		appId: entities.encode(req.body.appId),
-		password: entities.encode(req.body.appPassword)
+		appId: req.body.appId,
+		password: req.body.appPassword
 	});
 
 	if (validateResult.error) {
@@ -103,19 +111,9 @@ exports.installApp = (req, res, next) => {
 			success: false,
 			message: fromErrorMessage(validateResult.error.details[0])
 		});
-	} else if (!!req.user.trial) {
-		return res.json({
-			success: false,
-			message: "Please, active your account. Your are now using trial version."
-		});
-	} else if (!!req.user.max_app_can_install && !!req.user.app_installed && req.user.max_app_can_install === req.user.app_installed) {
-		return res.json({
-			success: false,
-			message: `Your already installed ${req.user.app_installed} app.`
-		});
 	}
 
-	installApp(validateResult.value, req.user._id)
+	installApp(validateResult.value, req.body.id, req.user._id)
 		.then(({ success, info }) => {
 			if (success) {
 				return res.json({

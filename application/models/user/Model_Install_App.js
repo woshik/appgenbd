@@ -1,125 +1,77 @@
 "use strict";
 
 const dateTime = require("date-and-time");
-const { getDB } = require(join(BASE_DIR, "db", "database"));
+const { ObjectId } = require("mongodb");
 const { randomBytes } = require("crypto");
+const { getDB } = require(join(BASE_DIR, "db", "database"));
 
 exports.insertAppName = (appName, userID) => {
-	return new Promise((resolve, reject) => {
-		getDB()
-			.createCollection("app")
-			.then(appCollection => {
-				appCollection
-					.findOne(
-						{
-							app_name: appName
-						},
-						{
-							projection: {
-								_id: 1
-							}
-						}
-					)
-					.then(appData => {
-						if (appData) {
-							return resolve({
-								success: false,
-								info: "This app name already exist."
-							});
-						}
+	return new Promise(async (resolve, reject) => {
+		try {
+			let appData = await getDB()
+				.collection("app")
+				.insertOne({
+					user_id: userID,
+					app_name: appName,
+					app_serial: `${randomBytes(4).toString("hex")}${new Date().getTime()}`,
+					create_date_time: dateTime.addHours(new Date(), 6),
+					app_active: false
+				});
 
-						appCollection
-							.insertOne({
-								user_id: userID,
-								app_name: appName,
-								app_serial: randomBytes(10).toString("hex"),
-								create_date_time: dateTime.addHours(new Date(), 6),
-								app_active: false
-							})
-							.then(appData => {
-								getDB()
-									.createCollection("users")
-									.then(userCollection => {
-										userCollection
-											.updateOne(
-												{
-													_id: userID
-												},
-												{
-													$inc: {
-														app_installed: 1
-													}
-												}
-											)
-											.then(userData =>
-												resolve({
-													success: true,
-													info: {
-														serial: appData.ops[0].app_serial,
-														name: appName
-													}
-												})
-											)
-											.catch(err => reject(err));
-									})
-									.catch(err => reject(err));
-							})
-							.catch(err => reject(err));
-					})
-					.catch(err => reject(err));
-			})
-			.catch(err => reject(err));
+			return resolve({
+				success: true,
+				info: {
+					id: appData.ops[0]._id,
+					serial: appData.ops[0].app_serial
+				}
+			});
+		} catch (error) {
+			return reject(error);
+		}
 	});
 };
 
-exports.installApp = (appInfo, userID) => {
-	return new Promise((resolve, reject) => {
-		getDB()
-			.createCollection("app")
-			.then(appCollection => {
-				appCollection
-					.findOne(
-						{
-							app_id: appInfo.appId
-						},
-						{
-							projection: {
-								_id: 1
-							}
-						}
-					)
-					.then(appData => {
-						if (appData) {
-							return resolve({
-								success: false,
-								info: "This app id already exist."
-							});
-						}
+exports.installApp = (appInfo, id, userID) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			id = ObjectId(id);
+		} catch (error) {
+			return resolve({
+				success: false,
+				info: "App name not found."
+			});
+		}
 
-						appCollection
-							.updateOne(
-								{
-									user_id: userID,
-									app_name: appInfo.appName
-								},
-								{
-									$set: {
-										app_id: appInfo.appId,
-										password: appInfo.password,
-										app_active: true
-									}
-								}
-							)
-							.then(update =>
-								resolve({
-									success: true,
-									info: null
-								})
-							)
-							.catch(err => reject(err));
-					})
-					.catch(err => reject(err));
-			})
-			.catch(err => reject(err));
+		try {
+			let updateInfo = await getDB()
+				.collection("app")
+				.updateOne(
+					{
+						_id: id,
+						user_id: userID
+					},
+					{
+						$set: {
+							provider_id: appInfo.appId,
+							provider_password: appInfo.password,
+							app_active: true
+						}
+					}
+				);
+
+			if (!updateInfo.modifiedCount) {
+				return resolve({
+					success: false,
+					info: "Fail to install you app. Please try again."
+				});
+			} else {
+				return resolve({
+					success: true,
+					info: null
+				});
+			}
+		} catch (error) {
+			return reject(error);
+		}
 	});
 };

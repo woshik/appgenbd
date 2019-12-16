@@ -6,8 +6,19 @@ const { format } = require("date-and-time");
 const { user } = require(join(BASE_DIR, "urlconf", "sideBar"));
 const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util"));
 const { passwordChange } = require(join(MODEL_DIR, "user/Model_Dashboard"));
+const { getDB } = require(join(BASE_DIR, "db", "database"));
 
-exports.dashboardView = (req, res, next) => {
+exports.dashboardView = async (req, res, next) => {
+	let appInstalled = null;
+
+	try {
+		appInstalled = await getDB()
+			.collection("app")
+			.countDocuments({ user_id: req.user._id });
+	} catch (error) {
+		return next(error);
+	}
+
 	res.render("user/base-template", {
 		layout: "dashboard",
 		info: companyInfo,
@@ -22,7 +33,7 @@ exports.dashboardView = (req, res, next) => {
 		accountActivationStartDate: format(new Date(req.user.account_activation_start_date), "DD-MM-YYYY"),
 		accountActivationEndDate: format(new Date(req.user.account_activation_end_date), "DD-MM-YYYY"),
 		maxAppCanInstall: req.user.max_app_can_install || 0,
-		appInstalled: req.user.app_installed || 0,
+		appInstalled: appInstalled,
 		totalSubscribers: req.user.total_subscribers || 0,
 		userProfileSettingURL: web.userProfileSetting.url
 	});

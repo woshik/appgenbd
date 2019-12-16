@@ -1,6 +1,7 @@
 "use strict";
 
 const { getDB } = require(join(BASE_DIR, "db", "database"));
+const { ObjectId } = require("mongodb");
 
 exports.getAppList = (query, id) => {
 	return new Promise(async (resolve, reject) => {
@@ -30,7 +31,6 @@ exports.getAppList = (query, id) => {
 			let appData = await appCollection
 				.find(where, {
 					projection: {
-						_id: 0,
 						user_id: 0,
 						app_serial: 0,
 						content: 0
@@ -43,9 +43,7 @@ exports.getAppList = (query, id) => {
 
 			return resolve({
 				list: appData,
-				recordsTotal: await appCollection.countDocuments({
-					user_id: id
-				}),
+				recordsTotal: await appCollection.countDocuments({ user_id: id }),
 				recordsFiltered: await appCollection.countDocuments(where)
 			});
 		} catch (err) {
@@ -54,20 +52,49 @@ exports.getAppList = (query, id) => {
 	});
 };
 
-exports.updateAppInfo = (appInfo, id) => {
+exports.updateAppInfo = (appInfo, id, userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			let appCollection = await getDB().createCollection("app");
+			id = ObjectId(id);
+		} catch (error) {
+			return resolve({
+				success: false,
+				message: "App name not found."
+			});
+		}
+
+		try {
+			let appCollection = await getDB().collection("app");
+
+			let appData = await appCollection.findOne(
+				{
+					_id: id,
+					user_id: userId
+				},
+				{
+					projection: {
+						provider_id: 1,
+						provider_password: 1
+					}
+				}
+			);
+
+			if (!!appData.provider_id && !!appData.provider_password) {
+				return resolve({
+					success: false,
+					message: "You already fillup app id & app password. "
+				});
+			}
 
 			await appCollection.updateOne(
 				{
-					user_id: id,
-					app_name: appInfo.appName
+					_id: appData._id,
+					user_id: userId
 				},
 				{
 					$set: {
-						app_id: appInfo.appId,
-						password: appInfo.appPassword,
+						provider_id: appInfo.appId,
+						provider_password: appInfo.appPassword,
 						app_active: true
 					}
 				}
@@ -75,7 +102,7 @@ exports.updateAppInfo = (appInfo, id) => {
 
 			return resolve({
 				success: true,
-				message: "Your app is successfully updated"
+				message: "Your app is successfully updated."
 			});
 		} catch (err) {
 			return reject(err);
@@ -83,15 +110,24 @@ exports.updateAppInfo = (appInfo, id) => {
 	});
 };
 
-exports.updateAppStatus = (appName, id) => {
+exports.updateAppStatus = (id, userId) => {
 	return new Promise(async (resolve, reject) => {
+		try {
+			id = ObjectId(id);
+		} catch (error) {
+			return resolve({
+				success: false,
+				message: "App name not found."
+			});
+		}
+
 		try {
 			let appCollection = await getDB().createCollection("app");
 
 			let appData = await appCollection.findOne(
 				{
-					user_id: id,
-					app_name: appName
+					_id: id,
+					user_id: userId
 				},
 				{
 					projection: {
@@ -113,7 +149,43 @@ exports.updateAppStatus = (appName, id) => {
 
 			return resolve({
 				success: true,
-				message: "Your app status is changed"
+				message: "Your app status is changed."
+			});
+		} catch (err) {
+			return reject(err);
+		}
+	});
+};
+
+exports.deleteApp = (id, userId) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			id = ObjectId(id);
+		} catch (error) {
+			return resolve({
+				success: false,
+				message: "App name not found."
+			});
+		}
+
+		try {
+			await getDB()
+				.collection("app")
+				.deleteMany({
+					_id: id,
+					user_id: userId
+				});
+
+			await getDB()
+				.collection("app.content")
+				.deleteMany({
+					app_id: id,
+					user_id: userId
+				});
+
+			return resolve({
+				success: true,
+				message: "Your app successfully deleted."
 			});
 		} catch (err) {
 			return reject(err);

@@ -127,45 +127,40 @@ exports.admin = (email, password) => {
 };
 
 exports.login = ({ id, role }) => {
-	return new Promise((resolve, reject) => {
-		getDB()
-			.createCollection(role === "user" ? "users" : "admin")
-			.then(collection => {
-				collection
-					.findOne(
-						{
-							_id: ObjectId(id)
-						},
-						{
-							projection: {
-								name: 1,
-								number: 1,
-								email: 1,
-								account_activation_start_date: 1,
-								account_activation_end_date: 1,
-								max_app_can_install: 1,
-								app_installed: 1,
-								total_subscribers: 1,
-								account_disable: 1,
-								trial: 1
-							}
+	return new Promise(async (resolve, reject) => {
+		try {
+			let userData = await getDB()
+				.collection(role === "user" ? "users" : "admin")
+				.findOne(
+					{
+						_id: ObjectId(id)
+					},
+					{
+						projection: {
+							name: 1,
+							number: 1,
+							email: 1,
+							account_activation_start_date: 1,
+							account_activation_end_date: 1,
+							max_app_can_install: 1,
+							total_subscribers: 1,
+							account_disable: 1,
+							trial: 1
 						}
-					)
-					.then(data => {
-						if (!data) {
-							return resolve(null, false);
-						} else if (!!data.account_disable) {
-							return resolve(null, false);
-						} else if (role === "user" && !data.trial) {
-							data.is_account_limit_available = dateTime.subtract(new Date(data.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0;
-						}
+					}
+				);
 
-						data.role = role;
-						return resolve(data);
-					})
-					.catch(err => reject(err));
-			})
-			.catch(err => reject(err));
+			if (!userData || !!userData.account_disable) {
+				return resolve(null, false);
+			} else if (role === "user" && !userData.trial) {
+				userData.is_account_limit_available = dateTime.subtract(new Date(userData.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0;
+			}
+
+			userData.role = role;
+			return resolve(userData);
+		} catch (error) {
+			return reject(error);
+		}
 	});
 };
 

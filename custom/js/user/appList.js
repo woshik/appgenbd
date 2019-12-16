@@ -18,8 +18,8 @@ $(document).ready(function() {
 			}
 		],
 		lengthMenu: [
-			[5, 10, 25, 50, 75, 100, 200],
-			[5, 10, 25, 50, 75, 100, 200]
+			[5, 10, 25, 50, 75, 100],
+			[5, 10, 25, 50, 75, 100]
 		]
 	});
 
@@ -29,9 +29,10 @@ $(document).ready(function() {
 
 	$("#update-app-info-message").fadeOut(0);
 	$("#app-status-change-message").fadeOut(0);
+	$("#delete-app-message").fadeOut(0);
 });
 
-function appInfoUpdate(appName) {
+function appInfoUpdate(id) {
 	$("#appInfoUpdateForm")
 		.unbind("submit")
 		.bind("submit", function(e) {
@@ -46,7 +47,7 @@ function appInfoUpdate(appName) {
 				headers: {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
-				data: form.serialize() + "&appName=" + appName,
+				data: form.serialize() + "&id=" + id,
 				dataType: "json",
 				beforeSend: function beforeSend() {
 					button
@@ -56,7 +57,7 @@ function appInfoUpdate(appName) {
 						.css("cursor", "no-drop");
 				},
 				success: function success(res) {
-					if (res.success === true) {
+					if (res.success) {
 						appList.ajax.reload(null, false);
 						$("#updateAppInfoModal").modal("hide");
 						$("#app-list-message")
@@ -84,7 +85,7 @@ function appInfoUpdate(appName) {
 		});
 }
 
-function appStatusChange(appName) {
+function appStatusChange(id) {
 	$("#appStatusChangeForm")
 		.unbind("submit")
 		.bind("submit", function(e) {
@@ -99,7 +100,7 @@ function appStatusChange(appName) {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
 				data: {
-					appName: appName
+					id: id
 				},
 				dataType: "json",
 				beforeSend: function beforeSend() {
@@ -110,7 +111,7 @@ function appStatusChange(appName) {
 						.css("cursor", "no-drop");
 				},
 				success: function success(res) {
-					if (res.success === true) {
+					if (res.success) {
 						appList.ajax.reload(null, false);
 						$("#appStatusChangeModal").modal("hide");
 						$("#app-list-message")
@@ -122,6 +123,60 @@ function appStatusChange(appName) {
 							.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
 							.fadeIn(1000);
 						clearMessage("app-status-change-message");
+					}
+				},
+				complete: function complete(jqXHR, textStatus) {
+					if (textStatus === "success") {
+						button
+							.removeAttr("disabled")
+							.css("cursor", "")
+							.text(btnText)
+							.children()
+							.remove();
+					}
+				}
+			});
+		});
+}
+
+function deleteApp(id) {
+	$("#deleteAppForm")
+		.unbind("submit")
+		.bind("submit", function(e) {
+			e.preventDefault();
+			var button = $("#deleteAppButton"),
+				btnText = button.text().trim(),
+				form = $(this);
+			$.ajax({
+				url: form.attr("action"),
+				type: "DELETE",
+				headers: {
+					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+				},
+				data: {
+					id: id
+				},
+				dataType: "json",
+				beforeSend: function beforeSend() {
+					button
+						.text(btnText + "...")
+						.append('<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">')
+						.attr("disabled", "disabled")
+						.css("cursor", "no-drop");
+				},
+				success: function success(res) {
+					if (res.success) {
+						appList.ajax.reload(null, false);
+						$("#deleteAppModal").modal("hide");
+						$("#app-list-message")
+							.html('<div class="alert alert-success" role="alert">' + res.message + "</div>")
+							.fadeIn(1000);
+						clearMessage("app-list-message");
+					} else {
+						$("#delete-app-message")
+							.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
+							.fadeIn(1000);
+						clearMessage("delete-app-message");
 					}
 				},
 				complete: function complete(jqXHR, textStatus) {

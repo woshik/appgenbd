@@ -27,19 +27,20 @@ $(document).ready(function() {
 						.css("cursor", "no-drop");
 				},
 				success: function success(res) {
-					if (res.success === true) {
+					if (res.success) {
 						if (check === 1) {
 							$("#smsUrl").val(res.info.sms);
 							$("#ussdUrl").val(res.info.ussd);
 							$("#sectionHidden").slideDown();
-							$("#installAppForm").attr("action", res.info.url);
+							form.attr("action", res.info.url);
 							$("#appName").attr("readonly", "readonly");
+							$("#rowId").val(res.info.id);
 							check++;
 						} else {
 							$("#sectionHidden").slideUp();
-							$("#installAppForm")[0].reset();
+							form[0].reset();
 							$("#appName").removeAttr("readonly", "readonly");
-							$("#installAppForm").attr("action", res.info.url);
+							form.attr("action", res.info.url);
 							$("#message")
 								.html('<div class="alert alert-success" role="alert">' + res.info.message + "</div>")
 								.fadeIn(1000);

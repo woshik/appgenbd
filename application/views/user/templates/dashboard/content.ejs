@@ -1,67 +1,66 @@
 <div class="container-fluid">
-    <%if(!isAccountLimitAvailable && !trialVersion){%>
-    <div class="alert alert-danger text-center" role="alert"> Your account expired. Please pay your monthly bill.</div>
-    <%}%>
-    <%if(trialVersion){%>
-    <div class="alert alert-danger text-center" role="alert"> Your are now using trial version. Please active your account.</div>
-    <%}%>
-    <div class="row">
-        <div class="outer-w3-agile col-xl">
-            <h4 class="tittle-w3-agileits mb-2">Server Overview</h4>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-1">
-                <div class="s-l">
-                    <h5>Account Active Date</h5>
-                </div>
-                <div class="s-r">
-                    <h6>
-                        <%=accountActivationStartDate%>
-                    </h6>
-                </div>
-            </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-2">
-                <div class="s-l">
-                    <h5>Account Expire Date</h5>
-                </div>
-                <div class="s-r">
-                    <h6>
-                        <%=accountActivationEndDate%>
-                    </h6>
-                </div>
-            </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-4">
-                <div class="s-l">
-                    <h5>Max App Install</h5>
-                </div>
-                <div class="s-r">
-                    <h6>
-                        <%=maxAppCanInstall%>
-                    </h6>
-                </div>
-            </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-5">
-                <div class="s-l">
-                    <h5>App Installed</h5>
-                </div>
-                <div class="s-r">
-                    <h6>
-                        <%=appInstalled%>
-                    </h6>
-                </div>
-            </div>
-            <div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-6">
-                <div class="s-l">
-                    <h5>Total Subscribers</h5>
-                </div>
-                <div class="s-r">
-                    <h6>
-                        <%=totalSubscribers%>
-                    </h6>
-                </div>
-            </div>
-        </div>
-        <div class="outer-w3-agile col-xl ml-xl-3 mt-xl-0 mt-3">
-            <h4 class="tittle-w3-agileits mb-2">Calender</h4>
-            <div class="calender"></div>
-        </div>
-    </div>
+	<%if(trialVersion) {%>
+	<div class="alert alert-danger text-center" role="alert">Your are now using trial version. Please active your account.</div>
+	<%} else if(!isAccountLimitAvailable) {%>
+	<div class="alert alert-danger text-center" role="alert">Your account expired. Please pay your monthly bill.</div>
+	<%}%>
+	<div class="row">
+		<div class="outer-w3-agile col-xl">
+			<h4 class="tittle-w3-agileits mb-2">Server Overview</h4>
+			<div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-1">
+				<div class="s-l">
+					<h5>Account Active Date</h5>
+				</div>
+				<div class="s-r">
+					<h6>
+						<%=accountActivationStartDate%>
+					</h6>
+				</div>
+			</div>
+			<div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-2">
+				<div class="s-l">
+					<h5>Account Expire Date</h5>
+				</div>
+				<div class="s-r">
+					<h6>
+						<%=accountActivationEndDate%>
+					</h6>
+				</div>
+			</div>
+			<div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-4">
+				<div class="s-l">
+					<h5>Max App Install</h5>
+				</div>
+				<div class="s-r">
+					<h6>
+						<%=maxAppCanInstall%>
+					</h6>
+				</div>
+			</div>
+			<div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-5">
+				<div class="s-l">
+					<h5>App Installed</h5>
+				</div>
+				<div class="s-r">
+					<h6>
+						<%=appInstalled%>
+					</h6>
+				</div>
+			</div>
+			<div class="stat-grid p-3 mt-3 d-flex align-items-center justify-content-between custom-block block-6">
+				<div class="s-l">
+					<h5>Total Subscribers</h5>
+				</div>
+				<div class="s-r">
+					<h6>
+						<%=totalSubscribers%>
+					</h6>
+				</div>
+			</div>
+		</div>
+		<div class="outer-w3-agile col-xl ml-xl-3 mt-xl-0 mt-3">
+			<h4 class="tittle-w3-agileits mb-2">Calender</h4>
+			<div class="calender"></div>
+		</div>
+	</div>
 </div>

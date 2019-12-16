@@ -1,14 +1,13 @@
 "use strict";
 
 const Joi = require("@hapi/joi");
-const entities = new (require("html-entities").AllHtmlEntities)();
 const { format } = require("date-and-time");
 const web = require(join(BASE_DIR, "urlconf", "webRule"));
 const { user } = require(join(BASE_DIR, "urlconf", "sideBar"));
 const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util"));
-const { getAppList, updateAppInfo, updateAppStatus } = require(join(MODEL_DIR, "user/Model_App_List"));
+const { getAppList, updateAppInfo, updateAppStatus, deleteApp } = require(join(MODEL_DIR, "user/Model_App_List"));
 
-exports.appListView = (req, res, next) => {
+exports.appListView = (req, res) => {
 	res.render("user/base-template", {
 		layout: "app-list",
 		info: companyInfo,
@@ -21,6 +20,7 @@ exports.appListView = (req, res, next) => {
 		flashMessage: req.flash("appListPageMessage"),
 		appInfoUpdateUrl: web.appdInfoUpdate.url,
 		appStatusChangeUrl: web.appStatusChange.url,
+		deleteAppUrl: web.deleteApp.url,
 		userProfileSettingURL: web.userProfileSetting.url
 	});
 };
@@ -31,39 +31,39 @@ exports.appList = (req, res, next) => {
 			let response = [];
 			appList.list.map(appData => {
 				let actionBtn =
-					!!appData.app_id && !!appData.password
+					!!appData.provider_id && !!appData.provider_password
 						? appData.app_active
 							? `
-						<a href="${web.appdetails.url}?appname=${appData.app_name}" title="Details" class="btn btn-primary btn-icon" >
-							<i class="fas fa-eye"></i>
-						</a>
-						<a href="${web.contentUpload.url}?appname=${appData.app_name}" title="Message upload" class="btn btn-primary btn-icon">
-							<i class="fas fa-cloud-upload-alt"></i>
-						</a>
-						`
-							: ""
-						: `
-						<a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfoModal" onclick="appInfoUpdate('${appData.app_name}')" data-backdrop="static">
-							<i class="fas fa-file-invoice"></i>
-						</a>`;
-
-				actionBtn +=
-					!!appData.app_id && !!appData.password
-						? appData.app_active
-							? `
-									<a href="javascript:void(0)" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Deactivate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
-										<i class="fas fa-toggle-off"></i>
-									</a>
-									`
+							<a href="${web.appdetails.url}?id=${appData._id}" title="Details" class="btn btn-primary btn-icon" >
+								<i class="fas fa-eye"></i>
+							</a>
+							<a href="${web.contentUpload.url}?id=${appData._id}" title="Message upload" class="btn btn-primary btn-icon">
+								<i class="fas fa-cloud-upload-alt"></i>
+							</a>
+							<a href="javascript:void(0)" class="btn btn-warning btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Deactivate Your App" onclick="appStatusChange('${appData._id}')" data-backdrop="static">
+								<i class="fas fa-toggle-off"></i>
+							</a>
+							`
 							: `
-									<a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Activate Your App" onclick="appStatusChange('${appData.app_name}')" data-backdrop="static">
-										<i class="fas fa-toggle-on"></i>
-									</a>`
-						: "";
+							<a href="javascript:void(0)" class="btn btn-success btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Activate Your App" onclick="appStatusChange('${appData._id}')" data-backdrop="static">
+								<i class="fas fa-toggle-on"></i>
+							</a>
+							`
+						: `
+						<a href="javascript:void(0)" title="Update App Information" class="btn btn-primary btn-icon" type="button" data-toggle="modal" data-target="#updateAppInfoModal" onclick="appInfoUpdate('${appData._id}')" data-backdrop="static">
+							<i class="fas fa-file-invoice"></i>
+						</a>
+						`;
+
+				actionBtn += `
+					<a href="javascript:void(0)" title="Delete Your App" class="btn btn-danger btn-icon" type="button" data-toggle="modal" data-target="#deleteAppModal" onclick="deleteApp('${appData._id}')" data-backdrop="static">
+						<i class="fas fa-trash-alt"></i>
+					</a>
+				`;
 
 				response.push([
 					appData.app_name,
-					appData.app_id,
+					appData.provider_id,
 					appData.subscribe || 0,
 					appData.dial || 0,
 					format(appData.create_date_time, "DD-MM-YYYY hh:mm:ss A"),
@@ -85,23 +85,19 @@ exports.appUpdate = (req, res, next) => {
 	const schema = Joi.object({
 		appId: Joi.string()
 			.trim()
+			.pattern(/^[a-zA-Z0-9_-\s]+$/)
 			.required()
+			.uppercase()
 			.label("App Id"),
 		appPassword: Joi.string()
 			.trim()
 			.required()
-			.label("Password"),
-		appName: Joi.string()
-			.trim()
-			.pattern(/^[a-zA-Z0-9_-\s]+$/)
-			.required()
-			.label("App Name")
+			.label("Password")
 	});
 
 	const validateResult = schema.validate({
-		appId: entities.encode(req.body.appId),
-		appPassword: entities.encode(req.body.appPassword),
-		appName: req.body.appName
+		appId: req.body.appId,
+		appPassword: req.body.appPassword
 	});
 
 	if (validateResult.error) {
@@ -111,13 +107,17 @@ exports.appUpdate = (req, res, next) => {
 		});
 	}
 
-	updateAppInfo(validateResult.value, req.user._id)
+	updateAppInfo(validateResult.value, req.body.id, req.user._id)
 		.then(result => res.json(result))
 		.catch(err => next(err));
 };
 
-exports.appStatusChange = (req, res, next) => {
-	updateAppStatus(req.body.appName, req.user._id)
+exports.appStatusChange = (req, res, next) =>
+	updateAppStatus(req.body.id, req.user._id)
 		.then(result => res.json(result))
 		.catch(err => next(err));
-};
+
+exports.deleteApp = (req, res, next) =>
+	deleteApp(req.body.id, req.user._id)
+		.then(result => res.json(result))
+		.catch(err => next(err));
