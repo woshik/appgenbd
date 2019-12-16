@@ -148,9 +148,8 @@ exports.contentUpload = async (req, res, next) => {
 
 								appContentCollection
 									.insertOne({
-										app_id: appData._id,
 										user_id: req.user._id,
-										provider_id: appData.provider_id,
+										app_id: appData._id,
 										date: `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`,
 										time: `${splitDateTime[1]} ${splitDateTime[2]}`,
 										message: validateResult.value.content

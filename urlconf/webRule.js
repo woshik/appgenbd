@@ -216,11 +216,20 @@ module.exports = {
 		path: "user"
 	},
 
-	updateContentUpload: {
-		url: "/user/edit-content",
+	getContent: {
+		url: "/user/get-content",
 		controller: "AppDetails",
 		methods: {
-			getContent: "get",
+			getContent: "get"
+		},
+		middleware: [isUserAuthenticated, isUserCanAccess],
+		path: "user"
+	},
+
+	updateContent: {
+		url: "/user/update-content",
+		controller: "AppDetails",
+		methods: {
 			updateContent: "post"
 		},
 		middleware: [isUserAuthenticated, isUserCanAccess],

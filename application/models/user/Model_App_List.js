@@ -3,7 +3,7 @@
 const { getDB } = require(join(BASE_DIR, "db", "database"));
 const { ObjectId } = require("mongodb");
 
-exports.getAppList = (query, id) => {
+exports.getAppList = (query, userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
 			let order = ["app_name", "app_id", "subscribe", "dial", "create_date", "app_active"];
@@ -17,7 +17,7 @@ exports.getAppList = (query, id) => {
 			}
 
 			let where = {
-				user_id: id,
+				user_id: userId,
 				$or: [
 					{
 						app_name: RegExp(`.*${query.search.value}.*`, "i")
@@ -42,7 +42,7 @@ exports.getAppList = (query, id) => {
 
 			return resolve({
 				list: appData,
-				recordsTotal: await appCollection.countDocuments({ user_id: id }),
+				recordsTotal: await appCollection.countDocuments({ user_id: userId }),
 				recordsFiltered: await appCollection.countDocuments(where)
 			});
 		} catch (err) {

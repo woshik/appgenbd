@@ -2,9 +2,11 @@
 
 const Joi = require("@hapi/joi");
 const web = require(join(BASE_DIR, "urlconf", "webRule"));
+const entities = new (require("html-entities").AllHtmlEntities)();
+const { format } = require("date-and-time");
 const { user } = require(join(BASE_DIR, "urlconf", "sideBar"));
 const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util"));
-const { checkAppIsActive, getAppMessageContent } = require(join(MODEL_DIR, "user/Model_App_Details"));
+const { checkAppIsActive, getAppMessageContent, getContent, updateMessageContent } = require(join(MODEL_DIR, "user/Model_App_Details"));
 
 exports.appDetailsView = (req, res, next) => {
 	checkAppIsActive(req.query.appId, req.user._id)
@@ -21,7 +23,7 @@ exports.appDetailsView = (req, res, next) => {
 					csrfToken: req.csrfToken(),
 					appId: req.query.appId,
 					appDetailUrl: req.path,
-					updateContentUrl: web.updateContentUpload.url,
+					updateContentUrl: web.updateContent.url,
 					userProfileSettingURL: web.userProfileSetting.url,
 					ussd: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${info.app_name}/ussd`,
 					sms: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${info.app_name}/sms`
@@ -38,14 +40,14 @@ exports.getAppMessageContent = (req, res, next) => {
 	getAppMessageContent(req.query, req.user._id)
 		.then(result => {
 			let response = [];
-			!!result.list.content &&
-				result.list.content.map(item => {
+			!!result.list &&
+				result.list.map(item => {
 					response.push([
-						item.date,
+						format(new Date(item.date), "DD-MM-YYYY"),
 						item.time,
 						item.message.substring(0, 80),
 						!!item.send ? "Send" : "Panding",
-						`<a href="javascript:void(0)" title="Edit Message" class="btn btn-info btn-icon" type="button" data-toggle="modal" data-target="#updateAppMessage" onclick="updateAppMessage('${item.date}','${item.time}','${req.params.appName}')" data-backdrop="static">
+						`<a href="javascript:void(0)" title="Edit Message" class="btn btn-info" type="button" data-toggle="modal" data-target="#updateAppContentModel" onclick="updateAppMessage('${item._id}')" data-backdrop="static">
 							<i class="far fa-edit"></i>
 						</a>`
 					]);
@@ -60,85 +62,13 @@ exports.getAppMessageContent = (req, res, next) => {
 		.catch(err => next(err));
 };
 
-exports.getContent = (req, res, next) => {
-	const schema = Joi.object({
-		date: Joi.string()
-			.trim()
-			.pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/)
-			.required()
-			.label("Date"),
-		time: Joi.string()
-			.trim()
-			.pattern(/^[0-1][0-9]:00 (am|pm)$/)
-			.required()
-			.label("Time"),
-		appName: Joi.string()
-			.trim()
-			.required()
-			.label("App name")
-	});
-
-	const validateResult = schema.validate({
-		date: req.query.date,
-		time: req.query.time,
-		appName: req.query.appName
-	});
-
-	if (validateResult.error) {
-		return res.status(200).json({
-			success: false,
-			message: fromErrorMessage(validateResult.error.details[0])
-		});
-	}
-
-	const app = new model("app");
-	app.findOne(
-		{
-			user_id: req.user._id,
-			app_name: validateResult.value.appName
-		},
-		{
-			_id: 0,
-			content: {
-				$elemMatch: {
-					date: validateResult.value.date,
-					time: validateResult.value.time
-				}
-			}
-		}
-	)
-		.then(result => {
-			if (result.length === 0) {
-				return res.json({
-					success: false,
-					message: "App not found."
-				});
-			}
-
-			return res.json({
-				success: true,
-				message: result.content[0].message
-			});
-		})
+exports.getContent = (req, res, next) =>
+	getContent(req.query.appContentId, req.query.appId, req.user._id)
+		.then(result => res.json(result))
 		.catch(err => next(err));
-};
 
 exports.updateContent = (req, res, next) => {
 	const schema = Joi.object({
-		date: Joi.string()
-			.trim()
-			.pattern(/^20[0-9]{2}-[0-1][0-9]-[0-3][0-9]$/)
-			.required()
-			.label("Date"),
-		time: Joi.string()
-			.trim()
-			.pattern(/^[0-1][0-9]:00 (am|pm)$/)
-			.required()
-			.label("Time"),
-		appName: Joi.string()
-			.trim()
-			.required()
-			.label("App name"),
 		message: Joi.string()
 			.trim()
 			.required()
@@ -146,43 +76,17 @@ exports.updateContent = (req, res, next) => {
 	});
 
 	const validateResult = schema.validate({
-		date: req.body.date,
-		time: req.body.time,
-		appName: req.body.appName,
-		message: req.body.message
+		message: entities.encode(req.body.updateAppContent)
 	});
 
 	if (validateResult.error) {
-		return res.status(200).json({
+		return res.json({
 			success: false,
 			message: fromErrorMessage(validateResult.error.details[0])
 		});
 	}
 
-	const app = new model("app");
-	app.updateOne(
-		{
-			user_id: req.user._id,
-			app_name: validateResult.value.appName,
-			"content.date": validateResult.value.date,
-			"content.time": validateResult.value.time
-		},
-		{
-			"content.$.message": validateResult.value.message
-		}
-	)
-		.then(updateInfo => {
-			if (!updateInfo.result.nModified) {
-				return res.json({
-					success: false,
-					message: "Server Error. Please try again later."
-				});
-			}
-
-			return res.json({
-				success: true,
-				message: "successfully updated."
-			});
-		})
+	updateMessageContent(req.body.appContentId, req.body.appId, req.user._id, validateResult.value.message)
+		.then(result => res.json(result))
 		.catch(err => next(err));
 };

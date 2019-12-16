@@ -48,24 +48,24 @@
 <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="updateAppContentModalLabel" aria-hidden="true" id="updateAppContentModel">
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content">
-			<form action="<%=updateContentUrl%>" method="post" id="updateContentURL">
+			<form action="<%=updateContentUrl%>" method="post" id="updateContentForm">
 				<div class="modal-header">
 					<h4 class="modal-title" id="updateAppContentModalLabel">Update App Content</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="$('#updateAppContent').val('')">
 						<span aria-hidden="true">×</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					<div id="update-app-message-content"></div>
+					<div id="update-app-content-message"></div>
 					<div class="form-group row">
 						<div class="form-group col-md-12">
-							<label for="updateAppMessageContent">Message</label>
-							<textarea class="form-control" name="updateAppMessageContent" id="updateAppContent" rows="3"></textarea>
+							<label for="updateAppContent">Message</label>
+							<textarea class="form-control" name="updateAppContent" id="updateAppContent" rows="3"></textarea>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="submit" class="btn btn-success" id="updateAppMessageBtn">Change</button>
+					<button type="submit" class="btn btn-success" id="updateAppContentBtn">Change</button>
 				</div>
 			</form>
 		</div>

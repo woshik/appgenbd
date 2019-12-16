@@ -5,8 +5,6 @@ $(document).ready(function() {
 	messageContentTable = $("#messageContentTable").DataTable({
 		processing: true,
 		serverSide: true,
-		ordering: false,
-		searching: false,
 		ajax: {
 			url: "/user/app-message-content",
 			type: "GET",
@@ -14,75 +12,93 @@ $(document).ready(function() {
 				appId: $("#appId").val()
 			}
 		},
+		columnDefs: [
+			{
+				targets: [1, 2, 4],
+				orderable: false
+			}
+		],
 		lengthMenu: [
-			[10, 25, 50, 75],
-			[10, 25, 50, 75]
+			[5, 10, 25, 50, 75],
+			[5, 10, 25, 50, 75]
 		]
 	});
+	$("#update-app-content-message").fadeOut(0);
+	$("#content-message").fadeOut(0);
+});
 
-	$("#updateAppMessageBtn")
-		.unbind("click")
-		.bind("click", function(e) {
+function updateAppMessage(appContentId) {
+	$.ajax({
+		url: "/user/get-content",
+		type: "GET",
+		headers: {
+			"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+		},
+		data: {
+			appContentId: appContentId,
+			appId: $("#appId").val()
+		},
+		dataType: "json",
+		success: function success(res) {
+			if (res.success === true) {
+				$("#updateAppContent").val(res.message);
+			} else {
+				$("#update-app-content-message")
+					.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
+					.fadeIn(1000);
+				clearMessage("update-app-content-message");
+			}
+		}
+	});
+	$("#updateContentForm")
+		.unbind("submit")
+		.bind("submit", function(e) {
+			e.preventDefault();
+			var button = $("#updateAppContentBtn"),
+				btnText = button.text().trim(),
+				form = $(this);
 			$.ajax({
-				url: "<%=updateContentUrl%>",
-				type: "POST",
+				url: form.attr("action"),
+				type: form.attr("method"),
 				headers: {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
-				data: {
-					date: date,
-					time: time,
-					appName: appName,
-					message: $("#updateAppMessageContent").val()
-				},
+				data: form.serialize() + "&appContentId=" + appContentId + "&appId=" + $("#appId").val(),
 				dataType: "json",
+				beforeSend: function beforeSend() {
+					button
+						.text(btnText + "...")
+						.append('<img src="/images/icons/loading.svg" alt="loading" style="margin-left:10px">')
+						.attr("disabled", "disabled")
+						.css("cursor", "no-drop");
+				},
 				success: function success(res) {
 					if (res.success) {
+						messageContentTable.ajax.reload(null, false);
+						$("#updateAppContentModel").modal("hide");
 						$("#content-message")
 							.html('<div class="alert alert-success" role="alert">' + res.message + "</div>")
 							.fadeIn(1000);
 						clearMessage("content-message");
-						appList.ajax.reload(null, false);
-						$("#updateAppMessage").modal("hide");
 					} else {
-						$("#update-app-message-content")
+						$("#update-app-content-message")
 							.html("<div class='alert alert-warning' role='alert'>" + res.message + "</div>")
 							.fadeIn(1000);
-						clearMessage("update-app-message-content");
+						clearMessage("update-app-content-message");
+					}
+				},
+				complete: function complete(jqXHR, textStatus) {
+					if (textStatus === "success") {
+						button
+							.removeAttr("disabled")
+							.css("cursor", "")
+							.text(btnText)
+							.children()
+							.remove();
 					}
 				}
 			});
 		});
-});
-
-function updateAppMessage(date, time, appName) {
-	if (date && time && appName) {
-		$("#update-app-message-content").fadeOut(0);
-		$("#content-message").fadeOut(0);
-		$.ajax({
-			url: "<%=updateContentUrl%>",
-			type: "GET",
-			headers: {
-				"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
-			},
-			data: {
-				date: date,
-				time: time,
-				appName: appName
-			},
-			dataType: "json",
-			success: function success(res) {
-				if (res.success === true) {
-					$("#updateAppMessageContent").val(res.message);
-				} else {
-					$("#update-app-message-content")
-						.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
-						.fadeIn(1000);
-					clearMessage("update-app-message-content");
-				}
-			}
-		});
-	}
 }
 
 function clearMessage(id) {
