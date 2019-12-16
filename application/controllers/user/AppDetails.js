@@ -7,24 +7,24 @@ const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util")
 const { checkAppIsActive, getAppMessageContent } = require(join(MODEL_DIR, "user/Model_App_Details"));
 
 exports.appDetailsView = (req, res, next) => {
-	checkAppIsActive(req.query.appname, req.user._id)
+	checkAppIsActive(req.query.appId, req.user._id)
 		.then(({ success, info }) => {
 			if (success) {
 				return res.render("user/base-template", {
 					layout: "app-details",
 					info: companyInfo,
-					title: `App Details - ${req.query.appname}`,
+					title: `App Details - ${info.app_name}`,
 					userName: req.user.name,
 					email: req.user.email,
 					sidebar: user,
 					path: "/user/app-list",
 					csrfToken: req.csrfToken(),
-					appName: req.query.appname,
+					appId: req.query.appId,
 					appDetailUrl: req.path,
 					updateContentUrl: web.updateContentUpload.url,
 					userProfileSettingURL: web.userProfileSetting.url,
-					ussd: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${req.query.appname}/ussd`,
-					sms: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${req.query.appname}/sms`
+					ussd: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${info.app_name}/ussd`,
+					sms: `${req.protocol}://${req.hostname}/api/${info.app_serial}/${info.app_name}/sms`
 				});
 			} else {
 				req.flash("appListPageMessage", "App not found.");

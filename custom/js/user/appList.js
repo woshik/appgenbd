@@ -32,7 +32,7 @@ $(document).ready(function() {
 	$("#delete-app-message").fadeOut(0);
 });
 
-function appInfoUpdate(id) {
+function appInfoUpdate(appId) {
 	$("#appInfoUpdateForm")
 		.unbind("submit")
 		.bind("submit", function(e) {
@@ -47,7 +47,7 @@ function appInfoUpdate(id) {
 				headers: {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
-				data: form.serialize() + "&id=" + id,
+				data: form.serialize() + "&appId=" + appId,
 				dataType: "json",
 				beforeSend: function beforeSend() {
 					button
@@ -85,7 +85,7 @@ function appInfoUpdate(id) {
 		});
 }
 
-function appStatusChange(id) {
+function appStatusChange(appId) {
 	$("#appStatusChangeForm")
 		.unbind("submit")
 		.bind("submit", function(e) {
@@ -100,7 +100,7 @@ function appStatusChange(id) {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
 				data: {
-					id: id
+					appId: appId
 				},
 				dataType: "json",
 				beforeSend: function beforeSend() {
@@ -139,7 +139,7 @@ function appStatusChange(id) {
 		});
 }
 
-function deleteApp(id) {
+function deleteApp(appId) {
 	$("#deleteAppForm")
 		.unbind("submit")
 		.bind("submit", function(e) {
@@ -154,7 +154,7 @@ function deleteApp(id) {
 					"CSRF-Token": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
 				},
 				data: {
-					id: id
+					appId: appId
 				},
 				dataType: "json",
 				beforeSend: function beforeSend() {

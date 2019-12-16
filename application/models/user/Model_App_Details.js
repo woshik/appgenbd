@@ -1,20 +1,30 @@
 "use strict";
 
 const { getDB } = require(join(BASE_DIR, "db", "database"));
+const { ObjectId } = require("mongodb");
 
-exports.checkAppIsActive = (appName, id) => {
+exports.checkAppIsActive = (appId, userId) => {
 	return new Promise(async (resolve, reject) => {
+		try {
+			appId = ObjectId(appId);
+		} catch (error) {
+			return resolve({ success: false });
+		}
+
 		getDB()
 			.collection("app")
 			.findOne(
 				{
-					user_id: id,
-					app_name: appName,
+					_id: appId,
+					user_id: userId,
 					app_active: true
 				},
 				{
-					_id: 1,
-					app_serial: 1
+					projection: {
+						_id: 1,
+						app_serial: 1,
+						app_name: 1
+					}
 				}
 			)
 			.then(result => {
@@ -33,15 +43,26 @@ exports.checkAppIsActive = (appName, id) => {
 	});
 };
 
-exports.getAppMessageContent = (query, id) => {
+exports.getAppMessageContent = (query, userId) => {
+	let appId = null;
+	try {
+		appId = ObjectId(query.appId);
+	} catch (error) {
+		return resolve({
+			list: [],
+			recordsTotal: 0
+		});
+	}
+
 	return new Promise(async (resolve, reject) => {
 		try {
-			let appCollection = await getDB().collection("app");
+			let appCollection = await getDB().collection("app.content");
 			let where = {
-				user_id: id,
-				app_name: query.appName,
+				user_id: userId,
+				app_id: appId,
 				app_active: true
 			};
+
 			let appMessageContent = await appCollection.findOne(where, {
 				projection: {
 					_id: 1,

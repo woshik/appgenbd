@@ -21,7 +21,7 @@ exports.insertAppName = (appName, userID) => {
 			return resolve({
 				success: true,
 				info: {
-					id: appData.ops[0]._id,
+					appId: appData.ops[0]._id,
 					serial: appData.ops[0].app_serial
 				}
 			});
@@ -31,10 +31,10 @@ exports.insertAppName = (appName, userID) => {
 	});
 };
 
-exports.installApp = (appInfo, id, userID) => {
+exports.installApp = (appInfo, appId, userID) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			id = ObjectId(id);
+			appId = ObjectId(appId);
 		} catch (error) {
 			return resolve({
 				success: false,
@@ -47,13 +47,13 @@ exports.installApp = (appInfo, id, userID) => {
 				.collection("app")
 				.updateOne(
 					{
-						_id: id,
+						_id: appId,
 						user_id: userID
 					},
 					{
 						$set: {
-							provider_id: appInfo.appId,
-							provider_password: appInfo.password,
+							provider_id: appInfo.providerId,
+							provider_password: appInfo.providerPassword,
 							app_active: true
 						}
 					}

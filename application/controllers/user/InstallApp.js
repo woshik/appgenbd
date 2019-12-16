@@ -71,7 +71,7 @@ exports.appName = async (req, res, next) => {
 				return res.json({
 					success: success,
 					info: {
-						id: info.id,
+						appId: info.appId,
 						ussd: `${req.protocol}://${req.hostname}/api/${info.serial}/${validateResult.value.appName}/ussd`,
 						sms: `${req.protocol}://${req.hostname}/api/${info.serial}/${validateResult.value.appName}/sms`,
 						url: web.installApp.url
@@ -89,21 +89,21 @@ exports.appName = async (req, res, next) => {
 
 exports.installApp = (req, res, next) => {
 	const schema = Joi.object({
-		appId: Joi.string()
+		providerId: Joi.string()
 			.required()
 			.trim()
 			.pattern(/^[a-zA-Z0-9_-\s]+$/)
 			.uppercase()
 			.label("App Id"),
-		password: Joi.string()
+		providerPassword: Joi.string()
 			.required()
 			.trim()
-			.label("Password")
+			.label("App Password")
 	});
 
 	const validateResult = schema.validate({
-		appId: req.body.appId,
-		password: req.body.appPassword
+		providerId: req.body.providerId,
+		providerPassword: req.body.providerPassword
 	});
 
 	if (validateResult.error) {
@@ -113,13 +113,13 @@ exports.installApp = (req, res, next) => {
 		});
 	}
 
-	installApp(validateResult.value, req.body.id, req.user._id)
+	installApp(validateResult.value, req.body.appId, req.user._id)
 		.then(({ success, info }) => {
 			if (success) {
 				return res.json({
 					success: success,
 					info: {
-						message: "Your app is successfully installed",
+						message: "Your app is successfully installed.",
 						url: web.appName.url
 					}
 				});

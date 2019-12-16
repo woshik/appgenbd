@@ -8,9 +8,10 @@ const { user } = require(join(BASE_DIR, "urlconf", "sideBar"));
 const { companyInfo, fromErrorMessage } = require(join(BASE_DIR, "core", "util"));
 const { checkAppIsActive } = require(join(MODEL_DIR, "user/Model_Content_Upload"));
 const { getDB } = require(join(BASE_DIR, "db", "database"));
+const { ObjectId } = require("mongodb");
 
 exports.contentUploadView = (req, res, next) => {
-	checkAppIsActive(req.query.appname, req.user._id)
+	checkAppIsActive(req.query.appId, req.user._id)
 		.then(success => {
 			if (success) {
 				return res.render("user/base-template", {
@@ -22,7 +23,7 @@ exports.contentUploadView = (req, res, next) => {
 					csrfToken: req.csrfToken(),
 					userName: req.user.name,
 					email: req.user.email,
-					appName: req.query.appname,
+					appId: req.query.appId,
 					contentUploadFormURL: web.contentUpload.url,
 					userProfileSettingURL: web.userProfileSetting.url
 				});
@@ -38,6 +39,17 @@ exports.contentUpload = async (req, res, next) => {
 	let message = req.body.messageContent;
 	let messageDateTime = req.body.dateTime;
 	let position = req.body.position;
+
+	let appId = null;
+
+	try {
+		appId = ObjectId(req.body.appId);
+	} catch (error) {
+		return res.json({
+			success: false,
+			message: "App Not Found."
+		});
+	}
 
 	if (typeof message === "undefined" || typeof messageDateTime === "undefined" || typeof position === "undefined") {
 		return res.json({
@@ -100,13 +112,14 @@ exports.contentUpload = async (req, res, next) => {
 				appCollection
 					.findOne(
 						{
+							_id: appId,
 							user_id: req.user._id,
-							app_name: req.body.appname,
 							app_active: true
 						},
 						{
 							projection: {
-								_id: 1
+								_id: 1,
+								provider_id: 1
 							}
 						}
 					)
@@ -137,7 +150,7 @@ exports.contentUpload = async (req, res, next) => {
 									.insertOne({
 										app_id: appData._id,
 										user_id: req.user._id,
-										app_name: req.body.appname,
+										provider_id: appData.provider_id,
 										date: `${splitDate[2]}-${splitDate[1]}-${splitDate[0]}`,
 										time: `${splitDateTime[1]} ${splitDateTime[2]}`,
 										message: validateResult.value.content

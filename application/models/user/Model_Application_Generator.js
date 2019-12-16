@@ -12,8 +12,10 @@ exports.getActiveAppName = id => {
 					app_active: true
 				},
 				{
-					_id: 0,
-					app_name: 1
+					projection: {
+						_id: 0,
+						app_name: 1
+					}
 				}
 			)
 			.toArray()

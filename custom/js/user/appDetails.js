@@ -11,7 +11,7 @@ $(document).ready(function() {
 			url: "/user/app-message-content",
 			type: "GET",
 			data: {
-				appName: $("#appName").val()
+				appId: $("#appId").val()
 			}
 		},
 		lengthMenu: [
@@ -19,6 +19,7 @@ $(document).ready(function() {
 			[10, 25, 50, 75]
 		]
 	});
+
 	$("#updateAppMessageBtn")
 		.unbind("click")
 		.bind("click", function(e) {

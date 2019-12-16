@@ -34,10 +34,10 @@ exports.appList = (req, res, next) => {
 					!!appData.provider_id && !!appData.provider_password
 						? appData.app_active
 							? `
-							<a href="${web.appdetails.url}?id=${appData._id}" title="Details" class="btn btn-primary btn-icon" >
+							<a href="${web.appdetails.url}?appId=${appData._id}" title="Details" class="btn btn-primary btn-icon" >
 								<i class="fas fa-eye"></i>
 							</a>
-							<a href="${web.contentUpload.url}?id=${appData._id}" title="Message upload" class="btn btn-primary btn-icon">
+							<a href="${web.contentUpload.url}?appId=${appData._id}" title="Message upload" class="btn btn-primary btn-icon">
 								<i class="fas fa-cloud-upload-alt"></i>
 							</a>
 							<a href="javascript:void(0)" class="btn btn-warning btn-icon" type="button" data-toggle="modal" data-target="#appStatusChangeModal" title="Deactivate Your App" onclick="appStatusChange('${appData._id}')" data-backdrop="static">
@@ -83,21 +83,21 @@ exports.appList = (req, res, next) => {
 
 exports.appUpdate = (req, res, next) => {
 	const schema = Joi.object({
-		appId: Joi.string()
+		providerId: Joi.string()
 			.trim()
 			.pattern(/^[a-zA-Z0-9_-\s]+$/)
 			.required()
 			.uppercase()
 			.label("App Id"),
-		appPassword: Joi.string()
+		providerPassword: Joi.string()
 			.trim()
 			.required()
 			.label("Password")
 	});
 
 	const validateResult = schema.validate({
-		appId: req.body.appId,
-		appPassword: req.body.appPassword
+		providerId: req.body.providerId,
+		providerPassword: req.body.providerPassword
 	});
 
 	if (validateResult.error) {
@@ -107,17 +107,17 @@ exports.appUpdate = (req, res, next) => {
 		});
 	}
 
-	updateAppInfo(validateResult.value, req.body.id, req.user._id)
+	updateAppInfo(validateResult.value, req.body.appId, req.user._id)
 		.then(result => res.json(result))
 		.catch(err => next(err));
 };
 
 exports.appStatusChange = (req, res, next) =>
-	updateAppStatus(req.body.id, req.user._id)
+	updateAppStatus(req.body.appId, req.user._id)
 		.then(result => res.json(result))
 		.catch(err => next(err));
 
 exports.deleteApp = (req, res, next) =>
-	deleteApp(req.body.id, req.user._id)
+	deleteApp(req.body.appId, req.user._id)
 		.then(result => res.json(result))
 		.catch(err => next(err));

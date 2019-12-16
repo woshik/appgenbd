@@ -34,7 +34,7 @@ $(document).ready(function() {
 							$("#sectionHidden").slideDown();
 							form.attr("action", res.info.url);
 							$("#appName").attr("readonly", "readonly");
-							$("#rowId").val(res.info.id);
+							$("#appId").val(res.info.appId);
 							check++;
 						} else {
 							$("#sectionHidden").slideUp();

@@ -32,8 +32,7 @@ exports.getAppList = (query, id) => {
 				.find(where, {
 					projection: {
 						user_id: 0,
-						app_serial: 0,
-						content: 0
+						app_serial: 0
 					},
 					skip: parseInt(query.start),
 					limit: parseInt(query.length),
@@ -52,10 +51,10 @@ exports.getAppList = (query, id) => {
 	});
 };
 
-exports.updateAppInfo = (appInfo, id, userId) => {
+exports.updateAppInfo = (appInfo, appId, userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			id = ObjectId(id);
+			appId = ObjectId(appId);
 		} catch (error) {
 			return resolve({
 				success: false,
@@ -68,7 +67,7 @@ exports.updateAppInfo = (appInfo, id, userId) => {
 
 			let appData = await appCollection.findOne(
 				{
-					_id: id,
+					_id: appId,
 					user_id: userId
 				},
 				{
@@ -110,10 +109,10 @@ exports.updateAppInfo = (appInfo, id, userId) => {
 	});
 };
 
-exports.updateAppStatus = (id, userId) => {
+exports.updateAppStatus = (appId, userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			id = ObjectId(id);
+			appId = ObjectId(appId);
 		} catch (error) {
 			return resolve({
 				success: false,
@@ -126,7 +125,7 @@ exports.updateAppStatus = (id, userId) => {
 
 			let appData = await appCollection.findOne(
 				{
-					_id: id,
+					_id: appId,
 					user_id: userId
 				},
 				{
@@ -157,10 +156,10 @@ exports.updateAppStatus = (id, userId) => {
 	});
 };
 
-exports.deleteApp = (id, userId) => {
+exports.deleteApp = (appId, userId) => {
 	return new Promise(async (resolve, reject) => {
 		try {
-			id = ObjectId(id);
+			appId = ObjectId(appId);
 		} catch (error) {
 			return resolve({
 				success: false,
@@ -172,14 +171,14 @@ exports.deleteApp = (id, userId) => {
 			await getDB()
 				.collection("app")
 				.deleteMany({
-					_id: id,
+					_id: appId,
 					user_id: userId
 				});
 
 			await getDB()
 				.collection("app.content")
 				.deleteMany({
-					app_id: id,
+					app_id: appId,
 					user_id: userId
 				});
 
