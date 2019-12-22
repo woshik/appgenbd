@@ -317,14 +317,13 @@ module.exports = {
 		url: "/user-list",
 		controller: "UserList",
 		methods: {
-			userListView: "get",
-			userList: "post"
+			userListView: "get"
 		},
 		middleware: [isAdminAuthenticated],
 		path: "admin"
 	},
 
-	userList: {
+	getUserList: {
 		url: "/user-list/get",
 		controller: "UserList",
 		methods: {

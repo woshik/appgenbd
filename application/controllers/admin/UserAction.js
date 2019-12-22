@@ -47,7 +47,6 @@ exports.accountStatusChange = (req, res, next) => {
 			message: "Please, don't violate the process."
 		});
 	}
-	console.log(req.body.id);
 
 	let user = new model("users");
 	user.findOne({

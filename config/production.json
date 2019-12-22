@@ -5,11 +5,11 @@
 	"domain": "appgenbd.com",
 	"PORT": 5000,
 	"mail": {
-		"host": "server232.web-hosting.com",
-		"username": "tech@identicalit.com",
-		"password": "199601OO7",
+		"host": "mail.techlooping.com",
+		"username": "tech@techlooping.com",
+		"password": "appgenbd@anik#0208",
 		"send_port": 465,
-		"sender_mail": "tech@identicalit.com"
+		"sender_mail": "tech@techlooping.com"
 	},
 	"session_secret": "hufasiudhfiuaba98ef98jsudvahrouifoiasjdoifjas",
 	"cookie_secret": "bhiahvyahuh;]f[a;sdfaisjrufh473gf8gsyfugsud",
@@ -18,7 +18,7 @@
 	"server_api": {
 		"subscription": "http://localhost:7000/subscription/send",
 		"subscription_check": "http://localhost:7000/subscription/getStatus",
-		"ussd": "http://localhost:7000/ussd/send"
+		"ussd": "https://developer.bdapps.com/ussd/send"
 	},
 	"ssl": {
 		"cert": "/etc/letsencrypt/live/appgenbd.com/cert.pem",

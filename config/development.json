@@ -5,11 +5,11 @@
 	"domain": "",
 	"PORT": 3000,
 	"mail": {
-		"host": "server232.web-hosting.com",
-		"username": "tech@identicalit.com",
-		"password": "199601OO7",
+		"host": "mail.techlooping.com",
+		"username": "tech@techlooping.com",
+		"password": "appgenbd@anik#0208",
 		"send_port": 465,
-		"sender_mail": "tech@identicalit.com"
+		"sender_mail": "tech@techlooping.com"
 	},
 	"secret_key": "hufasiudhffret23532#%^@#$SHFGSFiuaba98ef98jsudvahrouifoiasjdoifjas",
 	"database_connection_string": "mongodb://localhost:27017/appgenbd",
