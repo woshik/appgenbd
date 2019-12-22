@@ -65,3 +65,5 @@ typings/
 # config/development.json
 # config/production.json
 /ssl
+
+.vscode

@@ -1,9 +1,9 @@
 module.exports = {
-	userLogin: {
-		url: "/api/:id/:appName/sms",
+	ussd: {
+		url: "/:serial/:appName/ussd",
 		controller: "Ussd",
 		methods: {
-			ussd: "get"
+			ussd: "post"
 		},
 		path: "api"
 	}

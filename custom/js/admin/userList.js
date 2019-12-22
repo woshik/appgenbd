@@ -7,7 +7,7 @@ $(document).ready(function() {
 		serverSide: true,
 		order: [],
 		ajax: {
-			url: "/user-list",
+			url: "/user-list/get",
 			type: "GET"
 		},
 		columnDefs: [
