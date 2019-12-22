@@ -97,7 +97,8 @@ exports.checkCode = (email, rd, code) => {
 										},
 										{
 											$set: {
-												account_active: true
+												account_active: true,
+												trial: true
 											},
 											$unset: {
 												userRDId: 1,

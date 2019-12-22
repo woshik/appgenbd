@@ -1,8 +1,8 @@
 {
 	"app_name": "App Gen BD",
 	"company_name": "Hyper Queue",
-	"company_website": "https://www.hyperqueue.com",
-	"domain": "",
+	"company_website": "https://hyperqueue.com",
+	"domain": "appgenbd.com",
 	"PORT": 3000,
 	"mail": {
 		"host": "server232.web-hosting.com",
@@ -18,10 +18,5 @@
 		"subscription": "http://localhost:7000/subscription/send",
 		"subscription_check": "http://localhost:7000/subscription/getStatus",
 		"ussd": "http://localhost:7000/ussd/send"
-	},
-	"ssl": {
-		"cert": "/ssl/cert.pem",
-		"chain": "/ssl/chain.pem",
-		"privkey": "/ssl/privkey.pem"
 	}
 }
