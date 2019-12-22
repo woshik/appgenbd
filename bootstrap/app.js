@@ -25,6 +25,13 @@ const { flash } = require(join(BASE_DIR, "core", "middlewares"));
 // calling express function
 const app = express();
 
+app.use((req, res, next) => {
+	if (req.url === "/") {
+		res.redirect("/login/user");
+	}
+	next();
+});
+
 // node js process error handle
 process.on("uncaughtException", err => {
 	console.log(err);
