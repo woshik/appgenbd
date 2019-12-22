@@ -12,7 +12,8 @@ const schema = Joi.object({
 		.pattern(/^tel:/)
 		.required(),
 	encoding: Joi.string().required(),
-	requestId: Joi.string().required()
+	message: Joi.string().required(),
+	requestId: Joi.required()
 });
 const axios = require("axios");
 const config = require("config");
@@ -21,9 +22,10 @@ const { logger } = require(join(BASE_DIR, "core", "util"));
 const { getDB } = require(join(BASE_DIR, "db", "database"));
 const { storageInstance } = require(join(BASE_DIR, "core", "sessionStore"));
 
-var userResponse = null;
-var userRequest = null;
-var sessionData = null;
+var userResponse = null,
+	userRequest = null,
+	_appDB = null,
+	sessionData = {};
 
 exports.ussd = async (req, res) => {
 	const validateResult = schema.validate({
@@ -33,6 +35,7 @@ exports.ussd = async (req, res) => {
 		ussdOperation: req.body.ussdOperation,
 		sourceAddress: req.body.sourceAddress,
 		encoding: req.body.encoding,
+		message: req.body.message,
 		requestId: req.body.requestId
 	});
 
@@ -46,8 +49,8 @@ exports.ussd = async (req, res) => {
 	userRequest = validateResult.value;
 
 	startSession()
-		.resolve(() => {
-			if (sessionData === [] && userRequest.ussdOperation === "mo-cont") {
+		.then(() => {
+			if (Object.keys(sessionData).length === 0  && userRequest.ussdOperation === "mo-cont") {
 				return res.status(400).json({
 					statusCode: "E1312",
 					statusDetail: "Invalid Request."
@@ -62,7 +65,7 @@ exports.ussd = async (req, res) => {
 		});
 
 	try {
-		const _appDB = await getDB().collection("app");
+		_appDB = await getDB().collection("app");
 		const appData = await _appDB.findOne(
 			{
 				app_serial: req.params.serial,
@@ -71,6 +74,7 @@ exports.ussd = async (req, res) => {
 			},
 			{
 				projection: {
+					provider_id: 1,
 					provider_password: 1,
 					user_id: 1
 				}
@@ -104,7 +108,7 @@ exports.ussd = async (req, res) => {
 				statusDetail: "App Not Available"
 			});
 		}
-
+		
 		if (userRequest.ussdOperation === "mo-init") {
 			const _subscriberDB = await getDB().collection("subscribers");
 			const subscriberData = await _subscriberDB.findOne({
@@ -113,11 +117,26 @@ exports.ussd = async (req, res) => {
 			});
 			setSessionValue("isSubscribed", !!subscriberData);
 			generateManu(!!subscriberData, userRequest.ussdOperation);
-			mobileTerminatedContent(userRequest, appData);
-		} else if (userRequest.ussdOperation === "mo-cont") {
-			selectManu();
+			mobileTerminatedContent(appData);
+
+			_appDB.findOne({
+				_id: appData._id
+			}, {
+				$inc: {
+					dial: 1
+				}
+			})
+			
+		} else {
+			selectManu(appData);
 		}
-	} catch (error) {
+
+		return res.json({
+			statusCode: "S1000",
+			statusDetail: "Success"
+		});
+
+	} catch (err) {
 		logger.error(err);
 		return res.json({
 			statusCode: "E1000",
@@ -181,20 +200,23 @@ function selectManu(appData) {
 			}
 			userResponse = "Thank you for using our application.";
 			mobileTerminatedFin(appData);
+			clearSession();
 			break;
 		case "2":
 			userResponse = "Thank you for using our application.";
 			mobileTerminatedFin(appData);
+			clearSession();
 			break;
 		default:
 			generateManu(sessionData.isSubscribed, userRequest.ussdOperation);
+			mobileTerminatedContent(appData);
 	}
 }
 
 function startSession() {
 	return new Promise((resolve, reject) => {
 		let session = storageInstance();
-		session.get(userRequest.sessionId, (err, data) => {
+		session.create(userRequest.sessionId, (err, data) => {
 			if (err) return reject();
 			if (!data) {
 				session.set(userRequest.sessionId, null, err => {
@@ -210,8 +232,11 @@ function startSession() {
 
 function setSessionValue(key, value) {
 	sessionData[key] = value;
-	let session = storageInstance();
-	session.touch(userRequest.sessionId, sessionData, callback);
+	storageInstance().update(userRequest.sessionId, sessionData);
+}
+
+function clearSession() {
+	storageInstance().destroy(userRequest.sessionId);
 }
 
 async function userSubscribed(appData) {
@@ -221,6 +246,14 @@ async function userSubscribed(appData) {
 		provider_id: appData.provider_id,
 		source_address: userRequest.sourceAddress
 	});
+
+	_appDB.findOne({
+		_id: appData._id
+	}, {
+		$inc: {
+			subscribers: 1
+		}
+	})
 }
 
 async function userUnsubscribed(appData) {
@@ -229,6 +262,14 @@ async function userUnsubscribed(appData) {
 		app_id: appData._id,
 		provider_id: appData.provider_id
 	});
+
+	_appDB.findOne({
+		_id: appData._id
+	}, {
+		$inc: {
+			subscribers: -1
+		}
+	})
 }
 
 function postRequest(url = config.get("server_api.ussd"), data) {

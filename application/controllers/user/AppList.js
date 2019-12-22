@@ -64,7 +64,7 @@ exports.appList = (req, res, next) => {
 				response.push([
 					appData.app_name,
 					appData.provider_id,
-					appData.subscribe || 0,
+					appData.subscribers || 0,
 					appData.dial || 0,
 					format(appData.create_date_time, "DD-MM-YYYY hh:mm:ss A"),
 					appData.app_active ? '<i class="far fa-check-circle correct"></i>' : '<i class="far fa-times-circle wrong"></i>',
