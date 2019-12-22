@@ -27,7 +27,7 @@ const app = express();
 
 app.use((req, res, next) => {
 	if (req.url === "/") {
-		res.redirect("/login/user");
+		return res.redirect("/login/user");
 	}
 	next();
 });
