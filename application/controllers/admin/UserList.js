@@ -75,7 +75,7 @@ exports.userList = (req, res, next) => {
 exports.userMaxAppInstall = (req, res, next) => {
 	try {
 		var id = ObjectId(req.query.id);
-	} catch {
+	} catch (err) {
 		return res.status(200).json({
 			success: false,
 			message: "Please, don't violate the process."
