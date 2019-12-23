@@ -121,7 +121,12 @@ exports.applicationGenerator = (req, res, next) => {
 	doc.fontSize(12).text("Charge:");
 	doc.fontSize(12).text("TK 2 + (VAT + SD + SC)/SMS wih Auto Renewal");
 
-	doc.fontSize(12).list([[`This is a subscription based <Please mention the type> service.`, `Subscription charge will cost 2 + (VAT + SD + SC)/ day SMS wih Auto Renewal`]]);
+	doc.fontSize(12).list([
+		[
+			`This is a subscription based <Please mention the type> service.`,
+			`Subscription charge will cost 2 + (VAT + SD + SC)/ day SMS wih Auto Renewal`
+		]
+	]);
 
 	doc.fontSize(12).text("Offer details:");
 	doc.fontSize(12).text(`1 SMS per day`);

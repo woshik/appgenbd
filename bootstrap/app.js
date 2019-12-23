@@ -55,9 +55,6 @@ app.use(
 	})
 );
 
-//session configuretion
-app.use(sessionStore);
-
 // api routing
 app.use("/api", require(join(BASE_DIR, "routes", "api")));
 
@@ -70,6 +67,9 @@ app.set("views", join(BASE_DIR, "application/views"));
 
 app.use(express.static(join(BASE_DIR, "public")));
 app.use(express.static(join(BASE_DIR, "custom")));
+
+//session configuretion
+app.use(sessionStore);
 
 // csrf configuretion
 app.use(csrf());

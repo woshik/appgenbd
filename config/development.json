@@ -15,8 +15,7 @@
 	"database_connection_string": "mongodb://localhost:27017/appgenbd",
 	"database_name": "appgenbd",
 	"server_api": {
-		"subscription": "http://localhost:7000/subscription/send",
-		"subscription_check": "http://localhost:7000/subscription/getStatus",
-		"ussd": "http://localhost:7000/ussd/send"
+		"ussd": "http://localhost:7000/ussd/send",
+		"sms": "https://developer.bdapps.com/sms/send"
 	}
 }
