@@ -36,7 +36,7 @@ if (cluster.isMaster) {
 	}
 
 	// application cron job
-	require(join(BASE_DIR, "cron", "serverCronJob"));
+	require(join(BASE_DIR, "service", "cronJob"));
 } else {
 	// application bootstrap
 	require(join(BASE_DIR, "bootstrap", "app"));
