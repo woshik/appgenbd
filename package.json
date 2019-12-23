@@ -11,7 +11,7 @@
 		"dev": "webpack --config webpack.config.js"
 	},
 	"engines": {
-		"node": "12.13.1"
+		"node": "12.14.0"
 	},
 	"author": "Hyper Queue",
 	"license": "MIT",
