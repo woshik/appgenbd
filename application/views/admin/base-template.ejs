@@ -1,29 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-
 	<head>
 		<title><%=title%> || <%=info.appName%></title>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="csrf-token" content="<%=csrfToken%>">
-
-		<link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css">
-		<link rel="stylesheet" type="text/css" href="/dashboard/css/fontawesome-all.css">
-		<link rel="stylesheet" type="text/css" href="/dashboard/css/style.css">
-		<link rel="stylesheet" type="text/css" href="/dashboard/css/style4.css">
-
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="csrf-token" content="<%=csrfToken%>" />
+		<link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="/dashboard/css/fontawesome-all.css" />
+		<link rel="stylesheet" type="text/css" href="/dashboard/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="/dashboard/css/style4.css" />
 		<%- include('templates/'+layout+'/style') %>
-
-		<link rel="stylesheet" type="text/css" href="/css/custom.css">
+		<link rel="stylesheet" type="text/css" href="/css/custom.css" />
 	</head>
 
 	<body>
 		<div class="wrapper">
 			<%- include('snippet/side-nav') %>
 			<div id="content">
-				<%- include('snippet/top-nav') %>
-
-				<%- include('templates/'+layout+'/content') %>
+				<%- include('snippet/top-nav') %> <%- include('templates/'+layout+'/content') %>
 
 				<div class="copyright-w3layouts py-xl-3 py-2 mt-xl-5 mt-4 text-center">
 					<p>Copyright &copy; 2019 <a href="<%=info.website%>" target="_blank">Hyper Queue</a>. All Rights Reserved</p>
@@ -31,8 +25,7 @@
 			</div>
 		</div>
 
-		<%- include('snippet/application-setting-modal') %>
-		<%- include('snippet/profile-setting-modal') %>
+		<%- include('snippet/application-setting-modal') %> <%- include('snippet/profile-setting-modal') %>
 
 		<script type="text/javascript" src="/common/js/jquery-3.4.1.min.js"></script>
 		<script type="text/javascript" src="/common/js/popper.min.js"></script>
@@ -42,7 +35,5 @@
 		<script type="text/javascript" src="/js/admin/dashboard.js"></script>
 
 		<%- include('templates/'+layout+'/script') %>
-
 	</body>
-
 </html>

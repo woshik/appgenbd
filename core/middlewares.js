@@ -8,7 +8,7 @@ exports.isUserAuthenticated = (req, res, next) => {
 	}
 };
 
-exports.canUserSee = (req, res, next) => {
+exports.userCanAccessAfterLogin = (req, res, next) => {
 	if (req.isAuthenticated()) {
 		return res.redirect(`/${req.user.role}/dashboard`);
 	} else {
@@ -16,11 +16,19 @@ exports.canUserSee = (req, res, next) => {
 	}
 };
 
-exports.isUserCanAccess = (req, res, next) => {
-	if (req.user.is_account_limit_available || !!req.user.trial) {
+exports.userAccountLimitIsAvailable = (req, res, next) => {
+	if (req.user.account_limit_available) {
 		return next();
 	} else {
-		return res.redirect("/user/dashboard");
+		return req.xhr ? res.json({ success: false, message: "Your account activation time is over, Please pay your bill." }) : res.redirect("/user/dashboard");
+	}
+};
+
+exports.trialUserCanAccess = (req, res, next) => {
+	if (req.user.trial) {
+		return req.xhr ? res.json({ success: false, message: "Your are now using trial version. Please active your account." }) : res.redirect("/user/dashboard");
+	} else {
+		return next();
 	}
 };
 

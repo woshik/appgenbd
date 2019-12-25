@@ -153,7 +153,7 @@ exports.login = ({ id, role }) => {
 			if (!userData || !!userData.account_disable) {
 				return resolve(null, false);
 			} else if (role === "user" && !userData.trial) {
-				userData.is_account_limit_available = dateTime.subtract(new Date(userData.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0;
+				userData.account_limit_available = dateTime.subtract(new Date(userData.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0;
 			}
 
 			userData.role = role;

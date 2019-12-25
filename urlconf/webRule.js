@@ -1,6 +1,6 @@
 "use strict";
 
-const { isUserAuthenticated, isAdminAuthenticated, canUserSee, isUserCanAccess } = require(join(BASE_DIR, "core", "middlewares"));
+const { isUserAuthenticated, isAdminAuthenticated, userCanAccessAfterLogin, trialUserCanAccess, userAccountLimitIsAvailable } = require(join(BASE_DIR, "core", "middlewares"));
 
 module.exports = {
 	userLogin: {
@@ -10,7 +10,7 @@ module.exports = {
 			userLoginView: "get",
 			userLogin: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -21,7 +21,7 @@ module.exports = {
 			registrationView: "get",
 			registration: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -32,7 +32,7 @@ module.exports = {
 			accountActivationView: "get",
 			accountActivation: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -43,7 +43,7 @@ module.exports = {
 			forgotPasswordView: "get",
 			forgotPassword: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -54,7 +54,7 @@ module.exports = {
 			accountVerificationView: "get",
 			accountVerification: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -65,7 +65,7 @@ module.exports = {
 			changePasswordView: "get",
 			changePassword: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -75,7 +75,7 @@ module.exports = {
 		methods: {
 			sendCodeAgain: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 
@@ -113,14 +113,23 @@ module.exports = {
 		path: "user"
 	},
 
+	installAppView: {
+		url: "/user/install-app",
+		controller: "InstallApp",
+		methods: {
+			installAppView: "get"
+		},
+		middleware: [isUserAuthenticated],
+		path: "user"
+	},
+
 	installApp: {
 		url: "/user/install-app",
 		controller: "InstallApp",
 		methods: {
-			installAppView: "get",
 			installApp: "post"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
 		path: "user"
 	},
 
@@ -130,16 +139,15 @@ module.exports = {
 		methods: {
 			appName: "post"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
 		path: "user"
 	},
 
-	appList: {
+	appListView: {
 		url: "/user/app-list",
 		controller: "AppList",
 		methods: {
-			appListView: "get",
-			appList: "get"
+			appListView: "get"
 		},
 		middleware: [isUserAuthenticated],
 		path: "user"
@@ -191,7 +199,7 @@ module.exports = {
 		methods: {
 			appStatusChange: "post"
 		},
-		middleware: [isUserAuthenticated],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
 		path: "user"
 	},
 
@@ -201,6 +209,16 @@ module.exports = {
 		methods: {
 			deleteApp: "delete"
 		},
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
+		path: "user"
+	},
+
+	contentUploadView: {
+		url: "/user/content-upload",
+		controller: "ContentUpload",
+		methods: {
+			contentUploadView: "get"
+		},
 		middleware: [isUserAuthenticated],
 		path: "user"
 	},
@@ -209,10 +227,9 @@ module.exports = {
 		url: "/user/content-upload",
 		controller: "ContentUpload",
 		methods: {
-			contentUploadView: "get",
 			contentUpload: "post"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
 		path: "user"
 	},
 
@@ -222,7 +239,7 @@ module.exports = {
 		methods: {
 			getContent: "get"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated],
 		path: "user"
 	},
 
@@ -232,7 +249,17 @@ module.exports = {
 		methods: {
 			updateContent: "post"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
+		path: "user"
+	},
+
+	applicationGeneratorView: {
+		url: "/user/application-generator",
+		controller: "ApplicationGenerator",
+		methods: {
+			applicationGeneratorView: "get"
+		},
+		middleware: [isUserAuthenticated],
 		path: "user"
 	},
 
@@ -240,10 +267,9 @@ module.exports = {
 		url: "/user/application-generator",
 		controller: "ApplicationGenerator",
 		methods: {
-			applicationGeneratorView: "get",
 			applicationGenerator: "post"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated, trialUserCanAccess, userAccountLimitIsAvailable],
 		path: "user"
 	},
 
@@ -253,7 +279,7 @@ module.exports = {
 		methods: {
 			download: "get"
 		},
-		middleware: [isUserAuthenticated, isUserCanAccess],
+		middleware: [isUserAuthenticated],
 		path: "user"
 	},
 
@@ -268,7 +294,7 @@ module.exports = {
 			adminLoginView: "get",
 			adminLogin: "post"
 		},
-		middleware: [canUserSee],
+		middleware: [userCanAccessAfterLogin],
 		path: "auth"
 	},
 

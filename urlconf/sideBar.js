@@ -8,17 +8,17 @@ exports.user = {
 	},
 	appInstall: {
 		title: "Install App",
-		url: web.installApp.url,
+		url: web.installAppView.url,
 		icon: '<i class="fas fa-arrow-alt-circle-down"></i>'
 	},
 	appList: {
 		title: "App List",
-		url: web.appList.url,
+		url: web.appListView.url,
 		icon: '<i class="fas fa-list-ul"></i>'
 	},
 	generateApplication: {
 		title: "Application Generator",
-		url: web.applicationGenerator.url,
+		url: web.applicationGeneratorView.url,
 		icon: '<i class="fas fa-file-pdf"></i>'
 	}
 };

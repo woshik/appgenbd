@@ -74,10 +74,12 @@ exports.applicationGenerator = (req, res, next) => {
 
 	doc.pipe(fs.createWriteStream(resolve(BASE_DIR, "pdf", `${validateResult.value.appName}.pdf`)));
 
+	doc.font("Times-Roman");
+
 	doc.addPage({
 		margins: {
 			top: 40,
-			bottom: 0,
+			bottom: 40,
 			left: 35,
 			right: 35
 		}
@@ -88,52 +90,87 @@ exports.applicationGenerator = (req, res, next) => {
 		.strokeColor("#1abc9c")
 		.stroke();
 
-	doc.fontSize(20).text(validateResult.value.appName, {
-		align: "center"
-	});
+	doc.strokeColor("#000");
 
-	doc.moveDown(0.1);
-	doc.fontSize(10).text("Powered by AppGenBD", {
-		align: "center"
-	});
+	doc.fontSize(24)
+		.text(validateResult.value.appName, {
+			align: "center",
+			underline: true
+		})
+		.moveDown();
 
-	doc.fontSize(12).text(validateResult.value.longDescription, 35, 90);
+	doc.fontSize(14)
+		.text(validateResult.value.longDescription)
+		.moveDown();
 
-	doc.moveDown(1);
-	doc.fontSize(12).text("How to Subscribe:");
-	doc.fontSize(12).list([
-		[
-			`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the subscription.`,
-			`USSD: Dial ${validateResult.value.smsKeyword} then press 1 (TBD) to subscribe.`,
-			`Other mode: N/A`
-		]
-	]);
+	doc.fontSize(14)
+		.text("How to Subscribe:", {
+			underline: true
+		})
+		.moveDown(0.5);
 
-	doc.fontSize(12).text("How to Unsubscribe:");
-	doc.fontSize(12).list([
-		[
-			`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the unsubscription.`,
-			`USSD: Dial ${validateResult.value.smsKeyword} then press 1 (TBD) to unsubscribe.`,
-			`Other mode: N/A`
-		]
-	]);
+	doc.fontSize(14)
+		.list([
+			[
+				`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the subscription.`,
+				`USSD: Dial ${validateResult.value.ussdcode} then press 1 (TBD) to subscribe.`,
+				`Other mode: N/A`
+			]
+		])
+		.moveDown();
 
-	doc.fontSize(12).text("Charge:");
-	doc.fontSize(12).text("TK 2 + (VAT + SD + SC)/SMS wih Auto Renewal");
+	doc.fontSize(14)
+		.text("How to Unsubscribe:", {
+			underline: true
+		})
+		.moveDown(0.5);
 
-	doc.fontSize(12).list([
-		[
-			`This is a subscription based <Please mention the type> service.`,
-			`Subscription charge will cost 2 + (VAT + SD + SC)/ day SMS wih Auto Renewal`
-		]
-	]);
+	doc.fontSize(14)
+		.list([
+			[
+				`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the unsubscription.`,
+				`USSD: Dial ${validateResult.value.ussdcode} then press 1 (TBD) to unsubscribe.`,
+				`Other mode: N/A`
+			]
+		])
+		.moveDown();
 
-	doc.fontSize(12).text("Offer details:");
-	doc.fontSize(12).text(`1 SMS per day`);
+	doc.fontSize(14)
+		.text("Charge:", {
+			underline: true
+		})
+		.moveDown(0.5);
 
-	doc.fontSize(12).text("Support contact:");
-	doc.fontSize(12).text(`${req.user.name}`);
-	doc.fontSize(12).text(`${req.user.email}`);
+	doc.fontSize(14)
+		.text("TK 2 + (VAT + SD + SC)/SMS wih Auto Renewal", 60)
+		.moveDown(0.5);
+
+	doc.fontSize(14)
+		.list([[validateResult.value.shortDescription, `Subscription charge will cost 2 + (VAT + SD + SC) / day SMS wih Auto Renewal.`]])
+		.moveDown();
+
+	doc.fontSize(14).text("", 35);
+
+	doc.fontSize(14)
+		.text("Offer details:", {
+			underline: true
+		})
+		.moveDown(0.5);
+
+	doc.fontSize(14)
+		.text(`1 SMS per day.`, 60)
+		.moveDown();
+
+	doc.fontSize(14).text("", 35);
+
+	doc.fontSize(14)
+		.text("Support contact:", {
+			underline: true
+		})
+		.moveDown(0.5);
+
+	doc.fontSize(14).text(`${req.user.name}`, 60);
+	doc.fontSize(14).text(`${req.user.email}`);
 
 	doc.end();
 

@@ -30,7 +30,7 @@ $(document).ready(function() {
 						window.location = res.url;
 					} else {
 						$("#message")
-							.html('<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + "</div>")
+							.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
 							.fadeIn(1000);
 						clearTimeout(timeOut);
 						timeOut = setTimeout(function() {

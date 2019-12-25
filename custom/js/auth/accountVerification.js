@@ -33,7 +33,7 @@ $(document).ready(function() {
 						window.location = res.url;
 					} else {
 						$("#message")
-							.html('<div class="alert alert-warning alert-dismissible" role="alert">' + res.message + "</div>")
+							.html('<div class="alert alert-warning" role="alert">' + res.message + "</div>")
 							.fadeIn(1000);
 						clearMessage("message");
 					}
@@ -66,7 +66,7 @@ $(document).ready(function() {
 			dataType: "json",
 			success: function success(res) {
 				$("#message")
-					.html('<div class="alert alert-info alert-dismissible" role="alert">' + res.message + "</div>")
+					.html('<div class="alert alert-info" role="alert">' + res.message + "</div>")
 					.fadeIn(1000);
 				clearMessage("message");
 			}

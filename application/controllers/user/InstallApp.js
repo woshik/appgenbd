@@ -42,11 +42,6 @@ exports.appName = async (req, res, next) => {
 			success: false,
 			message: fromErrorMessage(validateResult.error.details[0])
 		});
-	} else if (!!req.user.trial) {
-		return res.json({
-			success: false,
-			message: "Please, active your account. Your are now using trial version."
-		});
 	}
 
 	try {

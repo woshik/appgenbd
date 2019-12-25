@@ -1,15 +1,15 @@
 #sectionHidden {
-    display: none;
+	display: none;
 }
 
 table th,
 td {
-    text-align: center;
+	text-align: center;
 }
 
 .fas,
 .far {
-    font-size: 17px
+	font-size: 17px;
 }
 
 .custom-block {
@@ -18,41 +18,46 @@ td {
 }
 
 .block-1 {
-    background: #fc3158;
+	background: #fc3158;
 }
 
 .block-2 {
-    background: #10ac84;
+	background: #10ac84;
 }
 
 .block-3 {
-    background: #2a2727;
+	background: #2a2727;
 }
 
 .block-4 {
-    background: #ff9f43;
+	background: #ff9f43;
 }
 
 .block-5 {
-    background: #2980b9;
+	background: #2980b9;
 }
 
 .block-6 {
-    background: #5D3F6A;
+	background: #5d3f6a;
 }
 
 .btn-icon {
-    margin: 2px
+	margin: 2px;
 }
 
 .correct {
-    color: #27ae60;
+	color: #27ae60;
 }
 
 .wrong {
-    color: #c0392b;
+	color: #c0392b;
 }
 
 #formField .form-row .form-group .dateTimepicker {
-    background-color: #fff !important;
+	background-color: #fff !important;
+}
+
+div.alert {
+	text-align: center;
+	border-radius: 150px;
 }

@@ -1,32 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<title><%=title%> || <%=info.appName%></title>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="description" content="Login page of appgenbd." />
+		<meta name="keywords" content="appgenbd, app server, pro app server, bdapp" />
+		<meta name="author" content="Hyper Queue" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="csrf-token" content="<%=csrfToken%>" />
+		<link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="/auth/css/main.min.css" />
+		<link rel="stylesheet" type="text/css" href="/css/custom.css" />
+	</head>
 
-    <head>
-        <title><%=title%> || <%=info.appName%></title>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="description" content="Login page of appgenbd.">
-        <meta name="keywords" content="appgenbd, app server, pro app server, bdapp">
-        <meta name="author" content="Hyper Queue">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="<%=csrfToken%>">
-        <link rel="stylesheet" type="text/css" href="/common/css/bootstrap.min.css">
-        <link rel="stylesheet" type="text/css" href="/auth/css/main.min.css">
-    </head>
-
-    <body>
-        <div class="limiter">
-            <div class="container-login100">
-                <div class="wrap-login100">
-                    <%- include('templates/'+layout+'/content') %>
-                </div>
-                <div class="copyright py-xl-3 py-2 text-center">
-                    <p>Copyright &copy; 2019 <a href="<%=info.website%>" target="_blank" rel="noreferrer" alt="<%=info.company%>"><%=info.company%></a>. All Rights Reserved</p>
-                </div>
-            </div>
-        </div>
-        <script src="/common/js/jquery-3.4.1.min.js"></script>
-        <%- include('templates/'+layout+'/script') %>
-    </body>
-
+	<body>
+		<div class="limiter">
+			<div class="container-login100">
+				<div class="wrap-login100">
+					<%- include('templates/'+layout+'/content') %>
+				</div>
+				<div class="copyright py-xl-3 py-2 text-center">
+					<p>Copyright &copy; 2019 <a href="<%=info.website%>" target="_blank" rel="noreferrer" alt="<%=info.company%>"><%=info.company%></a>. All Rights Reserved</p>
+				</div>
+			</div>
+		</div>
+		<script src="/common/js/jquery-3.4.1.min.js"></script>
+		<%- include('templates/'+layout+'/script') %>
+	</body>
 </html>
