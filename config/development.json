@@ -16,6 +16,6 @@
 	"database_name": "appgenbd",
 	"server_api": {
 		"ussd": "http://localhost:7000/ussd/send",
-		"sms": "https://developer.bdapps.com/sms/send"
+		"sms": "http://localhost:7000/sms/send"
 	}
 }

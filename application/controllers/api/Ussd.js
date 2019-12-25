@@ -2,42 +2,34 @@
 
 const Joi = require("@hapi/joi");
 const schema = Joi.object({
-	version: Joi.string().required(),
 	applicationId: Joi.string().required(),
-	sessionId: Joi.string().required(),
 	ussdOperation: Joi.string()
 		.pattern(/^(mo-init|mo-cont)$/)
 		.required(),
 	sourceAddress: Joi.string()
 		.pattern(/^tel:/)
 		.required(),
-	encoding: Joi.string().required(),
-	message: Joi.string().required(),
-	requestId: Joi.required()
+	message: Joi.string().required()
 });
 const axios = require("axios");
 const config = require("config");
 const dateTime = require("date-and-time");
 const { logger } = require(join(BASE_DIR, "core", "util"));
 const { getDB } = require(join(BASE_DIR, "db", "database"));
-const { storageInstance } = require(join(BASE_DIR, "core", "sessionStore"));
 
-var userResponse = null,
+var _db = null,
+	userResponse = null,
 	userRequest = null,
 	_appDB = null,
-	subscriberData = null,
-	sessionData = {};
+	isSubscribed = false,
+	appData = null;
 
 exports.ussd = async (req, res) => {
 	const validateResult = schema.validate({
-		version: req.body.version,
 		applicationId: req.body.applicationId,
-		sessionId: req.body.sessionId,
 		ussdOperation: req.body.ussdOperation,
 		sourceAddress: req.body.sourceAddress,
-		encoding: req.body.encoding,
-		message: req.body.message,
-		requestId: req.body.requestId
+		message: req.body.message
 	});
 
 	if (validateResult.error) {
@@ -50,8 +42,9 @@ exports.ussd = async (req, res) => {
 	userRequest = validateResult.value;
 
 	try {
-		_appDB = await getDB().collection("app");
-		const appData = await _appDB.findOne(
+		_db = getDB();
+		_appDB = await _db.collection("app");
+		appData = await _appDB.findOne(
 			{
 				app_serial: req.params.serial,
 				app_name: req.params.appName,
@@ -61,6 +54,7 @@ exports.ussd = async (req, res) => {
 				projection: {
 					provider_id: 1,
 					provider_password: 1,
+					app_name: 1,
 					user_id: 1
 				}
 			}
@@ -73,8 +67,7 @@ exports.ussd = async (req, res) => {
 			});
 		}
 
-		const _userDB = await getDB().collection("users");
-		const userData = await _userDB.findOne(
+		const userData = await _db.collection("users").findOne(
 			{
 				_id: appData.user_id
 			},
@@ -98,15 +91,14 @@ exports.ussd = async (req, res) => {
 			});
 		}
 
-		const _subscriberDB = await getDB().collection("subscribers");
-		subscriberData = !!(await _subscriberDB.findOne({
-			source_address: userRequest.sourceAddress,
-			provider_id: userRequest.applicationId
+		isSubscribed = !!(await _db.collection("subscribers").findOne({
+			app_id: appData._id,
+			source_address: userRequest.sourceAddress
 		}));
 
 		if (userRequest.ussdOperation === "mo-init") {
-			generateManu(subscriberData, userRequest.ussdOperation);
-			mobileTerminatedContent(appData);
+			generateManu();
+			mobileTerminatedContent();
 
 			_appDB.findOne(
 				{
@@ -127,26 +119,14 @@ exports.ussd = async (req, res) => {
 			statusDetail: "Success"
 		});
 	} catch (err) {
-		logger.error(err);
-		return res.json({
+		return res.status(500).json({
 			statusCode: "E1000",
 			statusDetail: "App failed to process this request."
 		});
 	}
 };
 
-function mobileTerminatedInit(appData) {
-	postRequest(config.get("server_api.ussd"), {
-		applicationId: appData.provider_id,
-		password: appData.provider_password,
-		message: userResponse,
-		sessionId: userRequest.sessionId,
-		ussdOperation: "mt-init",
-		destinationAddress: userRequest.sourceAddress
-	});
-}
-
-function mobileTerminatedContent(appData) {
+function mobileTerminatedContent() {
 	postRequest(config.get("server_api.ussd"), {
 		applicationId: appData.provider_id,
 		password: appData.provider_password,
@@ -157,7 +137,7 @@ function mobileTerminatedContent(appData) {
 	});
 }
 
-function mobileTerminatedFin(appData) {
+function mobileTerminatedFin() {
 	postRequest(config.get("server_api.ussd"), {
 		applicationId: appData.provider_id,
 		password: appData.provider_password,
@@ -168,9 +148,9 @@ function mobileTerminatedFin(appData) {
 	});
 }
 
-function generateManu(isSubscribed, ussdOperation) {
+function generateManu() {
 	userResponse = [];
-	if (ussdOperation === "mo-init") {
+	if (userRequest.ussdOperation === "mo-init") {
 		userResponse.push(`Thanks For Your Interest. Press 1 for ${isSubscribed ? "unsubscribe" : "subscribe"} this service.`);
 	} else {
 		userResponse.push("Invalid choice. Try again.");
@@ -180,34 +160,37 @@ function generateManu(isSubscribed, ussdOperation) {
 	userResponse = userResponse.join("\n");
 }
 
-function selectManu(appData) {
+function selectManu() {
 	switch (userRequest.message) {
 		case "1":
-			if (subscriberData) {
-				userUnsubscribed(appData);
+			if (isSubscribed) {
+				userUnsubscribed();
 			} else {
-				userSubscribed(appData);
+				userSubscribed();
 			}
 			userResponse = "Thank you for using our application.";
-			mobileTerminatedFin(appData);
+			sendConfirm();
+			mobileTerminatedFin();
 			break;
 		case "2":
 			userResponse = "Thank you for using our application.";
-			mobileTerminatedFin(appData);
+			mobileTerminatedFin();
 			break;
 		default:
-			generateManu(subscriberData, userRequest.ussdOperation);
-			mobileTerminatedContent(appData);
+			generateManu();
+			mobileTerminatedContent();
 	}
 }
 
-async function userSubscribed(appData) {
-	const _subscriberDB = await getDB().collection("subscribers");
-	_subscriberDB.insertOne({
-		app_id: appData._id,
-		provider_id: appData.provider_id,
-		source_address: userRequest.sourceAddress
-	});
+function userSubscribed() {
+	getDB()
+		.collection("subscribers")
+		.insertOne({
+			app_id: appData._id,
+			provider_id: appData.provider_id,
+			source_address: userRequest.sourceAddress,
+			subscribe: true
+		});
 
 	_appDB.findOne(
 		{
@@ -221,12 +204,21 @@ async function userSubscribed(appData) {
 	);
 }
 
-async function userUnsubscribed(appData) {
-	const _subscriberDB = await getDB().collection("subscribers");
-	_subscriberDB.deleteOne({
-		app_id: appData._id,
-		provider_id: appData.provider_id
-	});
+function userUnsubscribed() {
+	getDB()
+		.collection("subscribers")
+		.updateOne(
+			{
+				app_id: appData._id,
+				provider_id: appData.provider_id,
+				source_address: userRequest.sourceAddress
+			},
+			{
+				$set: {
+					subscribe: false
+				}
+			}
+		);
 
 	_appDB.findOne(
 		{
@@ -240,19 +232,20 @@ async function userUnsubscribed(appData) {
 	);
 }
 
-function postRequest(url = config.get("server_api.ussd"), data) {
-	return new Promise((resolve, reject) => {
-		axios
-			.post(url, JSON.stringify(data), {
-				headers: {
-					"Content-Type": "application/json"
-				}
-			})
-			.then(response => {
-				resolve(response.data);
-			})
-			.catch(error => {
-				reject(error);
-			});
+function sendConfirm() {
+	postRequest(config.get("server_api.sms"), {
+		applicationId: appData.provider_id,
+		password: appData.provider_password,
+		message: "Your are successfully subscribe",
+		destinationAddresses: [].push(userRequest.sourceAddress),
+		sourceAddress: appData.app_name
+	});
+}
+
+function postRequest(url, data) {
+	axios.post(url, JSON.stringify(data), {
+		headers: {
+			"Content-Type": "application/json"
+		}
 	});
 }
