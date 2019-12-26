@@ -80,11 +80,7 @@ exports.ussd = async (req, res) => {
 			}
 		);
 
-		if (
-			!userData.account_active ||
-			!!userData.account_disable ||
-			!(dateTime.subtract(new Date(userData.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0)
-		) {
+		if (!userData.account_active || !!userData.account_disable || !(dateTime.subtract(new Date(userData.account_activation_end_date), dateTime.addHours(new Date(), 6)).toDays() >= 0)) {
 			return res.status(404).json({
 				statusCode: "E1301",
 				statusDetail: "App Not Available"
@@ -93,7 +89,8 @@ exports.ussd = async (req, res) => {
 
 		isSubscribed = !!(await _db.collection("subscribers").findOne({
 			app_id: appData._id,
-			source_address: userRequest.sourceAddress
+			source_address: userRequest.sourceAddress,
+			subscribe: true
 		}));
 
 		if (userRequest.ussdOperation === "mo-init") {

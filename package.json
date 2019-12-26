@@ -5,10 +5,10 @@
 	"description": "this a application server where any one can host their robi bd apps",
 	"main": "index.js",
 	"scripts": {
-		"start": "export NODE_ENV=development && node index.js",
+		"start": "export NODE_ENV=development && node index.dev.js",
+		"dev": "export NODE_ENV=development && nodemon index.dev.js",
 		"server": "export NODE_ENV=production && node index.js",
-		"watch": "export NODE_ENV=development && nodemon index.js",
-		"dev": "webpack --config webpack.config.js"
+		"prod": "export NODE_ENV=production && nodemon index.js"
 	},
 	"engines": {
 		"node": "12.14.0"

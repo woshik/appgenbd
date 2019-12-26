@@ -92,24 +92,28 @@ exports.applicationGenerator = (req, res, next) => {
 
 	doc.strokeColor("#000");
 
-	doc.fontSize(24)
+	doc.font("Times-Bold")
+		.fontSize(24)
 		.text(validateResult.value.appName, {
 			align: "center",
 			underline: true
 		})
 		.moveDown();
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.text(validateResult.value.longDescription)
 		.moveDown();
 
-	doc.fontSize(14)
+	doc.font("Times-Bold")
+		.fontSize(14)
 		.text("How to Subscribe:", {
 			underline: true
 		})
 		.moveDown(0.5);
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.list([
 			[
 				`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the subscription.`,
@@ -119,13 +123,15 @@ exports.applicationGenerator = (req, res, next) => {
 		])
 		.moveDown();
 
-	doc.fontSize(14)
+	doc.font("Times-Bold")
+		.fontSize(14)
 		.text("How to Unsubscribe:", {
 			underline: true
 		})
 		.moveDown(0.5);
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.list([
 			[
 				`SMS: User will have to type "${validateResult.value.smsKeyword}" and send to 21213 to complete the unsubscription.`,
@@ -135,42 +141,52 @@ exports.applicationGenerator = (req, res, next) => {
 		])
 		.moveDown();
 
-	doc.fontSize(14)
+	doc.font("Times-Bold")
+		.fontSize(14)
 		.text("Charge:", {
 			underline: true
 		})
 		.moveDown(0.5);
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.text("TK 2 + (VAT + SD + SC)/SMS wih Auto Renewal", 60)
 		.moveDown(0.5);
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.list([[validateResult.value.shortDescription, `Subscription charge will cost 2 + (VAT + SD + SC) / day SMS wih Auto Renewal.`]])
 		.moveDown();
 
 	doc.fontSize(14).text("", 35);
 
-	doc.fontSize(14)
-		.text("Offer details:", {
+	doc.font("Times-Bold")
+		.fontSize(14)
+		.text("Offer Details:", {
 			underline: true
 		})
 		.moveDown(0.5);
 
-	doc.fontSize(14)
+	doc.font("Times-Roman")
+		.fontSize(14)
 		.text(`1 SMS per day.`, 60)
 		.moveDown();
 
 	doc.fontSize(14).text("", 35);
 
-	doc.fontSize(14)
-		.text("Support contact:", {
+	doc.font("Times-Bold")
+		.fontSize(14)
+		.text("Support Contact:", {
 			underline: true
 		})
 		.moveDown(0.5);
 
-	doc.fontSize(14).text(`${req.user.name}`, 60);
-	doc.fontSize(14).text(`${req.user.email}`);
+	doc.font("Times-Roman")
+		.fontSize(14)
+		.text(`${req.user.name}`, 60);
+	doc.font("Times-Roman")
+		.fontSize(14)
+		.text(`${req.user.email}`);
 
 	doc.end();
 
