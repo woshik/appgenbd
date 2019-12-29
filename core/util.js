@@ -2,7 +2,6 @@
 
 const winstonDailyRotateFile = require("winston-daily-rotate-file");
 const { createLogger, format, transports } = require("winston");
-const { align, combine, timestamp, printf } = format;
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const config = require("config");
@@ -81,10 +80,10 @@ exports.hashPassword = password => {
 };
 
 exports.logger = createLogger({
-	format: combine(
-		timestamp(),
-		align(),
-		printf(error => `${error.timestamp} ${error.level}: ${error}`)
+	format: format.combine(
+		format.timestamp(),
+		format.align(),
+		format.printf(error => `${error.timestamp} ${error.level}: ${error.message}`)
 	),
 	transports: [
 		new winstonDailyRotateFile({

@@ -3,7 +3,7 @@ const sendSms = require("sensSms");
 
 // mail sending limit reset
 new CronJob(
-	"* */60 * * * *",
+	"0 0 * * * *",
 	function() {
 		sendSms();
 	},

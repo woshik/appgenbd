@@ -15,25 +15,21 @@ if (cluster.isMaster) {
 		});
 	}
 
-	if (process.env.NODE_ENV === "production") {
-		masterCommunicator(1);
-		cluster.on("exit", worker => {
-			let newWork = cluster.fork({
-				worker_id: worker_id === worker.id ? 1 : Object.keys(cluster.workers).length + 1
-			});
+	masterCommunicator(1);
+	cluster.on("exit", worker => {
+		let newWork = cluster.fork({
+			worker_id: worker_id === worker.id ? 1 : Object.keys(cluster.workers).length + 1
+		});
 
-			if (worker_id === worker.id) {
-				masterCommunicator(newWork.id);
-			}
-		});
-	}
+		if (worker_id === worker.id) {
+			masterCommunicator(newWork.id);
+		}
+	});
 } else if (parseInt(cluster.worker.process.env.worker_id) === 1) {
-	if (process.env.NODE_ENV === "production") {
-		process.send({
-			type: "cron",
-			id: cluster.worker.id
-		});
-	}
+	process.send({
+		type: "cron",
+		id: cluster.worker.id
+	});
 
 	// application cron job
 	require(join(BASE_DIR, "service", "cronJob"));
